@@ -40,6 +40,8 @@ class Issue:
     milestone: str | None
     body: str
     milestone_state: str | None = "open"
+    # Calendar date (YYYY-MM-DD) of the milestone's due_on, as GitHub stores it.
+    milestone_due: str | None = None
 
 
 @dataclass(frozen=True)
@@ -59,6 +61,7 @@ def issue_from_api(item: Mapping[str, Any]) -> Issue:
         milestone=str(milestone["title"]) if milestone else None,
         body=str(item.get("body") or ""),
         milestone_state=str(milestone.get("state", "")).lower() if milestone else None,
+        milestone_due=str(milestone["due_on"])[:10] if milestone and milestone.get("due_on") else None,
     )
 
 
@@ -108,19 +111,42 @@ def metadata_findings(issue: Issue) -> list[Finding]:
     if "P1" in priorities and "bug" not in issue.labels:
         findings.append(Finding(issue.number, "p1-reserved",
                                 "has P1 without bug: P1 is reserved for confirmed calculation bugs"))
+    active = False
     if not issue.milestone:
         findings.append(Finding(issue.number, "milestone", "has no milestone"))
     elif issue.milestone_state != "open" or issue.milestone.split(" ", 1)[0] != ACTIVE_MILESTONE:
         findings.append(Finding(issue.number, "milestone",
                                 f"milestone must be open and target {ACTIVE_MILESTONE}"))
+    else:
+        active = True
     date = target_end_date(issue.body)
     try:
         if date is None or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
             raise ValueError("missing or non-ISO date")
-        dt.date.fromisoformat(date)
+        target = dt.date.fromisoformat(date)
     except ValueError:
         findings.append(Finding(issue.number, "target-date", "needs a valid ISO YYYY-MM-DD target end date (Europe/Rome)"))
+        return findings
+    if active:
+        findings += due_date_findings(issue, target)
     return findings
+
+
+def due_date_findings(issue: Issue, target: dt.date) -> list[Finding]:
+    """The target end date must fall before the milestone's due date; never guess one."""
+    if issue.milestone_due is None:
+        return [Finding(issue.number, "milestone-due",
+                        f"milestone {issue.milestone!r} has no due date, so the target end "
+                        "date cannot be checked against it")]
+    try:
+        due = dt.date.fromisoformat(issue.milestone_due)
+    except ValueError:
+        return [Finding(issue.number, "milestone-due",
+                        f"milestone due date {issue.milestone_due!r} is not an ISO date")]
+    if target >= due:
+        return [Finding(issue.number, "milestone-due",
+                        f"target end date {target} must be before the milestone due date {due}")]
+    return []
 
 
 def dependency_findings(issue: Issue, states: Mapping[int, str], repository: str,
