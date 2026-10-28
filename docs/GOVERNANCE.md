@@ -150,7 +150,8 @@ limits or features available only to public repositories have been enabled.
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
 It checks committed Markdown links/fences, YAML syntax and duplicate keys,
-workflow syntax/expressions with a checksum-verified actionlint binary, strict Python typing, lint and tests, and committed blob whitespace. Python 3.13 and Node 22
+workflow syntax/expressions with a checksum-verified actionlint binary, strict Python typing, lint and tests, and committed blob whitespace (trailing
+whitespace, final newline and blank lines at end of file). Python 3.13 and Node 22
 are selected explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.

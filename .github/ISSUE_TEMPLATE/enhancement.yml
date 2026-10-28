@@ -109,4 +109,3 @@ body:
           required: true
         - label: This proposal contains only synthetic data and no secrets or private links.
           required: true
-
