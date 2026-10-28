@@ -1,8 +1,10 @@
 # Security policy
 
-K-NSFR is a private repository in setup. Report suspected vulnerabilities
-privately to the repository owner through a private GitHub channel available to
-you, or contact the owner outside the repository. Do not open a public issue or
+K-NSFR is private during setup and is intended to become public. Report
+suspected vulnerabilities privately to the repository owner through a private
+GitHub channel available to you, or contact the owner outside the repository.
+Before publication, the owner must verify that a usable private reporting route
+is documented and available to external reporters. Do not open a public issue or
 attach exploit details, credentials, client data, or personal data to an issue or
 PR. The owner will acknowledge, triage, and coordinate remediation and any
 necessary disclosure; no response-time or security-support guarantee is claimed.
