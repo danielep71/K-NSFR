@@ -27,7 +27,7 @@ regulatory implementation or an automatic test oracle.
 | Surface | Declared target | Execution evidence |
 | --- | --- | --- |
 | Reference engine and workbook adapter | Windows 11; Microsoft 365 desktop Excel; VBA7; 64-bit Office | NOT_RUN; #14 must record exact OS/Excel build and bitness |
-| Portable repository checks | Ubuntu 24.04 runner; Python 3.13; Node supplied by the current runner | Existing workflow configuration; results must be attached to each candidate |
+| Portable repository checks | Ubuntu 24.04 runner; Python 3.13; Node 22 explicitly selected by Repository integrity | Existing workflow configuration; results must be attached to each candidate |
 | 32-bit Office, perpetual Excel versions, Excel for Mac | Not supported in the initial profile | No compatibility claim |
 | Excel web/mobile, LibreOffice, server-side Excel automation | Not supported | Cannot substitute for the selected host |
 

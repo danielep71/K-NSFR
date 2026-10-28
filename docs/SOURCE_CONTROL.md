@@ -51,7 +51,7 @@ python -m unittest discover -s tools -p 'test_source_control.py'
 The checker reads blob objects and the binary allowlist from the specified
 commit, not working-tree bytes. It therefore does not mistake intentional CRLF
 checkout conversion for a committed whitespace defect. It rejects unexpected
-binary formats according to committed attributes, invalid cross-platform UTF-8,
+binary formats using Git attribute resolution, invalid cross-platform UTF-8,
 BOM/NUL, unintended trailing whitespace, missing newlines, symlinks and submodules.
 Host-text inspection is byte-preserving and does not certify a code page.
 Run it after committing; uncommitted
@@ -76,3 +76,12 @@ The attributes also classify binary merges, VBA diffs, language reporting and
 archive exclusions. A source archive omits repository control files and GitHub
 automation by design; use a Git clone for the repository validation commands.
 No workbook exception is enabled until an actual K-NSFR template is approved.
+
+### Known attribute-isolation limitation
+
+The audit at release commit `253928b51aba932932a595cc909e736cea14b77c`
+reproduced PR #34's unresolved finding: `git check-attr --source=<commit>`
+still observes `.git/info/attributes`. An unchanged clean text blob can fail
+as an unallowlisted binary after a local override. Issue #4 remains open for
+isolating local/global overrides and adding regression coverage. Existing
+checkout-conversion tests do not establish that isolation.

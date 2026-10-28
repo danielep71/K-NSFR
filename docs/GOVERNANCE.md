@@ -58,8 +58,8 @@ The label manifest, synchronization and drift workflows are versioned in this
 repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
-into main and release/**. Dependabot proposes grouped GitHub Actions updates to `release/0.1.0`
-weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
+into main and release/**. The release-branch Dependabot configuration stages grouped GitHub Actions updates
+to `release/0.1.0` weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
 
 ## Branches and integration
@@ -115,7 +115,8 @@ Additional rulesets protect `release/**` from deletion, `v*` tags from
 updates/deletion, and `traffic-history` from deletion or history rewrite.
 GitHub Actions requires full SHA pins and gives the default workflow token
 read access; Dependabot currently targets `main` and retargeting is tracked
-by #6. Branch-rule enforcement scenarios are tracked by #15. These are
+by #6. The staged release-branch configuration is not active until reviewed
+integration updates the default-branch configuration. Branch-rule enforcement scenarios are tracked by #15. These are
 observed configuration and workflow baselines, not a claim that private-repo
 limits or features available only to public repositories have been enabled.
 
@@ -127,3 +128,11 @@ source syntax and tests, and committed blob whitespace. Python 3.13 and Node 22
 are selected explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.
+
+## Audit evidence precision
+
+On pull_request events, the current checkout validates GitHub's synthetic merge
+commit (`github.sha`). Record both that tested SHA and the associated PR head;
+do not describe it as a direct head checkout. Push runs validate the integrated
+commit. Automated review, maintainer self-review, CI and supported-host testing
+are distinct evidence and must retain their actual commit and outcome.
