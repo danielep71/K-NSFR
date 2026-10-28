@@ -48,7 +48,7 @@ must be approved before any numerical implementation.
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
 | Calculation | Not implemented; no ASF, RSF or ratio output is available |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
-| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT_RUN** |
+| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT RUN** |
 | Data | Synthetic-only policy; no production or client data |
 
 <a id="scope"></a>
