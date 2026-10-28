@@ -64,7 +64,7 @@ checkout conversion for a committed whitespace defect. It rejects unexpected
 binary formats according to committed attributes resolved in a disposable
 repository with an empty index, no templates and isolated Git configuration.
 Local/global/system attributes, environment-injected Git config and dirty or
-staged attribute files do not affect that resolution. It also rejects, invalid cross-platform UTF-8,
+staged attribute files do not affect that resolution. It also rejects invalid cross-platform UTF-8,
 BOM/NUL, unintended trailing whitespace, missing newlines, symlinks and submodules.
 Host-text inspection is byte-preserving and does not certify a code page.
 Run it after committing; uncommitted
