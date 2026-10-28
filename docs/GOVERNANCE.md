@@ -47,6 +47,9 @@ python tools/check_issues.py --check-config
 python -m unittest discover -s tools -p 'test_check_issues.py'
 python tools/check_source_control.py --ref HEAD
 python -m unittest discover -s tools -p 'test_source_control.py'
+python tools/check_content.py
+python -m unittest discover -s tools -p 'test_check_content.py'
+python -m compileall -q tools
 ```
 
 ## Repository configuration
@@ -55,7 +58,7 @@ The label manifest, synchronization and drift workflows are versioned in this
 repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
-into main and release/**. Dependabot proposes grouped GitHub Actions updates
+into main and release/**. Dependabot proposes grouped GitHub Actions updates to `release/0.1.0`
 weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
 
@@ -115,3 +118,12 @@ read access; Dependabot currently targets `main` and retargeting is tracked
 by #6. Branch-rule enforcement scenarios are tracked by #15. These are
 observed configuration and workflow baselines, not a claim that private-repo
 limits or features available only to public repositories have been enabled.
+
+Repository integrity runs on every PR into main and release/**, including
+documentation-only and ancestry-only synchronization PRs, without a path filter.
+It checks committed Markdown links/fences, YAML syntax and duplicate keys,
+workflow syntax/expressions with a checksum-verified actionlint binary, Python
+source syntax and tests, and committed blob whitespace. Python 3.13 and Node 22
+are selected explicitly in the workflow. These portable checks do not run Excel
+or validate regulatory results. A failing check blocks integration until a new
+candidate passes; no skipped outcome is treated as evidence.
