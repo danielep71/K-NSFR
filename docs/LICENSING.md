@@ -1,17 +1,20 @@
 # Licensing and distribution decision
 
 K-NSFR is private during setup and is intended to become public. Its present
-visibility is temporary; the publication date and license are not yet selected.
-No license has been granted by this repository. Copyright and other rights
-remain with their respective rights holders. Public visibility alone would not
-grant reuse rights or establish ownership.
+visibility is temporary; the publication date is not yet selected. The owner
+selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
+standard text is in [LICENSE](../LICENSE). Copyright and other rights remain
+with their respective rights holders; this choice grants only rights a
+contributor is entitled to license.
 
-Before publication or adding a LICENSE, the owner must record the rights holder,
-authorized license and notices, intended audience and redistribution conditions,
-and treatment of any third-party material. Confirm that the chosen terms apply specifically to
-K-NSFR. Record the decision and evidence in issue #3 and update this file and
-any required notices. Until then, the license-selection criterion is open; do
-not copy a license from another repository merely because the workflows match.
+Before publication, confirm rights and required notices for imported material
+and any third-party content. The MPL-2.0 choice applies to original K-NSFR
+source files and contributions for which the contributors can grant those
+rights; it cannot relicense material owned by others. Preserve existing notices
+and add the MPL Exhibit A notice to new source files or a location where a
+recipient is likely to find it. Do not add an Exhibit B incompatibility notice
+without a separate decision. Record ownership and attribution evidence in issue
+#3 before declaring the publication gate complete.
 
 Publication gate: review every tracked file and accessible history, issue/PR
 content, Actions logs and artifacts for secrets and client, employer, proprietary
