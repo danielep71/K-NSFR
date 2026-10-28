@@ -71,6 +71,67 @@ VBA-specific static gates, neutral harness, packaging and actual host evidence
 remain #11–#14. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
+<a id="continuous-integration"></a>
+
+## ☁️ Continuous integration
+
+Four workflows run from `.github/workflows/`. Every checkout sets
+`persist-credentials: false`, every action is pinned to a full commit SHA, and
+the default token is read-only; only label reconciliation can write.
+
+| Workflow | Triggers | Runs | Writes |
+| --- | --- | --- | --- |
+| Repository integrity | Every PR into and push to `main` and `release/**`; manual dispatch. No path filter, so it can be a required check. | `python tools/check.py --ci` | Nothing; uploads `test-results/` |
+| Issue triage | Issue events (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
+| Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
+| Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`) |
+
+Repository integrity checks out the exact commit under review and verifies that
+`HEAD` is that commit; for a pull request this is GitHub's test merge of the
+head into the base. Its Markdown report is added to the job summary and
+`test-results/` is uploaded as `repository-integrity-<sha>-<run>-<attempt>`,
+retained for 30 days. It downloads only the pinned actions, the locked Python
+wheels and the checksum-verified actionlint archive.
+
+<a id="issue-triage"></a>
+
+## 🗂️ Issue triage
+
+`check_issues.py` applies the [issue rules](../docs/GOVERNANCE.md#issues) to
+every open issue and reports findings; it never changes an issue. It checks the
+assignee, exactly one priority (P1 only with `bug`), an open milestone of the
+active release, a valid ISO target end date before the milestone's due date,
+catalogue labels, and the dependency section against the `blocked` label. Pull
+request numbers are loaded so that a dependency section may name one as a
+reference; a pull request never counts as a prerequisite, so the workflow
+token also needs `pull-requests: read`. Issue events run the workflow from the
+default branch, so a rule change takes effect after integration into `main`.
+
+```sh
+GITHUB_TOKEN=<token with issues:read and pull-requests:read> python tools/check_issues.py --repository danielep71/K-NSFR
+python tools/check_issues.py --input issues.json   # issues and pull requests exported as GitHub REST JSON
+python tools/check_issues.py --check-config        # issue forms and label catalogue only, offline
+```
+
+Exit code 0 means no findings, 1 means findings, 2 means the audit could not
+run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
+`--check-config` runs in Repository integrity.
+
+<a id="tool-versions"></a>
+
+## 🔧 Tool versions
+
+| Tool | Version | Pinned in |
+| --- | --- | --- |
+| Python | 3.13 | `actions/setup-python` in the workflows; `pyproject.toml` targets |
+| Node.js | 22 | `actions/setup-node` in the workflows |
+| Ruff, mypy | 0.16.6, 2.3.1 | `requirements-quality-ci.txt`, hash-locked for CPython 3.13 on Linux x86_64 |
+| PyYAML, markdown-it-py | 6.0.3, 4.0.0 | `requirements-quality-ci.txt` (content gate) |
+| actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
+
+Update a version only as [dependency updates](#dependency-updates) describes,
+and change every place that pins it in the same pull request.
+
 <a id="dependency-updates"></a>
 
 ## 📦 Dependency updates
@@ -81,5 +142,6 @@ verify their hashes, update the lock and provenance together, and rerun all
 gates. Do not remove hash enforcement to admit an update. The narrow mypy
 configuration applies to every Python tool and test without blanket exclusions.
 Actionlint has its own pinned version/checksum in the workflow. Dependabot
-handles GitHub Actions pins only; #42 separately reviews the pending Node setup
-action major-version update.
+proposes GitHub Actions pin updates only, as pull requests into the active
+release branch; each is reviewed by the owner before merge (for example #41,
+reviewed in #42).
