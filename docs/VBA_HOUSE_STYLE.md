@@ -305,7 +305,7 @@ generated, names the generator and says it must not be edited by hand.
 - `python tools/check.py` must pass. It is a static check and never compiles
   or runs VBA: a static PASS proves neither that the project compiles nor
   that a result is right ([tools/README.md](../tools/README.md#validation-boundaries)).
-- Host execution remains **NOT_RUN**. #14 records OS/Excel build, bitness, exact
+- Host execution remains **NOT RUN**. #14 records OS/Excel build, bitness, exact
   candidate/source fingerprints, import, compile, execution and cleanup. Never
   promote a sketch or a portable PASS into host evidence.
 

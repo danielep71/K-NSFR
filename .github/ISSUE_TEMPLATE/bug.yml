@@ -14,7 +14,7 @@ body:
         Name the exact commit, give steps anyone can repeat, and state where the expected value comes from. Triage sets the milestone and confirms the priority: `P2` by default, `P1` only for a confirmed calculation bug.
 
         > [!CAUTION]
-        > Synthetic data only: never paste real trades, counterparties, collateral, credentials or private workbooks. Do not include vulnerability details in an issue.
+        > Synthetic data only: never paste real trades, counterparties, collateral, credentials or private workbooks. Report a vulnerability privately as [`SECURITY.md`](https://github.com/danielep71/K-NSFR/blob/main/SECURITY.md) describes, never in an issue.
 
   - type: dropdown
     id: area
@@ -94,7 +94,7 @@ body:
     id: target_end_date
     attributes:
       label: "🗓️ Target end date (Europe/Rome)"
-      description: ISO calendar date YYYY-MM-DD. Triage verifies this and assigns an open milestone for the active release.
+      description: ISO calendar date YYYY-MM-DD, earlier than the due date of the milestone. Triage verifies this and assigns an open milestone for the active release.
       placeholder: "2026-11-04"
     validations:
       required: true
@@ -138,4 +138,3 @@ body:
           required: true
         - label: This report contains only synthetic data and no secrets, private links or vulnerability details.
           required: true
-

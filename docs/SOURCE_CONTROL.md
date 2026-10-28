@@ -7,7 +7,8 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 Repository source is canonical. Cross-platform text uses UTF-8 without a BOM,
-LF in committed text, and a final newline. Remove trailing spaces or tabs except
+LF in committed text, and exactly one final newline with no blank line at the end
+of the file. Remove trailing spaces or tabs except
 for intentional Markdown hard breaks. Preserve the standard license text.
 VBA and Windows-native source retain their host encoding contract: the editor
 configuration does not force a charset, and no Git working-tree-encoding rule is
@@ -65,7 +66,8 @@ binary formats according to committed attributes resolved in a disposable
 repository with an empty index, no templates and isolated Git configuration.
 Local/global/system attributes, environment-injected Git config and dirty or
 staged attribute files do not affect that resolution. It also rejects invalid cross-platform UTF-8,
-BOM/NUL, unintended trailing whitespace, missing newlines, symlinks and submodules.
+BOM/NUL, unintended trailing whitespace, missing final newlines, blank or
+whitespace-only last lines, symlinks and submodules.
 Host-text inspection is byte-preserving and does not certify a code page.
 Run it after committing; uncommitted
 changes are deliberately outside its scope. A failing scan reports paths and
