@@ -20,11 +20,9 @@ repository.
 
 ## 📨 Report a vulnerability
 
-K-NSFR is private during setup and is intended to become public. Report
-suspected vulnerabilities privately to the repository owner through a private
-GitHub channel available to you, or contact the owner outside the repository.
-Before publication, the owner must verify that a usable private reporting route
-is documented and available to external reporters. Do not open a public issue or
+Report a suspected vulnerability privately through GitHub's private
+vulnerability reporting: **Security → Report a vulnerability**
+(<https://github.com/danielep71/K-NSFR/security/advisories/new>). Do not open a public issue or
 attach exploit details, credentials, client data, or personal data to an issue or
 PR. The owner will acknowledge, triage, and coordinate remediation and any
 necessary disclosure within the targets below.
@@ -102,7 +100,7 @@ workflow runs.
 
 ## 🛡️ Security features
 
-Recorded on **2026-10-28** for the private repository. The source column says
+Recorded on **2026-10-28** for the public repository. The source column says
 how each state is known; a state marked *not verified* has not been read back
 and must not be assumed.
 
@@ -112,10 +110,12 @@ and must not be assumed.
 | Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` |
 | Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
 | Dependabot version updates for GitHub Actions | Configured and active; proposals arrive as pull requests for review | `.github/dependabot.yml`; activation evidenced in #6 by Dependabot PR #41 |
-| Private vulnerability reporting | Not available while the repository is private | GitHub offers it for public repositories |
-| Dependabot alerts | Not verified | — |
-| Dependabot security updates | Not verified | — |
-| Secret scanning and push protection | Not verified | — |
+| Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
+| Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
+| Dependabot alerts | Enabled by inference: security updates require alerts | Not readable without admin access; not verified directly |
 | Code scanning | Not configured: no code-scanning workflow exists | Repository configuration |
 
 Update this table, with its date and source, when a feature is enabled,

@@ -116,6 +116,6 @@ branch name.
 ## ⚖️ License, data and security
 
 K-NSFR uses [MPL-2.0](LICENSE) for contributions the rights holders can license.
-The repository is private during setup and intended to become public after the
-separate publication review. Examples and fixtures must be synthetic. Report
+The repository has been public since 2026-10-28; the post-publication review
+is recorded in #19. Examples and fixtures must be synthetic. Report
 suspected vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
