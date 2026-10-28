@@ -10,9 +10,7 @@
 
 ## 📜 Selected license
 
-K-NSFR is private during setup and is intended to become public. Its present
-visibility is temporary; the publication date is not yet selected. The owner
-selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
+K-NSFR has been public since 2026-10-28. The owner selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
 standard text is in [LICENSE](../LICENSE). Copyright and other rights remain
 with their respective rights holders; this choice grants only rights a
 contributor is entitled to license.
@@ -21,8 +19,8 @@ contributor is entitled to license.
 
 ## 🔍 Rights and notices
 
-Before publication, confirm rights and required notices for imported material
-and any third-party content. The MPL-2.0 choice applies to original K-NSFR
+Confirm rights and required notices for imported material and any third-party
+content before it is published. The MPL-2.0 choice applies to original K-NSFR
 source files and contributions for which the contributors can grant those
 rights; it cannot relicense material owned by others. Preserve existing notices
 and add the MPL Exhibit A notice to new source files or a location where a
@@ -38,6 +36,9 @@ Publication gate: review every tracked file and accessible history, issue/PR
 content, Actions logs and artifacts for secrets and client, employer, proprietary
 or personal material. Confirm rights and notices for the imported governance
 source, and remove or resolve any questionable content before changing visibility.
+The repository was made public on 2026-10-28, before this review; on the
+owner's decision the review was then run as a post-publication review and is
+recorded in #19, with its open items in #68, #69 and #70.
 After publication, review public issue reporting and repository controls for
 that visibility. Record the candidate commit and review evidence in issue #19.
 

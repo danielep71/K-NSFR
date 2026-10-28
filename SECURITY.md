@@ -20,11 +20,9 @@ repository.
 
 ## 📨 Report a vulnerability
 
-K-NSFR is private during setup and is intended to become public. Report
-suspected vulnerabilities privately to the repository owner through a private
-GitHub channel available to you, or contact the owner outside the repository.
-Before publication, the owner must verify that a usable private reporting route
-is documented and available to external reporters. Do not open a public issue or
+Report a suspected vulnerability privately through GitHub's private
+vulnerability reporting: **Security → Report a vulnerability**
+(<https://github.com/danielep71/K-NSFR/security/advisories/new>). Do not open a public issue or
 attach exploit details, credentials, client data, or personal data to an issue or
 PR. The owner will acknowledge, triage, and coordinate remediation and any
 necessary disclosure within the targets below.
@@ -77,13 +75,52 @@ revoke/rotate affected credentials, assess exposure and remove the material from
 active artifacts. History cleanup requires a separate coordinated decision; a
 normal deletion commit does not erase previous versions.
 
+<a id="automation-risk-surface"></a>
+
+## ⚙️ Automation risk surface
+
+No workflow runs VBA, Excel or an NSFR calculation. The workflows use only the
+workflow token; no repository secret or other credential is configured in them.
+
+| Workflow | Job token permissions | Runs on |
+| --- | --- | --- |
+| `Repository integrity` | `contents: read` | Pull requests into and pushes to `main` and `release/**`; manual dispatch |
+| `Issue triage` | `contents: read`, `issues: read`, `pull-requests: read` | Issue events, from the default branch; manual dispatch |
+| `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
+| `Sync issue labels` | `contents: read`; `issues: write` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
+
+Every checkout sets `persist-credentials: false`, every action is pinned to a
+full commit SHA, and the workflow-level default permission is
+`contents: read`. No workflow approves, merges or dismisses alerts. The
+[tooling guide](tools/README.md) describes what each
+workflow runs.
+
 <a id="existing-controls"></a>
+<a id="security-features"></a>
 
-## 🛡️ Existing controls
+## 🛡️ Security features
 
-GitHub Actions has a read-only default token and SHA-pinned actions; these
-configuration controls do not constitute a security certification. Dependency
-alerts and host validation have separate evidence requirements. See
+Recorded on **2026-10-28** for the public repository. The source column says
+how each state is known; a state marked *not verified* has not been read back
+and must not be assumed.
+
+| Feature | State | Source |
+| --- | --- | --- |
+| Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
+| Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` |
+| Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
+| Dependabot version updates for GitHub Actions | Configured and active; proposals arrive as pull requests for review | `.github/dependabot.yml`; activation evidenced in #6 by Dependabot PR #41 |
+| Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
+| Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
+| Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
+| Dependabot alerts | Enabled by inference: security updates require alerts | Not readable without admin access; not verified directly |
+| Code scanning | Not configured: no code-scanning workflow exists | Repository configuration |
+
+Update this table, with its date and source, when a feature is enabled,
+changed or read back. These controls do not constitute a security
+certification; host validation has separate evidence requirements. See
 [synthetic-data policy](docs/DATA_POLICY.md) and [provenance](docs/PROVENANCE.md).
 
 <a id="safe-harbor"></a>

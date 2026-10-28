@@ -152,8 +152,8 @@ separate parts, and none stands in for another:
 
 The code-review bot reviews a PR when it is opened or marked ready, not after
 later pushes. When the head changes after a completed review, the owner decides
-whether to request a new review by posting `@codex review` as a top-level
-comment. Before merging, wait until the review shows completed for the
+whether to request a new review by posting the bot's review command as a
+top-level comment. Before merging, wait until the review shows completed for the
 recorded head SHA, then fix or answer every finding and resolve its thread.
 Record the reviewed SHA and the result as text in the PR (for example "no
 findings", or each finding and how it was settled): the bot's summary comment
@@ -189,7 +189,7 @@ issues and their blocked labels.
 
 ## 🔐 Installed settings and limits
 
-The private repository currently has active rulesets for `main` and
+The public repository currently has active rulesets for `main` and
 `release/**`: pull requests, resolved review threads, no required approving
 reviews, no bypass actors, strict Repository integrity status checks, and
 protection against deletion and non-fast-forward updates. The `main` ruleset
@@ -199,8 +199,9 @@ updates/deletion, and `traffic-history` from deletion or history rewrite.
 GitHub Actions requires full SHA pins and gives the default workflow token
 read access; Dependabot targets `release/0.1.0` from the configuration
 installed on `main`. Activation was verified in #6. Branch-rule enforcement scenarios are tracked by #15. These are
-observed configuration and workflow baselines, not a claim that private-repo
-limits or features available only to public repositories have been enabled.
+observed configuration and workflow baselines. The repository became public on
+2026-10-28; the security features enabled for it are recorded, with their
+sources, in [SECURITY.md](../SECURITY.md#security-features).
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
