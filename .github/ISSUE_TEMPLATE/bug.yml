@@ -138,4 +138,3 @@ body:
           required: true
         - label: This report contains only synthetic data and no secrets, private links or vulnerability details.
           required: true
-

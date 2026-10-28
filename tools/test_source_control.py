@@ -86,6 +86,29 @@ class SourceControlTests(unittest.TestCase):
         for expected in ("trailing whitespace", "missing final newline", "invalid UTF-8", "BOM"):
             self.assertIn(expected, findings)
 
+    def test_blank_lines_at_end_of_file_are_rejected(self) -> None:
+        cases = {
+            "one-blank.txt": b"text\n\n",
+            "two-blank.yml": b"key: value\n\n\n",
+            "whitespace-last.md": b"text\n  \n",
+            "only-newline.txt": b"\n",
+            "host.bas": b"Option Explicit\n\n",
+        }
+        for name, data in cases.items():
+            self.write(name, data)
+        self.write("clean.txt", b"text\n\ninner blank line\n")
+        self.write("empty.txt", b"")
+        self.commit()
+        findings = check(cwd=self.repo)[2]
+        self.assertEqual(sorted(f for f in findings if "blank line at end of file" in f),
+                         sorted(f"{name}: blank line at end of file" for name in cases))
+        self.assertFalse([f for f in findings if f.startswith(("clean.txt", "empty.txt"))])
+
+    def test_missing_newline_is_not_reported_as_blank_line(self) -> None:
+        self.write("no-newline.txt", b"text\n\nlast")
+        self.commit()
+        self.assertEqual(check(cwd=self.repo)[2], ["no-newline.txt: missing final newline"])
+
     def test_committed_crlf_is_rejected(self) -> None:
         self.write("bad.txt", b"bad\r\n")
         self.commit()
