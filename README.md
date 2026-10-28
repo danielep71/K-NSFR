@@ -20,5 +20,5 @@ Basel material is a conceptual reference, not an interchangeable rule set.
 - [Existing governance and local checks](docs/GOVERNANCE.md)
 
 Development targets `release/0.1.0` through task pull requests. Integration into
-`main` requires owner authorization; detailed release governance is tracked in
-[issue #1](https://github.com/danielep71/K-NSFR/issues/1).
+`main` follows the owner decision and synchronization process in
+[release governance](docs/GOVERNANCE.md#branches-and-integration).
