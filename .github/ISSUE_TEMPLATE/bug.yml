@@ -90,6 +90,15 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: target_end_date
+    attributes:
+      label: "🗓️ Target end date (Europe/Rome)"
+      description: ISO calendar date YYYY-MM-DD. Triage verifies this and assigns an open milestone for the active release.
+      placeholder: "2026-11-04"
+    validations:
+      required: true
+
   - type: textarea
     id: acceptance
     attributes:

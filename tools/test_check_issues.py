@@ -16,17 +16,17 @@ from check_issues import Issue
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "danielep71/K-NSFR"
 BLOCKED_LABEL = check_issues.BLOCKED
-READY = "## Dependencies and blocking status\n\n**Ready to start**: none.\n"
+READY = "## Planning\n- Target end date: 2026-11-04 (Europe/Rome)\n\n## Dependencies and blocking status\n\n**Ready to start**: none.\n"
 
 
 def issue(number: int, *labels: str, state: str = "open", body: str = READY,
-          assignees: tuple[str, ...] = ("danielep71",), milestone: str | None = "v0.1.0") -> Issue:
-    return Issue(number, state, labels or ("P3",), assignees, milestone, body)
+          assignees: tuple[str, ...] = ("danielep71",), milestone: str | None = "v0.1.0", milestone_state: str = "open") -> Issue:
+    return Issue(number, state, labels or ("P3",), assignees, milestone, body, milestone_state)
 
 
 def blocked_by(*numbers: int, heading: str = "## Dependencies and blocking status") -> str:
     lines = "\n".join(f"- #{n} — prerequisite" for n in numbers)
-    return f"## Objective\n\nx\n\n{heading}\n\n**blocked**:\n\n{lines}\n\n## Tracking\n\n#99\n"
+    return f"## Planning\n- Target end date: 2026-11-04 (Europe/Rome)\n\n## Objective\n\nx\n\n{heading}\n\n**blocked**:\n\n{lines}\n\n## Tracking\n\n#99\n"
 
 
 def rules(issues: list[Issue], states: dict[int, str] | None = None,
@@ -45,6 +45,16 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(rules([issue(1, "documentation")]), [(1, "priority")])
         self.assertEqual(rules([issue(1, "P2", "P3")]), [(1, "priority")])
         self.assertEqual(rules([issue(1, milestone=None)]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone_state="closed")]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Other")]), [(1, "milestone")])
+
+    def test_dates_are_required_and_calendar_valid(self) -> None:
+        for date in ("2026-02-30", "2026-11-4", "tomorrow", "2025-13-01"):
+            with self.subTest(date=date):
+                self.assertEqual(rules([issue(1, body=READY.replace("2026-11-04", date))]), [(1, "target-date")])
+        self.assertEqual(rules([issue(1, body=READY.replace("- Target end date: 2026-11-04 (Europe/Rome)\n", ""))]), [(1, "target-date")])
+        form = "### 🗓️ Target end date (Europe/Rome)\n\n2028-02-29\n\n" + READY.split("## Dependencies", 1)[1]
+        self.assertEqual(check_issues.target_end_date(form), "2028-02-29")
 
     def test_p1_is_reserved_for_bugs(self) -> None:
         self.assertEqual(rules([issue(1, "P1", "documentation")]), [(1, "p1-reserved")])
@@ -73,8 +83,8 @@ class DependencyTests(unittest.TestCase):
 
     def test_external_condition_counts_as_a_blocker(self) -> None:
         body = "### 🔗 Dependencies and blocking status\n\nExternal condition: Excel host access\n"
-        self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=body)]), [])
-        self.assertEqual(rules([issue(2, "P3", body=body)]), [(2, "blocked")])
+        self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=READY.split("## Dependencies", 1)[0] + body)]), [])
+        self.assertEqual(rules([issue(2, "P3", body=READY.split("## Dependencies", 1)[0] + body)]), [(2, "blocked")])
 
     def test_references_outside_the_section_are_ignored(self) -> None:
         # blocked_by() also mentions #99 under Tracking; it must not count.
@@ -84,10 +94,10 @@ class DependencyTests(unittest.TestCase):
     def test_issue_urls_and_form_headings_are_recognised(self) -> None:
         body = ("### 🔗 Dependencies and blocking status\n\n"
                 f"- https://github.com/{REPOSITORY}/issues/1\n")
-        self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=body), issue(1)]), [])
+        self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=READY.split("## Dependencies", 1)[0] + body), issue(1)]), [])
 
     def test_missing_section_and_unknown_reference(self) -> None:
-        self.assertEqual(rules([issue(1, body="## Objective\n\nx\n")]), [(1, "dependencies")])
+        self.assertEqual(rules([issue(1, body=READY.split("## Dependencies", 1)[0] + "## Objective\n\nx\n")]), [(1, "dependencies")])
         self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=blocked_by(7))]),
                          [(2, "dependencies"), (2, "blocked")])
 
@@ -97,7 +107,7 @@ class DependencyTests(unittest.TestCase):
     def test_named_pull_request_is_a_reference_not_a_prerequisite(self) -> None:
         body = "## Dependencies and blocking status\n\nNone. #1 was delivered in #22.\n"
         closed = issue(1, state="closed")
-        self.assertEqual(rules([issue(2, "P3", body=body), closed], pulls=frozenset({22})), [])
+        self.assertEqual(rules([issue(2, "P3", body=READY.split("## Dependencies", 1)[0] + body), closed], pulls=frozenset({22})), [])
         # A pull request never justifies blocked, and unknown numbers are still reported.
         self.assertEqual(rules([issue(2, "P3", BLOCKED_LABEL, body=blocked_by(22, 7))],
                                pulls=frozenset({22})),

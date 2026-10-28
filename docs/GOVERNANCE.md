@@ -11,12 +11,20 @@ The application profile has no additional labels.
 ## 🏷️ Issues
 
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
-to danielep71, has exactly one priority and belongs to a milestone selected
-during triage. Forms default bugs to P2 and enhancements/documentation to P3.
+to danielep71, has exactly one priority, a valid `YYYY-MM-DD` target end date in
+Europe/Rome, and belongs to an open milestone for the active release selected
+during triage. The active milestone is `v0.1.0 - Repo setup`; update the triage
+configuration when a new release branch becomes active. Never assign a closed
+milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
 - P1: confirmed calculation bug producing wrong results for valid inputs; requires bug.
 - P2: material correctness, robustness or maintainability defect.
 - P3: non-blocking quality, testing, documentation or setup work.
+
+P1 is reserved for a confirmed wrong calculation on valid inputs and requires
+the bug label; P3 covers planned setup work. Keep intentional labels and valid
+assignments when triaging. Forms cannot preselect a milestone; the owner assigns
+it and resolves read-only triage findings.
 
 Every issue includes a Dependencies and blocking status section. Write None
 if ready, name prerequisite issues with #number, or use a line beginning
@@ -38,8 +46,12 @@ remains a maintainer decision.
 - Detect issue-label drift runs offline fixtures on relevant pull requests
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
-- Issue triage checks assignee, priority, milestone, catalogue membership
-  and dependency status.
+- Issue triage checks assignee, exactly one priority, open active milestone,
+  ISO target end date, catalogue membership and dependency status. It reports
+  findings without changing issues. A pull request is never a prerequisite.
+- Before label synchronization deletes a label outside the manifest, it checks
+  all-state issues and PRs for use. A used label prevents reconciliation;
+  the owner decides whether to retain or migrate it. Dry runs make no writes.
 
 ## ✅ Local validation
 
