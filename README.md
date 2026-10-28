@@ -18,6 +18,10 @@ Basel material is a conceptual reference, not an interchangeable rule set.
 - [Decision log](docs/DECISIONS.md)
 - [Follow-on implementation backlog](docs/BACKLOG.md)
 - [Existing governance and local checks](docs/GOVERNANCE.md)
+- [Licensing and distribution](docs/LICENSING.md)
+- [Provenance and attribution](docs/PROVENANCE.md)
+- [Synthetic-data policy](docs/DATA_POLICY.md)
+- [Security reporting](SECURITY.md)
 
 Development targets `release/0.1.0` through task pull requests. Integration into
 `main` follows the owner decision and synchronization process in
