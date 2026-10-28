@@ -32,8 +32,9 @@ regulatory implementation or an automatic test oracle.
 | Excel web/mobile, LibreOffice, server-side Excel automation | Not supported | Cannot substitute for the selected host |
 
 The host target is a support intention, not a tested compatibility certification.
-#5 specifies import encoding, numeric/error conventions, and the detailed
-supported-versus-tested matrix; #6 owns runtime consistency for portable tooling.
+[Implementation conventions](IMPLEMENTATION.md) specify source encoding,
+numeric/error behavior and the detailed supported-versus-tested matrix; #6 owns
+runtime consistency for portable tooling.
 #13 supplies reproducible packaging and source synchronization, and #14 supplies
 genuine host evidence. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
@@ -98,7 +99,7 @@ governance tooling in place; do not move tests merely to match the future layout
 
 ## Validation boundaries
 
-Portable CI currently checks label policy and issue triage. It does not compile
+Portable CI checks label policy, issue triage and committed source conventions. It does not compile
 VBA, run Excel, or validate regulatory results. Future static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different
 evidence and must report their own status. Independent numerical validation is
