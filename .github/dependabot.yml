@@ -1,7 +1,8 @@
 # Proposes updates to the SHA-pinned GitHub Actions used by the workflows.
 # Every update arrives as a pull request for maintainer review; nothing merges
 # automatically. See docs/GOVERNANCE.md.
-# K-NSFR has no release branch yet; target main until one is designated.
+# Updates currently target main. Retargeting to the existing release/0.1.0
+# branch is tracked in K-NSFR issue #6.
 # Milestones belong to issues only; link each PR to a tracking issue in triage.
 version: 2
 updates:
