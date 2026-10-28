@@ -1,4 +1,10 @@
-# Licensing and distribution decision
+# ⚖️ Licensing and distribution decision
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+## 📜 Selected license
 
 K-NSFR is private during setup and is intended to become public. Its present
 visibility is temporary; the publication date is not yet selected. The owner
@@ -6,6 +12,8 @@ selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
 standard text is in [LICENSE](../LICENSE). Copyright and other rights remain
 with their respective rights holders; this choice grants only rights a
 contributor is entitled to license.
+
+## 🔍 Rights and notices
 
 Before publication, confirm rights and required notices for imported material
 and any third-party content. The MPL-2.0 choice applies to original K-NSFR
@@ -16,12 +24,16 @@ recipient is likely to find it. Do not add an Exhibit B incompatibility notice
 without a separate decision. The licensing and policy setup is complete in issue #3. Record the remaining
 ownership and attribution evidence for publication under issue #19.
 
+## 🚦 Publication gate
+
 Publication gate: review every tracked file and accessible history, issue/PR
 content, Actions logs and artifacts for secrets and client, employer, proprietary
 or personal material. Confirm rights and notices for the imported governance
 source, and remove or resolve any questionable content before changing visibility.
 After publication, review public issue reporting and repository controls for
 that visibility. Record the candidate commit and review evidence in issue #19.
+
+## 🧩 Future dependencies
 
 The inventory in [PROVENANCE.md](PROVENANCE.md) identifies the existing imported
 and authored surfaces. Future dependencies require a source URL, version or

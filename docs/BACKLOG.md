@@ -1,10 +1,14 @@
-# Follow-on backlog
+# 🗺️ Follow-on backlog
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 This backlog separates existing setup work from later numerical implementation.
 All links refer to K-NSFR. Production work items below are planning records, not
 created GitHub issues, scheduled commitments, or implemented features.
 
-## Existing setup delivery
+## 🧩 Existing setup delivery
 
 | Work | Existing issue | Deliverable required before calculation work |
 | --- | --- | --- |
@@ -18,7 +22,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 | Host packaging and actual evidence | [#13](https://github.com/danielep71/K-NSFR/issues/13), [#14](https://github.com/danielep71/K-NSFR/issues/14) | Reproducible import and genuine supported-host execution |
 | Setup certification | [#22](https://github.com/danielep71/K-NSFR/issues/22) | Exact-candidate setup readiness, subject to all milestone dependencies |
 
-## Later calculation work
+## 🚀 Later calculation work
 
 Accountable backlog owner: @danielep71. Before starting each item, create a scoped
 issue with priority, milestone, target end date, dependencies, acceptance

@@ -1,4 +1,10 @@
-# Provenance and attribution inventory
+# 🔗 Provenance and attribution inventory
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+## 📌 Review baseline
 
 Baseline reviewed for issue #3: K-NSFR release branch after issue #2, at
 `68263b950d5fda7ff31e9ac7780f15390fce7190`. The initial governance
@@ -7,6 +13,8 @@ import is recorded in repository history at
 for this repository, with unrelated repository references removed. This inventory
 records origins at the repository level; it does not establish transferable
 copyright ownership or permission to redistribute.
+
+## 🗂️ Tracked surfaces
 
 | Surface | Origin and current status | Attribution/obligation review |
 | --- | --- | --- |
@@ -17,11 +25,15 @@ copyright ownership or permission to redistribute.
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook, regulatory parameters, numerical fixtures | None in the setup baseline | Future source/version, licensing and independent validation required |
 
+## 🧩 External tools and future dependencies
+
 GitHub-hosted actions are fetched at pinned revisions and are not vendored in
 this tree. No third-party application package manifest or binary is present.
 A future dependency entry must record its exact version, upstream URL, license,
 notices, and use/redistribution decision. Regulatory text is source material to
 cite and interpret, not an assumed software license.
+
+## 🔍 Confidentiality review
 
 A repository-tree review at this candidate found no workbook, client data,
 credentials or proprietary template in tracked paths. The tracked text and

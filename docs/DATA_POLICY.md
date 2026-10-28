@@ -1,4 +1,10 @@
-# Synthetic-data policy
+# 🧪 Synthetic-data policy
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+## ✅ Allowed data
 
 Repository issues, source, fixtures, workbooks, test outputs, logs, screenshots,
 and PR attachments may contain only synthetic or suitably non-identifying data.
@@ -8,6 +14,8 @@ identifiers, dates, and amounts must not be reversible to real cases. Record
 fixture generation method and expected-result provenance when numerical cases
 are introduced. No production feeds, credentials, or proprietary templates are
 admitted to this setup repository.
+
+## 🔍 Review before committing
 
 Before adding a fixture or artifact, inspect its content and metadata, including
 hidden workbook sheets, comments, author fields, external links, embedded

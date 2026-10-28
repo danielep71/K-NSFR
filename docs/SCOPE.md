@@ -1,9 +1,13 @@
-# Scope and maturity
+# 🎯 Scope and maturity
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 This is the scope decision for [issue #2](https://github.com/danielep71/K-NSFR/issues/2),
 dated 2026-10-28. It defines planned capabilities, not implemented calculations.
 
-## Users and use cases
+## 👥 Users and use cases
 
 | User | Intended use | Boundary |
 | --- | --- | --- |
@@ -18,7 +22,7 @@ Input scope must explicitly identify the as-of date, reporting perimeter,
 currency basis, and methodology version. No default entity consolidation,
 currency conversion, or missing-data interpretation is implied.
 
-## Regulatory profiles
+## 📜 Regulatory profiles
 
 | Profile identifier | Role | Status and admission condition |
 | --- | --- | --- |
@@ -37,7 +41,7 @@ separate applicability decisions and independently validated fixtures before
 being admitted. #8 owns source verification; this document specifies no legal
 thresholds, weightings, reporting obligations, or effective legal text.
 
-## Reference use and production admission
+## 🛡️ Reference use and production admission
 
 The setup baseline may be used to review architecture and repository processes.
 Even an educational numerical example requires reviewed provenance before it
@@ -50,7 +54,7 @@ quality and reconciliation controls, access and operational controls, change
 management, supported-host evidence, and accountable owner sign-off. Passing
 portable CI or an Excel smoke test alone does not satisfy this gate.
 
-## v0.1.0 inclusions and exclusions
+## 📦 v0.1.0 inclusions and exclusions
 
 The setup milestone defines governance, architecture, source provenance,
 contracts, static checks, neutral test infrastructure, host packaging, and

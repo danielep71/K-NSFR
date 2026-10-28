@@ -1,10 +1,14 @@
-# Issue and label governance
+# ⚖️ Issue and label governance
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 K-NSFR uses a 20-label catalogue and the issue-triage rules defined below.
 Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json).
 The application profile has no additional labels.
 
-## Issues
+## 🏷️ Issues
 
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
 to danielep71, has exactly one priority and belongs to a milestone selected
@@ -25,7 +29,7 @@ manual dispatch. Findings require maintainer triage; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
 remains a maintainer decision.
 
-## Label workflows
+## 🔄 Label workflows
 
 - Sync issue labels validates and self-tests changes on pull requests into
   main and release/**. Relevant pushes to main, or manual dispatch on the
@@ -37,7 +41,7 @@ remains a maintainer decision.
 - Issue triage checks assignee, priority, milestone, catalogue membership
   and dependency status.
 
-## Local validation
+## ✅ Local validation
 
 ```sh
 node .github/scripts/labels-sync.mjs --self-test
@@ -52,7 +56,7 @@ python -m unittest discover -s tools -p 'test_check_content.py'
 python -m compileall -q tools
 ```
 
-## Repository configuration
+## ⚙️ Repository configuration
 
 The label manifest, synchronization and drift workflows are versioned in this
 repository. Issue forms and triage tooling target K-NSFR.
@@ -62,7 +66,7 @@ into main and release/**. Dependabot proposes grouped GitHub Actions updates to 
 weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
 
-## Branches and integration
+## 🌿 Branches and integration
 
 | Branch | Role | Changes |
 | --- | --- | --- |
@@ -104,7 +108,7 @@ issue. A skipped check or unresolved criterion is visible evidence of a gap,
 not an implicit pass. The owner decides whether to defer or rework before
 integration; branch rules remain in force.
 
-## Installed settings and limits
+## 🔐 Installed settings and limits
 
 The private repository currently has active rulesets for `main` and
 `release/**`: pull requests, resolved review threads, no required approving
