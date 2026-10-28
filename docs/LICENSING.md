@@ -13,15 +13,15 @@ source files and contributions for which the contributors can grant those
 rights; it cannot relicense material owned by others. Preserve existing notices
 and add the MPL Exhibit A notice to new source files or a location where a
 recipient is likely to find it. Do not add an Exhibit B incompatibility notice
-without a separate decision. Record ownership and attribution evidence in issue
-#3 before declaring the publication gate complete.
+without a separate decision. The licensing and policy setup is complete in issue #3. Record the remaining
+ownership and attribution evidence for publication under issue #19.
 
 Publication gate: review every tracked file and accessible history, issue/PR
 content, Actions logs and artifacts for secrets and client, employer, proprietary
 or personal material. Confirm rights and notices for the imported governance
 source, and remove or resolve any questionable content before changing visibility.
 After publication, review public issue reporting and repository controls for
-that visibility. Record the candidate commit and review evidence in issue #3.
+that visibility. Record the candidate commit and review evidence in issue #19.
 
 The inventory in [PROVENANCE.md](PROVENANCE.md) identifies the existing imported
 and authored surfaces. Future dependencies require a source URL, version or
