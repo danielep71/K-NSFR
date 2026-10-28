@@ -64,7 +64,7 @@ body:
     id: target_end_date
     attributes:
       label: "🗓️ Target end date (Europe/Rome)"
-      description: ISO calendar date YYYY-MM-DD. Triage verifies this and assigns an open milestone for the active release.
+      description: ISO calendar date YYYY-MM-DD, earlier than the due date of the milestone. Triage verifies this and assigns an open milestone for the active release.
       placeholder: "2026-11-04"
     validations:
       required: true

@@ -62,7 +62,7 @@ Excel runs and numerical evidence. Write "Nothing" only if that is true.
 
 ## ✅ Review checklist
 
-- [ ] The PR targets the correct branch and links an issue with owner, one priority, an open active-release milestone and ISO target end date.
+- [ ] The PR targets the correct branch and links an issue with owner, one priority, an open active-release milestone and an ISO target end date before the milestone due date.
 - [ ] The diff is focused; no secrets, real data, generated output or unapproved binary files.
 - [ ] The current head has a successful required Repository integrity check and review conversations are resolved.
 - [ ] The final-head review covers the current head; every finding is fixed or answered.
