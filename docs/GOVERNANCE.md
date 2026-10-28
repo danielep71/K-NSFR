@@ -17,7 +17,10 @@ The application profile has no additional labels.
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
 to danielep71, has exactly one priority, a valid `YYYY-MM-DD` target end date in
 Europe/Rome, and belongs to an open milestone for the active release selected
-during triage. The active milestone is `v0.1.0 - Repo setup`; update the triage
+during triage. The target end date must be earlier than the milestone's due
+date, so every milestone carries a due date; triage reads the calendar date of
+the milestone's `due_on` and reports a milestone without one rather than
+guessing it. The active milestone is `v0.1.0 - Repo setup`; update the triage
 configuration when a new release branch becomes active. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
@@ -53,7 +56,8 @@ remains a maintainer decision.
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
 - Issue triage checks assignee, exactly one priority, open active milestone,
-  ISO target end date, catalogue membership and dependency status. It reports
+  ISO target end date before the milestone due date, catalogue membership and
+  dependency status. It reports
   findings without changing issues. A pull request is never a prerequisite.
 - Before label synchronization deletes a label outside the manifest, it checks
   all-state issues and PRs for use. A used label prevents reconciliation;
