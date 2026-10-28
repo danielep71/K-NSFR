@@ -105,11 +105,16 @@ is not evidence for a later one.
 
 For a task PR, review the diff, resolve review threads and wait for the required
 Repository integrity check on the current head. The owner makes the integration
-decision and squashes the task PR into `release/0.1.0`. Do not record self-review
+decision and squashes the task PR into `release/0.1.0`. The squash commit
+subject is the PR title in the [commit convention](../CONTRIBUTING.md#commit-messages)
+ending with the PR number, for example `docs: define review evidence (#<PR>)`.
+Its body says what changed and why, what was validated on the final head and
+what was not, and ends with `Refs #<issue>`. Do not record self-review
 as an independent approval. The installed rulesets require zero approving reviews
 and resolved review threads; this policy asks for an explicit owner decision,
-not a fictitious second reviewer. Close the linked issue only after its criteria
-and evidence are complete on the integrated release branch. Review dependent
+not a fictitious second reviewer. [Review evidence](#review) is recorded in the
+PR. Close the linked issue only after its criteria and evidence are complete on
+the integrated release branch, as [closing issues](#closing-issues) describes. Review dependent
 issues and their blocked labels then.
 
 For release integration, open a PR from `release/0.1.0` into `main`. Record the
@@ -129,6 +134,52 @@ including the reason, owner decision, affected candidate SHA and follow-up
 issue. A skipped check or unresolved criterion is visible evidence of a gap,
 not an implicit pass. The owner decides whether to defer or rework before
 integration; branch rules remain in force.
+
+<a id="review"></a>
+
+## 🔎 Review
+
+The owner is the sole maintainer and reviewer. Review evidence has three
+separate parts, and none stands in for another:
+
+- the owner's review of the final diff and head commit;
+- the automated code review, which runs on PRs opened by people;
+- the required Repository integrity check on the current head.
+
+The code-review bot reviews a PR when it is opened or marked ready, not after
+later pushes. When the head changes after a completed review, the owner decides
+whether to request a new review by posting `@codex review` as a top-level
+comment. Before merging, wait until the review shows completed for the
+recorded head SHA, then fix or answer every finding and resolve its thread.
+Record the reviewed SHA and the result as text in the PR (for example "no
+findings", or each finding and how it was settled): the bot's summary comment
+is edited in place, so a link to it later describes another commit.
+
+The bot does not review PRs authored by bots such as Dependabot. For those, the
+owner's review of the final diff and head SHA is the only review; do not claim
+automated coverage that did not run. A `main` to `release/0.1.0`
+synchronization PR whose diff is empty changes no file: it needs the required
+check only. Confirm that `git diff` between the two branches is empty and
+record that and the check result in the PR. A synchronization PR that changes
+any file is reviewed like any other PR. If review fails or is unavailable,
+leave the PR open and record the blocker.
+
+<a id="closing-issues"></a>
+
+## 🏁 Closing issues
+
+Close an issue as completed only when linked evidence meets its acceptance
+criteria, and tick a criterion only when that evidence demonstrates it. When
+the issue is closed, add a **Resolution** section to its body with:
+
+- links to the change (PR and commit);
+- the checks actually run, with their results;
+- what was not validated, and any accepted limitation or deferred criterion
+  with its follow-up issue.
+
+Close for another reason (duplicate, not planned, superseded) only with the
+matching close reason and an explanation. After closing, review dependent
+issues and their blocked labels.
 
 <a id="installed-settings-and-limits"></a>
 
