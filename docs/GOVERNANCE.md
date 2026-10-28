@@ -45,6 +45,8 @@ node .github/scripts/labels-sync.mjs --mode validate
 node .github/scripts/labels-drift.mjs --self-test
 python tools/check_issues.py --check-config
 python -m unittest discover -s tools -p 'test_check_issues.py'
+python tools/check_source_control.py --ref HEAD
+python -m unittest discover -s tools -p 'test_source_control.py'
 ```
 
 ## Repository configuration

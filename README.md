@@ -15,6 +15,7 @@ Basel material is a conceptual reference, not an interchangeable rule set.
 
 - [Scope, users, profiles, and exclusions](docs/SCOPE.md)
 - [Architecture, host targets, and repository layout](docs/ARCHITECTURE.md)
+- [Source-control and generated-file conventions](docs/SOURCE_CONTROL.md)
 - [Decision log](docs/DECISIONS.md)
 - [Follow-on implementation backlog](docs/BACKLOG.md)
 - [Existing governance and local checks](docs/GOVERNANCE.md)
