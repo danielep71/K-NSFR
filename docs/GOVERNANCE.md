@@ -152,8 +152,8 @@ separate parts, and none stands in for another:
 
 The code-review bot reviews a PR when it is opened or marked ready, not after
 later pushes. When the head changes after a completed review, the owner decides
-whether to request a new review by posting `@codex review` as a top-level
-comment. Before merging, wait until the review shows completed for the
+whether to request a new review by posting the bot's review command as a
+top-level comment. Before merging, wait until the review shows completed for the
 recorded head SHA, then fix or answer every finding and resolve its thread.
 Record the reviewed SHA and the result as text in the PR (for example "no
 findings", or each finding and how it was settled): the bot's summary comment
