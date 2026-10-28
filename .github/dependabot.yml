@@ -1,14 +1,14 @@
 # Proposes updates to the SHA-pinned GitHub Actions used by the workflows.
 # Every update arrives as a pull request for maintainer review; nothing merges
 # automatically. See docs/GOVERNANCE.md.
-# Updates currently target main. Retargeting to the existing release/0.1.0
-# branch is tracked in K-NSFR issue #6.
+# Updates target the active release/0.1.0 development branch.
+# Review and integrate into main through release governance.
 # Milestones belong to issues only; link each PR to a tracking issue in triage.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
-    target-branch: main
+    target-branch: release/0.1.0
     schedule:
       interval: weekly
       day: monday
