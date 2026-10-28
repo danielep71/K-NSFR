@@ -1,8 +1,12 @@
+<a id="synthetic-data-policy"></a>
+
 # 🧪 Synthetic-data policy
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+<a id="allowed-data"></a>
 
 ## ✅ Allowed data
 
@@ -14,6 +18,8 @@ identifiers, dates, and amounts must not be reversible to real cases. Record
 fixture generation method and expected-result provenance when numerical cases
 are introduced. No production feeds, credentials, or proprietary templates are
 admitted to this setup repository.
+
+<a id="review-before-committing"></a>
 
 ## 🔍 Review before committing
 

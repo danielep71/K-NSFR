@@ -1,8 +1,12 @@
+<a id="licensing-and-distribution-decision"></a>
+
 # ⚖️ Licensing and distribution decision
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+<a id="selected-license"></a>
 
 ## 📜 Selected license
 
@@ -12,6 +16,8 @@ selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
 standard text is in [LICENSE](../LICENSE). Copyright and other rights remain
 with their respective rights holders; this choice grants only rights a
 contributor is entitled to license.
+
+<a id="rights-and-notices"></a>
 
 ## 🔍 Rights and notices
 
@@ -24,6 +30,8 @@ recipient is likely to find it. Do not add an Exhibit B incompatibility notice
 without a separate decision. The licensing and policy setup is complete in issue #3. Record the remaining
 ownership and attribution evidence for publication under issue #19.
 
+<a id="publication-gate"></a>
+
 ## 🚦 Publication gate
 
 Publication gate: review every tracked file and accessible history, issue/PR
@@ -32,6 +40,8 @@ or personal material. Confirm rights and notices for the imported governance
 source, and remove or resolve any questionable content before changing visibility.
 After publication, review public issue reporting and repository controls for
 that visibility. Record the candidate commit and review evidence in issue #19.
+
+<a id="future-dependencies"></a>
 
 ## 🧩 Future dependencies
 

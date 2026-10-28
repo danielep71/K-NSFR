@@ -1,8 +1,12 @@
+<a id="architecture-and-implementation-profile"></a>
+
 # 🏗️ Architecture and implementation profile
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+<a id="evidence-and-selection"></a>
 
 ## 🔎 Evidence and selection
 
@@ -26,12 +30,14 @@ add hosting, authentication, and operational concerns outside setup scope.
 Neither alternative is selected for the initial engine. Python is not a second
 regulatory implementation or an automatic test oracle.
 
+<a id="host-and-tooling-profile"></a>
+
 ## 🧰 Host and tooling profile
 
 | Surface | Declared target | Execution evidence |
 | --- | --- | --- |
 | Reference engine and workbook adapter | Windows 11; Microsoft 365 desktop Excel; VBA7; 64-bit Office | NOT_RUN; #14 must record exact OS/Excel build and bitness |
-| Portable repository checks | Ubuntu 24.04 runner; Python 3.13; Node supplied by the current runner | Existing workflow configuration; results must be attached to each candidate |
+| Portable repository checks | Ubuntu 24.04 runner; Python 3.13; Node 22 explicitly selected | Existing workflow configuration; results must be attached to each candidate |
 | 32-bit Office, perpetual Excel versions, Excel for Mac | Not supported in the initial profile | No compatibility claim |
 | Excel web/mobile, LibreOffice, server-side Excel automation | Not supported | Cannot substitute for the selected host |
 
@@ -43,6 +49,8 @@ runtime consistency for portable tooling.
 genuine host evidence. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
 be justified and isolated.
+
+<a id="dependency-and-responsibility-boundaries"></a>
 
 ## 🧱 Dependency and responsibility boundaries
 
@@ -66,6 +74,8 @@ and error codes are deliverables of #5, #9, and #10, not finalized by this issue
 Invalid inputs must produce explicit diagnostics, never fabricated zero results.
 The host owns cleanup and restoration of any Excel state it changes, including
 on failure; host failures must remain distinguishable from calculation failures.
+
+<a id="layout-and-stable-names"></a>
 
 ## 🗂️ Layout and stable names
 
@@ -100,6 +110,8 @@ workbooks are not source of truth. [Source-control conventions](SOURCE_CONTROL.m
 define encoding, line endings, generated files and exact binary exceptions,
 and #13 implements the manifest and synchronization controls. Preserve existing
 governance tooling in place; do not move tests merely to match the future layout.
+
+<a id="validation-boundaries"></a>
 
 ## ✅ Validation boundaries
 

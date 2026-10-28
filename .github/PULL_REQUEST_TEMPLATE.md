@@ -4,6 +4,8 @@ Never include secrets, client data or vulnerability details. Mark unavailable
 checks NOT RUN with a reason; a portable check is not Excel evidence.
 -->
 
+<a id="outcome-and-linked-issue"></a>
+
 ## 🎯 Outcome and linked issue
 
 Related issue: #
@@ -11,6 +13,8 @@ Related issue: #
 Describe the observable result and the reason for this change. State whether
 it changes calculations, public API, host behavior, tooling or documentation.
 Milestones belong to issues only; leave the PR milestone empty.
+
+<a id="candidate-and-validation"></a>
 
 ## 🔎 Candidate and validation
 
@@ -24,12 +28,16 @@ If the head changes, update this section and rerun affected checks. No
 earlier green run is evidence for a later candidate. Describe any skipped
 check as NOT RUN and explain it.
 
+<a id="scope-and-risk"></a>
+
 ## ⚖️ Scope and risk
 
 - Regulatory source/profile and applicability, if calculations change:
 - Compatibility, input/output and public API effects:
 - Synthetic-data and provenance review:
 - Remaining risks, exceptions or deferred criteria (link the follow-up issue):
+
+<a id="review-checklist"></a>
 
 ## ✅ Review checklist
 
