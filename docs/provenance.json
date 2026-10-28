@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-28",
+  "imports": [
+    {
+      "local_paths": [
+        ".editorconfig",
+        ".gitattributes",
+        ".gitignore"
+      ],
+      "source_url": "https://github.com/danielep71/K-SACCR/tree/a950f36e8fae8a70b7ba3520437219c626b4abda",
+      "source_revision": "a950f36e8fae8a70b7ba3520437219c626b4abda",
+      "local_import_commit": "5457438b50fccf95ea67d1253318c32405ea5928",
+      "note": "Reference snapshot for audit comparison; original import recorded by local commit. Repository-name comments adapted and unrelated workbook allowlist removed.",
+      "license": "MPL-2.0"
+    },
+    {
+      "local_paths": [
+        "tools/check.py",
+        "tools/test_check.py",
+        "tools/requirements-quality-ci.txt",
+        "pyproject.toml",
+        "docs/VBA_HOUSE_STYLE.md"
+      ],
+      "source_url": "https://github.com/danielep71/K-SFTs/tree/e6bae6df272083ba596c9eb866b14e6f9152bc15",
+      "source_revision": "e6bae6df272083ba596c9eb866b14e6f9152bc15",
+      "note": "Runner/tests and quality configuration adapted; content dependencies and NSFR gates added. House style adapted to existing NSFR architecture, status-based API and provisional numeric contract. Source-specific capability claims removed.",
+      "license": "MPL-2.0"
+    }
+  ]
+}

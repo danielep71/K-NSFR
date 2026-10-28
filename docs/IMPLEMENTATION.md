@@ -1,3 +1,5 @@
+<a id="implementation-host-and-api-conventions"></a>
+
 # ✍️ Implementation, host and API conventions
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -9,6 +11,8 @@ engine. The repository is in setup: there is no numerical engine, workbook or
 validated regulatory profile. [Architecture](ARCHITECTURE.md) selected VBA;
 Python and JavaScript remain repository tooling, not parallel NSFR engines.
 These conventions constrain later code without asserting a regulatory formula.
+
+<a id="public-boundary-and-deterministic-core"></a>
 
 ## 🧩 Public boundary and deterministic core
 
@@ -33,6 +37,8 @@ identical validated inputs and versioned configuration. No default profile,
 effective date, reporting perimeter, currency basis or missing value is
 inferred. Unknown or unapproved configuration is rejected. Regulatory
 methodology and accepted parameter versions belong to #8 and #9.
+
+<a id="numbers-validation-and-diagnostics"></a>
 
 ## 🧮 Numbers, validation and diagnostics
 
@@ -59,12 +65,14 @@ result contains no authoritative totals. Host errors remain distinguishable
 from calculation validation. The host restores any Excel state it changed
 even after failure and does not suppress the original diagnostic.
 
+<a id="supported-and-tested-environments"></a>
+
 ## 💻 Supported and tested environments
 
 | Environment | Declared support | Execution evidence at v0.1.0 setup |
 | --- | --- | --- |
 | Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | NOT_RUN; #14 must record OS/Excel build, bitness, import, execution and cleanup |
-| Ubuntu 24.04, Python 3.13, Node supplied by Actions runner | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
+| Ubuntu 24.04, Python 3.13, Node 22 explicitly selected | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
 | 32-bit Office, older/perpetual Excel, Excel for Mac | Outside initial host profile | NOT_RUN; no compatibility claim |
 | Excel web/mobile, LibreOffice, server Excel automation | Unsupported | NOT_RUN |
 
@@ -72,6 +80,8 @@ A declared target does not become tested merely because portable CI passes.
 Host evidence in #14 binds the exact candidate commit, builds, bitness, source
 import/export and observed outcome; follow-up host variants need their own
 record. #13 owns packaging and a reproducible source-to-workbook process.
+
+<a id="vba-source-and-environment"></a>
 
 ## 📦 VBA source and environment
 
@@ -105,6 +115,8 @@ workbook, selection or active sheet as an input; pass the workbook and ranges
 explicitly. Static checks in #11 will enforce feasible source rules once
 modules exist, and a neutral harness in #12 will test the interfaces.
 
+<a id="repository-tooling"></a>
+
 ## 🛠️ Repository tooling
 
 Python governance utilities use explicit arguments and typed, deterministic
@@ -114,3 +126,27 @@ the existing naming rules in [ARCHITECTURE.md](ARCHITECTURE.md). VBA-specific
 module and conditional-compilation rules are inapplicable to Python/JavaScript,
 because neither is selected as a calculation engine. No new runtime or
 dependency is introduced by this document.
+
+<a id="numeric-design-rationale-and-admission-tests"></a>
+
+## 📏 Numeric design rationale and admission tests
+
+The initial fixed-point preference is intended to make decimal scale and
+rounding explicit and avoid accidental binary rounding in monetary inputs.
+It is a design preference, not proof of a suitable numeric engine. Unlike a
+binary-floating-point design, `Currency` has a limited range and four fractional
+digits; intermediate weighted amounts and ratios may exceed that precision.
+`Decimal` requires a Variant subtype and careful coercion control. Neither
+choice is admitted to production merely by this document.
+
+Before #9 finalizes types, record maximum input, aggregate and intermediate
+magnitudes; accepted decimal scales; parsing rules; currency/unit identity;
+rounding mode and location; overflow behavior; and ratio representation.
+#10 must independently test range boundaries, fractional weights, cancellation,
+aggregation order, zero denominators and serialization round trips. If these
+show the initial preference is unsuitable, supersede it in the decision log
+before implementation. Never cast silently between Currency, Decimal and Double.
+
+The detailed [VBA house style](VBA_HOUSE_STYLE.md) defines procedure banners,
+visibility, argument ownership, array bounds, module layout and cleanup sketches.
+Its examples are not executed host evidence.

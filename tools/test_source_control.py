@@ -1,16 +1,18 @@
 """Exercise committed-content checks and real Git checkout round trips."""
 
 import json
-from pathlib import Path
+import os
 import subprocess
 import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from check_source_control import check, git
 
 
 class SourceControlTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.repo = Path(self.temp.name) / "source"
@@ -23,16 +25,16 @@ class SourceControlTests(unittest.TestCase):
         attributes = Path(__file__).resolve().parents[1] / ".gitattributes"
         self.write(".gitattributes", attributes.read_bytes())
 
-    def write(self, name, data):
+    def write(self, name: str, data: bytes) -> None:
         path = self.repo / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
 
-    def commit(self):
+    def commit(self) -> None:
         git("add", "-f", ".", cwd=self.repo)
         git("commit", "-qm", "fixture", cwd=self.repo)
 
-    def test_fresh_checkout_round_trip(self):
+    def test_fresh_checkout_round_trip(self) -> None:
         original = b'Attribute VB_Name = "Example"\nOption Explicit\n'
         self.write("src/core/Example.bas", original)
         self.write("docs/example.md", "Synthetic café\n".encode())
@@ -49,13 +51,33 @@ class SourceControlTests(unittest.TestCase):
                 git("add", "--renormalize", ".", cwd=clone)
                 self.assertEqual(git("diff", "--cached", "--name-only", cwd=clone), b"")
 
-    def test_dirty_checkout_does_not_change_committed_result(self):
+    def test_dirty_checkout_does_not_change_committed_result(self) -> None:
         self.write("example.txt", b"clean\n")
         self.commit()
         self.write("example.txt", b"dirty  \r\n")
         self.assertEqual(check(cwd=self.repo)[2], [])
 
-    def test_bad_committed_text(self):
+    def test_attribute_overrides_do_not_change_result(self) -> None:
+        self.write("example.txt", b"clean\n")
+        self.write("nested/.gitattributes", b"*.dat -text\n")
+        self.write("nested/approved.dat", b"\x00\xff")
+        self.write("tools/binary-allowlist.json", b'["nested/approved.dat"]\n')
+        self.commit()
+        expected = check(cwd=self.repo)
+        self.assertEqual(expected[2], [])
+        self.write(".git/info/attributes", b"example.txt binary\nnested/* text\n")
+        overrides = Path(self.temp.name) / "external-attributes"
+        overrides.write_text("* binary\n")
+        git("config", "core.attributesFile", str(overrides), cwd=self.repo)
+        self.write(".gitattributes", b"* binary\n")
+        git("add", ".gitattributes", cwd=self.repo)
+        self.assertEqual(check(cwd=self.repo), expected)
+        with patch.dict(os.environ, {"GIT_CONFIG_COUNT": "1",
+                        "GIT_CONFIG_KEY_0": "core.attributesFile",
+                        "GIT_CONFIG_VALUE_0": str(overrides)}):
+            self.assertEqual(check(cwd=self.repo), expected)
+
+    def test_bad_committed_text(self) -> None:
         self.write("bad.txt", b"trailing \nmissing-newline")
         self.write("bad-encoding.txt", b"\xff\n")
         self.write("bom.txt", b"\xef\xbb\xbfbom\n")
@@ -64,7 +86,7 @@ class SourceControlTests(unittest.TestCase):
         for expected in ("trailing whitespace", "missing final newline", "invalid UTF-8", "BOM"):
             self.assertIn(expected, findings)
 
-    def test_committed_crlf_is_rejected(self):
+    def test_committed_crlf_is_rejected(self) -> None:
         self.write("bad.txt", b"bad\r\n")
         self.commit()
         # Write an unnormalized blob directly to exercise committed-byte checks.
@@ -74,7 +96,7 @@ class SourceControlTests(unittest.TestCase):
         git("commit", "-qm", "malformed committed blob", cwd=self.repo)
         self.assertIn("committed content must use LF", "\n".join(check(cwd=self.repo)[2]))
 
-    def test_binary_requires_exact_existing_entry(self):
+    def test_binary_requires_exact_existing_entry(self) -> None:
         self.write("templates/example.xlsx", b"PK\x00\xff")
         self.commit()
         self.assertTrue(check(cwd=self.repo)[2])
@@ -87,12 +109,12 @@ class SourceControlTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             check(cwd=self.repo)
 
-    def test_stale_allowlist_is_rejected(self):
+    def test_stale_allowlist_is_rejected(self) -> None:
         self.write("tools/binary-allowlist.json", b'["missing.png"]\n')
         self.commit()
         self.assertIn("does not exist", "\n".join(check(cwd=self.repo)[2]))
 
-    def test_ignored_outputs_and_trackable_sources(self):
+    def test_ignored_outputs_and_trackable_sources(self) -> None:
         ignore = Path(__file__).resolve().parents[1] / ".gitignore"
         self.write(".gitignore", ignore.read_bytes())
         for name in ("test-output/run.json", "build/example.xlsm", "~$example.xlsx",
@@ -108,7 +130,7 @@ class SourceControlTests(unittest.TestCase):
         self.assertEqual(len(tracked.stdout.splitlines()), 4)
         self.assertTrue(all(line.startswith("::\t") for line in tracked.stdout.splitlines()))
 
-    def test_markdown_breaks_and_host_encoding_are_preserved(self):
+    def test_markdown_breaks_and_host_encoding_are_preserved(self) -> None:
         self.write("docs/example.md", b"line  \nnext\n")
         self.write("src/example.bas", b"' synthetic accented byte: \xe9\n")
         self.commit()
