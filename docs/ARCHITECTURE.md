@@ -91,7 +91,8 @@ independently of row order. #5 will define the public API naming details before
 code is introduced.
 
 Repository text is the future canonical source; generated macro-enabled
-workbooks are not source of truth. #4 determines encoding and line-ending rules,
+workbooks are not source of truth. [Source-control conventions](SOURCE_CONTROL.md)
+define encoding, line endings, generated files and exact binary exceptions,
 and #13 implements the manifest and synchronization controls. Preserve existing
 governance tooling in place; do not move tests merely to match the future layout.
 

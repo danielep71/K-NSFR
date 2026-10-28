@@ -31,4 +31,7 @@ jobs:
         run: |
           python tools/check_issues.py --check-config
           python -m unittest discover -s tools -p 'test_check_issues.py'
-
+      - name: Validate committed source conventions and checkout round trips
+        run: |
+          python tools/check_source_control.py --ref HEAD
+          python -m unittest discover -s tools -p 'test_source_control.py'
