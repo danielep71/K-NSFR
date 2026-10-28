@@ -26,6 +26,19 @@ class ContentTests(unittest.TestCase):
             with self.subTest(bad=bad):
                 self.assertTrue(markdown_errors("docs/guide.md", bad, names, docs))
 
+    def test_container_fences_use_normalized_parser_lines(self) -> None:
+        for text in ("> ```python\n> value = 1\n> ```\n",
+                     "- item\n\n    ```\n    nested\n    ```\n",
+                     "> - item\n>\n>     ~~~\n>     nested\n>     ~~~\n",
+                     "```\n```", "```\nvalue\n````"):
+            with self.subTest(text=text):
+                self.assertEqual(markdown_errors("README.md", text, {"README.md"}), [])
+        for text in ("> ```\n> value\n", "- item\n\n    ```\n    value",
+                     "```\nvalue", "```\n", "> ```\n> value\n\noutside\n"):
+            with self.subTest(text=text):
+                self.assertIn("unclosed code fence", " ".join(
+                    markdown_errors("README.md", text, {"README.md"})))
+
     def test_yaml_valid_and_duplicate(self) -> None:
         self.assertEqual(yaml.load("name: check\nsteps:\n  - run: echo ok\n", Loader=UniqueKeysLoader)["name"], "check")
         with self.assertRaises(yaml.YAMLError):

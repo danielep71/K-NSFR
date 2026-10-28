@@ -8,7 +8,6 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 from __future__ import annotations
 
 import posixpath
-import re
 import subprocess
 import sys
 from collections.abc import Mapping
@@ -64,8 +63,13 @@ def navigation(text: str) -> tuple[set[str], list[str], list[str]]:
     for token in tokens:
         inspect_token(token, html, links)
         if token.type == "fence" and token.map:
-            closing = text.splitlines()[token.map[1] - 1]
-            if token.map[1] - token.map[0] < 2 or not re.fullmatch(r" {0,3}" + re.escape(token.markup[0]) + "{" + str(len(token.markup)) + r",}\s*", closing):
+            # The parser removes quote/list prefixes from content. A closed
+            # fence spans opening + content lines + closing; an implicit EOF
+            # or container-end closure has no closing line in token.map.
+            content_lines = token.content.count("\n")
+            if token.content and not token.content.endswith("\n"):
+                content_lines += 1
+            if token.map[1] - token.map[0] != content_lines + 2:
                 errors.append("unclosed code fence")
     for anchor in html.anchors:
         if anchor in anchors:
