@@ -1,0 +1,28 @@
+# Proposes updates to the SHA-pinned GitHub Actions used by the workflows.
+# Every update arrives as a pull request for maintainer review; nothing merges
+# automatically. See docs/GOVERNANCE.md.
+# K-NSFR has no release branch yet; target main until one is designated.
+# Milestones belong to issues only; link each PR to a tracking issue in triage.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: main
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Europe/Rome
+    open-pull-requests-limit: 5
+    labels:
+      - ci
+      - P3
+    assignees:
+      - danielep71
+    commit-message:
+      prefix: ci
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+

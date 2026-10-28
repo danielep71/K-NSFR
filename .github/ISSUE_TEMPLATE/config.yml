@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "Governance and issue rules"
+    url: "https://github.com/danielep71/K-NSFR/blob/main/docs/GOVERNANCE.md"
+    about: "Priorities, milestones and dependency status."
+
