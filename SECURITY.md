@@ -94,7 +94,7 @@ workflow token; no repository secret or other credential is configured in them.
 Every checkout sets `persist-credentials: false`, every action is pinned to a
 full commit SHA, and the workflow-level default permission is
 `contents: read`. No workflow approves, merges or dismisses alerts. The
-[tooling guide](tools/README.md#continuous-integration) describes what each
+[tooling guide](tools/README.md) describes what each
 workflow runs.
 
 <a id="existing-controls"></a>
