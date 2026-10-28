@@ -20,8 +20,9 @@ READY = "## Planning\n- Target end date: 2026-11-04 (Europe/Rome)\n\n## Dependen
 
 
 def issue(number: int, *labels: str, state: str = "open", body: str = READY,
-          assignees: tuple[str, ...] = ("danielep71",), milestone: str | None = "v0.1.0", milestone_state: str = "open") -> Issue:
-    return Issue(number, state, labels or ("P3",), assignees, milestone, body, milestone_state)
+          assignees: tuple[str, ...] = ("danielep71",), milestone: str | None = "v0.1.0", milestone_state: str = "open",
+          milestone_due: str | None = "2026-11-30") -> Issue:
+    return Issue(number, state, labels or ("P3",), assignees, milestone, body, milestone_state, milestone_due)
 
 
 def blocked_by(*numbers: int, heading: str = "## Dependencies and blocking status") -> str:
@@ -55,6 +56,30 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(rules([issue(1, body=READY.replace("- Target end date: 2026-11-04 (Europe/Rome)\n", ""))]), [(1, "target-date")])
         form = "### 🗓️ Target end date (Europe/Rome)\n\n2028-02-29\n\n" + READY.split("## Dependencies", 1)[1]
         self.assertEqual(check_issues.target_end_date(form), "2028-02-29")
+
+    def test_target_date_must_be_before_the_milestone_due_date(self) -> None:
+        self.assertEqual(rules([issue(1, milestone_due="2026-11-05")]), [])
+        for due in ("2026-11-04", "2026-11-03"):
+            with self.subTest(due=due):
+                self.assertEqual(rules([issue(1, milestone_due=due)]), [(1, "milestone-due")])
+        message = check_issues.audit([issue(1, milestone_due="2026-11-04")], {1: "open"}, REPOSITORY)[0].message
+        self.assertIn("2026-11-04", message)
+        self.assertEqual(rules([issue(1, milestone_due=None)]), [(1, "milestone-due")])
+        self.assertEqual(rules([issue(1, milestone_due="soon")]), [(1, "milestone-due")])
+
+    def test_due_date_is_not_checked_without_a_valid_milestone_or_date(self) -> None:
+        self.assertEqual(rules([issue(1, milestone=None, milestone_due=None)]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone_state="closed", milestone_due=None)]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, body=READY.replace("2026-11-04", "2026-02-30"),
+                                      milestone_due="2026-01-01")]), [(1, "target-date")])
+
+    def test_due_date_is_read_from_rest_milestones(self) -> None:
+        for due_on, expected in (("2026-11-30T08:00:00Z", "2026-11-30"), (None, None)):
+            milestone = {"title": "v0.1.0 - Repo setup", "state": "open", "due_on": due_on}
+            item = {"number": 7, "state": "open", "labels": [], "assignees": [], "body": READY,
+                    "milestone": milestone}
+            with self.subTest(due_on=due_on):
+                self.assertEqual(check_issues.issue_from_api(item).milestone_due, expected)
 
     def test_p1_is_reserved_for_bugs(self) -> None:
         self.assertEqual(rules([issue(1, "P1", "documentation")]), [(1, "p1-reserved")])
