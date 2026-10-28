@@ -2,9 +2,9 @@
 
 Issue: [#2](https://github.com/danielep71/K-NSFR/issues/2).
 Decision date: 2026-10-28.
-Status: selected implementation baseline submitted for review in the implementing
-PR; these decisions take effect upon integration into the development branch.
-They do not certify host execution or regulatory correctness.
+Status: selected implementation baseline for the development branch after
+integration of issue #2. These decisions do not certify host execution or
+regulatory correctness.
 
 | ID | Decision and rationale | Consequence / revisit trigger |
 | --- | --- | --- |
