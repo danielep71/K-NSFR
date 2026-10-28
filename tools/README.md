@@ -38,7 +38,7 @@ and missing tools. No gate is skipped after an earlier gate fails.
 | Gate | Evidence |
 | --- | --- |
 | Tool tests | Positive and negative fixtures for source, links, YAML, issues and runner behavior |
-| Source control | Committed bytes and exact binary allowlist; isolated committed Git attributes |
+| Source control | Committed bytes (encoding, LF, trailing whitespace, final newline, blank lines at end of file) and exact binary allowlist; isolated committed Git attributes |
 | Content | Parsed Markdown links/images, reference links, HTML links, explicit section anchors, fences and duplicate YAML keys |
 | Labels and forms | Manifest validation, sync/drift self-tests and issue-form configuration |
 | Ruff | Import/error rules and complexity ceiling 15; a probe proves 15 passes and 16 fails |

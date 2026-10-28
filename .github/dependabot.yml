@@ -26,4 +26,3 @@ updates:
       github-actions:
         patterns:
           - "*"
-

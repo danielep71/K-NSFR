@@ -104,4 +104,3 @@ body:
           required: true
         - label: This request contains no secrets, private links or real portfolio data.
           required: true
-

@@ -510,4 +510,3 @@ main().catch(error => {
   process.stderr.write(`ERROR: ${message}\n`);
   process.exitCode = 2;
 });
-

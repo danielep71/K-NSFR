@@ -100,6 +100,10 @@ def text_errors(name: str, data: bytes) -> list[str]:
         errors.append(f"{name}: committed content must use LF")
     if text and not text.endswith("\n"):
         errors.append(f"{name}: missing final newline")
+    # A blank or whitespace-only last line is what `git diff --check` reports
+    # as a blank line at EOF; this check does not depend on core.whitespace.
+    elif text and text[:-1].split("\n")[-1].strip(" \t") == "":
+        errors.append(f"{name}: blank line at end of file")
     # Markdown hard breaks and the exact standard license text are retained.
     if (PurePosixPath(name).suffix.lower() != ".md" and name != "LICENSE" and
             any(line.endswith((" ", "\t")) for line in text.split("\n"))):
