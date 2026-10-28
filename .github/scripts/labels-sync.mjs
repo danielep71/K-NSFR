@@ -353,6 +353,10 @@ async function listLiveLabels(repository, token) {
 
 async function assertSafeDeletions(repository, token, changes, request = githubRequest) {
   for (const change of changes.filter(item => item.action === "delete")) {
+    // The REST filter splits decoded commas; it cannot prove literal-name disuse.
+    if (change.currentName.includes(",")) {
+      throw new Error(`Cannot delete label ${change.currentName}: comma-containing names require manual review`);
+    }
     // Query all states: closed issues and pull requests still carry labels.
     const users = await request(repository, token, "GET",
       `/issues?state=all&per_page=1&labels=${encodeURIComponent(change.currentName)}`);
@@ -590,6 +594,13 @@ async function runSelfTest(manifestPath, policyPath) {
   await assert.rejects(
     assertSafeDeletions("owner/repo", "fixture", deletes, readOnly),
     /in use by an issue or PR/
+  );
+  await assert.rejects(
+    assertSafeDeletions("owner/repo", "fixture",
+      [{ action: "delete", currentName: "legacy,review" }], async () => {
+        throw new Error("ambiguous label filter must not be queried");
+      }),
+    /comma-containing names require manual review/
   );
   await assertSafeDeletions("owner/repo", "fixture", [], async () => {
     throw new Error("unexpected request");
