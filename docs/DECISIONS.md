@@ -28,6 +28,7 @@ regulatory correctness.
 | ADR-004 | Separate core, API, and host with one-way dependencies | Determinism and independent testing take precedence over worksheet convenience; no hidden host inputs in calculations |
 | ADR-005 | Keep exported source canonical and data synthetic | #4 defines text conventions, #13 packaging; real data and operational deployment require separate approval and controls |
 | ADR-006 | Distinguish planned support, portable checks, host execution, and numerical validation | A green repository workflow cannot be cited as proof of Excel or NSFR correctness |
+| ADR-007 | Prefer explicit decimal scale for monetary inputs; Currency/Decimal remain provisional pending #9/#10 range, rounding and coercion tests | Do not implement numerical logic before those tests; supersede the preference if domain limits require another representation |
 
 <a id="changing-a-decision"></a>
 

@@ -99,13 +99,13 @@ signature. Omit sections that are empty.
   in [IMPLEMENTATION.md](IMPLEMENTATION.md#numbers-validation-and-diagnostics).
   State currency and unit explicitly; never silently scale by thousands/millions.
 - Currencies are three-letter ISO 4217 codes held as `String`.
-- Rates, haircuts and other proportions are decimals: `0.05`, never `5`
+- Approved weights and other proportions are decimals: `0.05`, never `5`
   meaning 5%.
-- Dates are VBA `Date`. A period is a `Double` in years unless its name
-  states another unit (`HoldingPeriodBusinessDays`).
+- Dates are VBA `Date`. Period representations and units are explicit contract decisions in #9;
+  never assume a year fraction or day-count convention.
 - Every numeric input states its valid domain, for example
   `Amount >= 0` or `0 <= Proportion < 1`.
-- Day-count, holding-period, remargining and every other regulatory
+- Maturity, encumbrance, classification and every other regulatory
   convention belong to the methodology
   ([methodology](SCOPE.md),
   [open decisions](ARCHITECTURE.md)).
