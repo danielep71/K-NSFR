@@ -1,3 +1,5 @@
+<a id="scope-and-maturity"></a>
+
 # 🎯 Scope and maturity
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -6,6 +8,8 @@
 
 This is the scope decision for [issue #2](https://github.com/danielep71/K-NSFR/issues/2),
 dated 2026-10-28. It defines planned capabilities, not implemented calculations.
+
+<a id="users-and-use-cases"></a>
 
 ## 👥 Users and use cases
 
@@ -21,6 +25,8 @@ required stable funding (RSF), diagnostics, and traceable reconciliation outputs
 Input scope must explicitly identify the as-of date, reporting perimeter,
 currency basis, and methodology version. No default entity consolidation,
 currency conversion, or missing-data interpretation is implied.
+
+<a id="regulatory-profiles"></a>
 
 ## 📜 Regulatory profiles
 
@@ -41,6 +47,8 @@ separate applicability decisions and independently validated fixtures before
 being admitted. #8 owns source verification; this document specifies no legal
 thresholds, weightings, reporting obligations, or effective legal text.
 
+<a id="reference-use-and-production-admission"></a>
+
 ## 🛡️ Reference use and production admission
 
 The setup baseline may be used to review architecture and repository processes.
@@ -53,6 +61,8 @@ establishes regulatory applicability, independent numerical validation, data
 quality and reconciliation controls, access and operational controls, change
 management, supported-host evidence, and accountable owner sign-off. Passing
 portable CI or an Excel smoke test alone does not satisfy this gate.
+
+<a id="v010-inclusions-and-exclusions"></a>
 
 ## 📦 v0.1.0 inclusions and exclusions
 

@@ -1,3 +1,5 @@
+<a id="documentation-style"></a>
+
 # 🎨 Documentation style
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -8,6 +10,8 @@ This is the presentation pattern for future K-NSFR Markdown. Keep the subject
 matter precise: a polished document must never imply an implemented engine,
 validated profile, Excel run, public release or production suitability before
 the linked evidence exists.
+
+<a id="page-structure"></a>
 
 ## 🧭 Page structure
 
@@ -20,8 +24,10 @@ the linked evidence exists.
   and tables only for genuine comparisons or mappings.
 - Keep warnings in GitHub callouts when a reader might mistake a target for
   delivered capability. Link to evidence or the owning issue for limitations.
-- End related explanations with actionable local links. Preserve existing
-  anchors when renaming a section by adding an explicit anchor if necessary.
+- End related explanations with actionable local links. Require an explicit `<a id="stable-name"></a>` anchor for each linked
+  section. Keep the ID unchanged when renaming or decorating headings.
+
+<a id="badge-and-glyph-rules"></a>
 
 ## 🏷️ Badge and glyph rules
 
@@ -38,6 +44,8 @@ Use glyphs as scanning aids: 🏦 project, 🎯 status/scope, 🧭 navigation/
 decisions, 🏗️ architecture, 🧰 tools, ✅ checks, 🗺️ roadmap, ⚖️ governance/
 license, 🔒 security, 🧪 synthetic data and 🔗 provenance. The text of each
 heading carries the meaning even if a glyph does not render.
+
+<a id="maintenance"></a>
 
 ## ✅ Maintenance
 

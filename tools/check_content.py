@@ -1,34 +1,32 @@
-"""Check committed Markdown links/fences and YAML syntax without a worktree dependency.
+"""Validate committed Markdown navigation and YAML; never fetch remote links.
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import re
+from __future__ import annotations
+
+import posixpath
 import subprocess
 import sys
+from collections.abc import Mapping
+from html.parser import HTMLParser
 from pathlib import PurePosixPath
-from urllib.parse import unquote
+from typing import Any
+from urllib.parse import unquote, urlsplit
 
 import yaml
-
-
-def committed_files(ref="HEAD"):
-    names = subprocess.check_output(["git", "ls-tree", "-rz", "--name-only", ref])
-    return {name.decode("utf-8") for name in names.split(b"\0") if name}
-
-
-def blob(ref, path):
-    return subprocess.check_output(["git", "show", f"{ref}:{path}"]).decode("utf-8")
+from markdown_it import MarkdownIt
+from markdown_it.token import Token
 
 
 class UniqueKeysLoader(yaml.SafeLoader):
     pass
 
 
-def unique_mapping(loader, node):
-    result = {}
+def unique_mapping(loader: UniqueKeysLoader, node: yaml.MappingNode) -> dict[Any, Any]:
+    result: dict[Any, Any] = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node)
         if key in result:
@@ -40,47 +38,104 @@ def unique_mapping(loader, node):
 UniqueKeysLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, unique_mapping)
 
 
-def markdown_errors(path, text, names):
-    errors = []
-    fence = None
-    for number, line in enumerate(text.splitlines(), 1):
-        match = re.match(r"^\s{0,3}(`{3,}|~{3,})", line)
-        if match:
-            token = match.group(1)
-            if fence is None:
-                fence = token
-            elif token[0] == fence[0] and len(token) >= len(fence):
-                fence = None
-            continue
-        if fence:
-            continue
-        for target in re.findall(r"(?<!!)\[[^\]]+\]\(([^)]+)\)", line):
-            target = target.split("#", 1)[0]
-            if not target or "://" in target or target.startswith(("mailto:", "#")):
+class HtmlNavigation(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.anchors: list[str] = []
+        self.links: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        for key, value in attrs:
+            if value is None:
                 continue
-            target = unquote(target).split(" ", 1)[0]
-            parent = PurePosixPath(path).parent
-            parts = []
-            for part in (str(parent / target)).split("/"):
-                if part == "..":
-                    if parts:
-                        parts.pop()
-                elif part not in ("", "."):
-                    parts.append(part)
-            resolved = "/".join(parts)
-            if resolved not in names and not any(n.startswith(resolved.rstrip("/") + "/") for n in names):
-                errors.append(f"{path}:{number}: missing link target {target}")
-    if fence:
-        errors.append(f"{path}: unclosed code fence")
-    return errors
+            if key == "id" or (tag == "a" and key == "name"):
+                self.anchors.append(value)
+            if key == "href" or (tag == "img" and key == "src"):
+                self.links.append(value)
 
 
-def check(ref="HEAD"):
+def navigation(text: str) -> tuple[set[str], list[str], list[str]]:
+    tokens = MarkdownIt("commonmark").parse(text)
+    html = HtmlNavigation()
+    anchors: set[str] = set()
+    links: list[str] = []
+    errors: list[str] = []
+    for token in tokens:
+        inspect_token(token, html, links)
+        if token.type == "fence" and token.map:
+            # The parser removes quote/list prefixes from content. A closed
+            # fence spans opening + content lines + closing; an implicit EOF
+            # or container-end closure has no closing line in token.map.
+            content_lines = token.content.count("\n")
+            if token.content and not token.content.endswith("\n"):
+                content_lines += 1
+            if token.map[1] - token.map[0] != content_lines + 2:
+                errors.append("unclosed code fence")
+    for anchor in html.anchors:
+        if anchor in anchors:
+            errors.append(f"duplicate anchor {anchor}")
+        anchors.add(anchor)
+    return anchors, links + html.links, errors
+
+
+def inspect_token(token: Token, html: HtmlNavigation, links: list[str]) -> None:
+    if token.type in ("html_block", "html_inline"):
+        html.feed(token.content)
+    if token.type in ("link_open", "image"):
+        target = token.attrGet("href" if token.type == "link_open" else "src")
+        if target:
+            links.append(str(target))
+    for child in token.children or []:
+        inspect_token(child, html, links)
+
+
+def target_error(path: str, target: str, names: set[str], anchors: Mapping[str, set[str]]) -> str | None:
+    url = urlsplit(target)
+    if url.scheme or url.netloc:
+        return None
+    raw = unquote(url.path)
+    resolved = posixpath.normpath(posixpath.join(str(PurePosixPath(path).parent), raw)) if raw else path
+    if resolved.startswith(("../", "/")) or resolved == "..":
+        return f"link escapes repository: {target}"
+    if resolved not in names:
+        if not url.fragment and any(n.startswith(resolved.rstrip("/") + "/") for n in names):
+            return None
+        return f"missing link target {target}"
+    if url.fragment and resolved.endswith(".md"):
+        if unquote(url.fragment) not in anchors.get(resolved, set()):
+            return f"missing section target {target}"
+    return None
+
+
+def markdown_errors(path: str, text: str, names: set[str],
+                    documents: Mapping[str, str] | None = None) -> list[str]:
+    documents = dict(documents or {})
+    documents[path] = text
+    anchors = {name: navigation(body)[0] for name, body in documents.items()}
+    _, links, errors = navigation(text)
+    for target in links:
+        error = target_error(path, target, names, anchors)
+        if error:
+            errors.append(error)
+    return [f"{path}: {error}" for error in errors]
+
+
+def committed_files(ref: str = "HEAD") -> set[str]:
+    names = subprocess.check_output(["git", "ls-tree", "-rz", "--name-only", ref])
+    return {name.decode("utf-8") for name in names.split(b"\0") if name}
+
+
+def blob(ref: str, path: str) -> str:
+    return subprocess.check_output(["git", "show", f"{ref}:{path}"]).decode("utf-8")
+
+
+def check(ref: str = "HEAD") -> list[str]:
     names = committed_files(ref)
+    documents = {path: blob(ref, path) for path in names if path.endswith(".md")}
     errors = []
+    for path, text in sorted(documents.items()):
+        errors.extend(markdown_errors(path, text, names, documents))
     for path in sorted(names):
-        if path.endswith(".md"):
-            errors.extend(markdown_errors(path, blob(ref, path), names))
         if path.endswith((".yml", ".yaml")):
             try:
                 list(yaml.load_all(blob(ref, path), Loader=UniqueKeysLoader))

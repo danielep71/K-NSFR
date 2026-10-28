@@ -1,6 +1,10 @@
 <div align="center">
 
+<a id="k-nsfr"></a>
+
 # 🏦 K-NSFR
+
+<a id="an-auditable-net-stable-funding-ratio-reference-project-in-excelvba"></a>
 
 ### An auditable Net Stable Funding Ratio reference project in Excel/VBA
 
@@ -24,6 +28,8 @@
 > validated regulatory profile exists yet. Do not use this baseline for
 > regulatory reporting, production decisions or a claim of compliance.
 
+<a id="what-this-project-is"></a>
+
 ## ✨ What this project is
 
 K-NSFR is being prepared as a reviewable Excel/VBA reference implementation of
@@ -32,6 +38,8 @@ instructors and developers working with synthetic cases. The first planned
 calculation profile is the EU CRR standard NSFR; Basel material is a conceptual
 reference, not an interchangeable rule set. Source and interpretation decisions
 must be approved before any numerical implementation.
+
+<a id="status"></a>
 
 ## 🎯 Status
 
@@ -43,6 +51,8 @@ must be approved before any numerical implementation.
 | Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT_RUN** |
 | Data | Synthetic-only policy; no production or client data |
 
+<a id="scope"></a>
+
 ## 🧭 Scope
 
 The setup milestone establishes the process and evidence needed to build a
@@ -51,6 +61,8 @@ Future work must trace methodology and parameters to applicable sources,
 separately validate numerical cases and record actual host execution. Read the
 [scope](docs/SCOPE.md) and [architecture](docs/ARCHITECTURE.md) before using
 the backlog as an implementation plan.
+
+<a id="requirements"></a>
 
 ## 🧰 Requirements
 
@@ -61,6 +73,8 @@ them does not prove Excel compatibility or regulatory correctness. See
 [implementation conventions](docs/IMPLEMENTATION.md) for the support matrix
 and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 
+<a id="documentation"></a>
+
 ## 📚 Documentation
 
 | Read | Purpose |
@@ -68,19 +82,25 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
+| [Contributor guide](CONTRIBUTING.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Reproducible checks and implementation review |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights and attribution inventory |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
 
+<a id="validation"></a>
+
 ## ✅ Validation
 
 The required **Repository integrity** check validates committed text, Markdown
-links and fences, YAML and workflow syntax, Python tooling, label policy and
+file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
+typing/lint/tests, label policy and
 issue triage on PRs. It runs on documentation-only and synchronization PRs.
 Actual Excel import/export and host evidence are planned under issue #14;
 independent numerical validation comes later. Follow the commands in
 [governance](docs/GOVERNANCE.md#local-validation) for portable local checks.
+
+<a id="roadmap"></a>
 
 ## 🗺️ Roadmap
 
@@ -90,6 +110,8 @@ branch; the owner controls integration into `main`. The
 [follow-on backlog](docs/BACKLOG.md) separates future calculation work from
 this setup milestone. No release or numerical capability is implied by the
 branch name.
+
+<a id="license-data-and-security"></a>
 
 ## ⚖️ License, data and security
 

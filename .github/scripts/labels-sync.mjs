@@ -351,6 +351,22 @@ async function listLiveLabels(repository, token) {
   throw new Error(`GitHub label pagination exceeded ${MAX_LABEL_PAGES} pages`);
 }
 
+async function assertSafeDeletions(repository, token, changes, request = githubRequest) {
+  for (const change of changes.filter(item => item.action === "delete")) {
+    // The REST filter splits decoded commas; it cannot prove literal-name disuse.
+    if (change.currentName.includes(",")) {
+      throw new Error(`Cannot delete label ${change.currentName}: comma-containing names require manual review`);
+    }
+    // Query all states: closed issues and pull requests still carry labels.
+    const users = await request(repository, token, "GET",
+      `/issues?state=all&per_page=1&labels=${encodeURIComponent(change.currentName)}`);
+    if (!Array.isArray(users)) throw new Error("GitHub issues response is not an array");
+    if (users.length) throw new Error(
+      `Cannot delete label ${change.currentName}: it is in use by an issue or PR`
+    );
+  }
+}
+
 async function applyChanges(repository, token, changes) {
   for (const change of changes) {
     if (change.action === "update") {
@@ -369,6 +385,13 @@ async function applyChanges(repository, token, changes) {
 
 function markdownEscape(value) {
   return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
+}
+
+function codeSpan(value) {
+  const escaped = markdownEscape(value);
+  const longest = Math.max(0, ...(escaped.match(/`+/g) ?? []).map(run => run.length));
+  const fence = "`".repeat(longest + 1);
+  return `${fence}${longest ? ` ${escaped} ` : escaped}${fence}`;
 }
 
 function renderLabelNames(labels) {
@@ -424,7 +447,7 @@ function renderSummary({
     `- Complete resolved set (${resolvedLabels.length}): ${renderLabelNames(resolvedLabels)}`
   );
   if (error) {
-    lines.push("", "## Failure", "", `\`${markdownEscape(error)}\``);
+    lines.push("", "## Failure", "", codeSpan(error));
     if (partial) {
       lines.push("", "The failure happened during or after reconciliation: some changes may already be applied. Compare the live labels with the manifest.");
     }
@@ -436,7 +459,7 @@ function renderSummary({
     lines.push("", "| Action | Label | Detail |", "|---|---|---|");
     for (const change of changes) {
       const detail = change.action === "update" ? change.fields.join(", ") : change.action === "delete" ? "outside selected manifest" : "missing live label";
-      lines.push(`| ${change.action} | \`${markdownEscape(change.name)}\` | ${markdownEscape(detail)} |`);
+      lines.push(`| ${change.action} | ${codeSpan(change.name)} | ${markdownEscape(detail)} |`);
     }
   }
   return `${lines.join("\n")}\n`;
@@ -553,6 +576,35 @@ async function runSelfTest(manifestPath, policyPath) {
   const extra = [...structuredClone(desired), { name: "extra", color: "ABCDEF", description: "extra" }];
   assert.deepEqual(planChanges(desired, extra, { prune: true }).map(change => change.action), ["delete"]);
   assert.equal(planChanges(desired, extra, { prune: false }).length, 0);
+
+  const special = structuredClone(baseline);
+  special.core[0].description = "contains | `inline`";
+  const specialManifest = validateManifest(special);
+  const specialLabels = resolveDesired(specialManifest);
+  assert.deepEqual(planChanges(specialLabels, desired)[0].fields, ["description"]);
+  const unusual = codeSpan("label|`code`");
+  assert.ok(unusual.includes("\\|"));
+  assert.ok(unusual.includes("`code`"));
+  const deletes = planChanges(desired, extra, { prune: true });
+  const readOnly = async (_repo, _token, method, path) => {
+    assert.equal(method, "GET");
+    assert.match(path, /state=all/);
+    return [{ number: 1 }];
+  };
+  await assert.rejects(
+    assertSafeDeletions("owner/repo", "fixture", deletes, readOnly),
+    /in use by an issue or PR/
+  );
+  await assert.rejects(
+    assertSafeDeletions("owner/repo", "fixture",
+      [{ action: "delete", currentName: "legacy,review" }], async () => {
+        throw new Error("ambiguous label filter must not be queried");
+      }),
+    /comma-containing names require manual review/
+  );
+  await assertSafeDeletions("owner/repo", "fixture", [], async () => {
+    throw new Error("unexpected request");
+  });
 
   const caseDrift = structuredClone(desired);
   caseDrift[0].name = desired[0].name.toUpperCase();
@@ -679,6 +731,7 @@ async function main() {
     return;
   }
 
+  await assertSafeDeletions(options.repository, process.env.GITHUB_TOKEN, changes);
   runState.applying = true;
   await applyChanges(options.repository, process.env.GITHUB_TOKEN, changes);
   const after = await listLiveLabels(options.repository, process.env.GITHUB_TOKEN);

@@ -1,3 +1,5 @@
+<a id="source-control-and-generated-file-conventions"></a>
+
 # 🧰 Source-control and generated-file conventions
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -25,6 +27,8 @@ The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md). This
 change adds only configuration, a committed-content check and its tests; future
 source, fixtures and templates directories are created with real deliverables.
 
+<a id="generated-files-and-intentional-binaries"></a>
+
 ## 📦 Generated files and intentional binaries
 
 `.gitignore` excludes the named root build/release staging and local test-output
@@ -43,6 +47,8 @@ Never allow a template directory or extension wholesale. Future templates must
 follow #13's manifest and data-policy review. Do not use git add -f as a substitute
 for an approved exception. Existing license and attribution text remains intact.
 
+<a id="validation"></a>
+
 ## ✅ Validation
 
 After committing the candidate, run:
@@ -55,7 +61,10 @@ python -m unittest discover -s tools -p 'test_source_control.py'
 The checker reads blob objects and the binary allowlist from the specified
 commit, not working-tree bytes. It therefore does not mistake intentional CRLF
 checkout conversion for a committed whitespace defect. It rejects unexpected
-binary formats according to committed attributes, invalid cross-platform UTF-8,
+binary formats according to committed attributes resolved in a disposable
+repository with an empty index, no templates and isolated Git configuration.
+Local/global/system attributes, environment-injected Git config and dirty or
+staged attribute files do not affect that resolution. It also rejects invalid cross-platform UTF-8,
 BOM/NUL, unintended trailing whitespace, missing newlines, symlinks and submodules.
 Host-text inspection is byte-preserving and does not certify a code page.
 Run it after committing; uncommitted

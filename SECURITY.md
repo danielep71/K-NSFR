@@ -1,8 +1,12 @@
+<a id="security-policy"></a>
+
 # 🔒 Security policy
 
 **K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Data policy](docs/DATA_POLICY.md)
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
+
+<a id="report-a-vulnerability"></a>
 
 ## 📨 Report a vulnerability
 
@@ -15,6 +19,8 @@ attach exploit details, credentials, client data, or personal data to an issue o
 PR. The owner will acknowledge, triage, and coordinate remediation and any
 necessary disclosure; no response-time or security-support guarantee is claimed.
 
+<a id="handle-secrets-and-incidents"></a>
+
 ## 🔑 Handle secrets and incidents
 
 Never commit secrets, tokens, connection strings, real customer records, or
@@ -24,6 +30,8 @@ secret or sensitive record is exposed, stop sharing it, alert the owner privatel
 revoke/rotate affected credentials, assess exposure and remove the material from
 active artifacts. History cleanup requires a separate coordinated decision; a
 normal deletion commit does not erase previous versions.
+
+<a id="existing-controls"></a>
 
 ## 🛡️ Existing controls
 

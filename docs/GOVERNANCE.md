@@ -1,3 +1,5 @@
+<a id="issue-and-label-governance"></a>
+
 # ⚖️ Issue and label governance
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -8,15 +10,25 @@ K-NSFR uses a 20-label catalogue and the issue-triage rules defined below.
 Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json).
 The application profile has no additional labels.
 
+<a id="issues"></a>
+
 ## 🏷️ Issues
 
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
-to danielep71, has exactly one priority and belongs to a milestone selected
-during triage. Forms default bugs to P2 and enhancements/documentation to P3.
+to danielep71, has exactly one priority, a valid `YYYY-MM-DD` target end date in
+Europe/Rome, and belongs to an open milestone for the active release selected
+during triage. The active milestone is `v0.1.0 - Repo setup`; update the triage
+configuration when a new release branch becomes active. Never assign a closed
+milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
 - P1: confirmed calculation bug producing wrong results for valid inputs; requires bug.
 - P2: material correctness, robustness or maintainability defect.
 - P3: non-blocking quality, testing, documentation or setup work.
+
+P1 is reserved for a confirmed wrong calculation on valid inputs and requires
+the bug label; P3 covers planned setup work. Keep intentional labels and valid
+assignments when triaging. Forms cannot preselect a milestone; the owner assigns
+it and resolves read-only triage findings.
 
 Every issue includes a Dependencies and blocking status section. Write None
 if ready, name prerequisite issues with #number, or use a line beginning
@@ -29,6 +41,8 @@ manual dispatch. Findings require maintainer triage; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
 remains a maintainer decision.
 
+<a id="label-workflows"></a>
+
 ## 🔄 Label workflows
 
 - Sync issue labels validates and self-tests changes on pull requests into
@@ -38,23 +52,29 @@ remains a maintainer decision.
 - Detect issue-label drift runs offline fixtures on relevant pull requests
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
-- Issue triage checks assignee, priority, milestone, catalogue membership
-  and dependency status.
+- Issue triage checks assignee, exactly one priority, open active milestone,
+  ISO target end date, catalogue membership and dependency status. It reports
+  findings without changing issues. A pull request is never a prerequisite.
+- Before label synchronization deletes a label outside the manifest, it checks
+  all-state issues and PRs for use. A used label prevents reconciliation;
+  the owner decides whether to retain or migrate it. Dry runs make no writes.
+
+<a id="local-validation"></a>
 
 ## ✅ Local validation
 
+Install the [portable toolchain](../tools/README.md#running-the-checks), then
+run all gates from a clean, committed checkout:
+
 ```sh
-node .github/scripts/labels-sync.mjs --self-test
-node .github/scripts/labels-sync.mjs --mode validate
-node .github/scripts/labels-drift.mjs --self-test
-python tools/check_issues.py --check-config
-python -m unittest discover -s tools -p 'test_check_issues.py'
-python tools/check_source_control.py --ref HEAD
-python -m unittest discover -s tools -p 'test_source_control.py'
-python tools/check_content.py
-python -m unittest discover -s tools -p 'test_check_content.py'
-python -m compileall -q tools
+python tools/check.py --ci
 ```
+
+[Tooling documentation](../tools/README.md) defines the gates, report artifacts,
+missing-tool behavior and limits. PR runs test GitHub's synthetic merge commit;
+record that SHA alongside the PR head. Push runs test the integrated commit.
+
+<a id="repository-configuration"></a>
 
 ## ⚙️ Repository configuration
 
@@ -65,6 +85,8 @@ Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates to `release/0.1.0`
 weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
+
+<a id="branches-and-integration"></a>
 
 ## 🌿 Branches and integration
 
@@ -108,6 +130,8 @@ issue. A skipped check or unresolved criterion is visible evidence of a gap,
 not an implicit pass. The owner decides whether to defer or rework before
 integration; branch rules remain in force.
 
+<a id="installed-settings-and-limits"></a>
+
 ## 🔐 Installed settings and limits
 
 The private repository currently has active rulesets for `main` and
@@ -118,16 +142,15 @@ allows merge commits; the release ruleset allows squash and merge commits.
 Additional rulesets protect `release/**` from deletion, `v*` tags from
 updates/deletion, and `traffic-history` from deletion or history rewrite.
 GitHub Actions requires full SHA pins and gives the default workflow token
-read access; Dependabot currently targets `main` and retargeting is tracked
-by #6. Branch-rule enforcement scenarios are tracked by #15. These are
+read access; Dependabot targets `release/0.1.0` from the configuration
+installed on `main`. Activation was verified in #6. Branch-rule enforcement scenarios are tracked by #15. These are
 observed configuration and workflow baselines, not a claim that private-repo
 limits or features available only to public repositories have been enabled.
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
 It checks committed Markdown links/fences, YAML syntax and duplicate keys,
-workflow syntax/expressions with a checksum-verified actionlint binary, Python
-source syntax and tests, and committed blob whitespace. Python 3.13 and Node 22
+workflow syntax/expressions with a checksum-verified actionlint binary, strict Python typing, lint and tests, and committed blob whitespace. Python 3.13 and Node 22
 are selected explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.

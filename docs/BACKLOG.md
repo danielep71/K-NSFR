@@ -1,3 +1,5 @@
+<a id="follow-on-backlog"></a>
+
 # 🗺️ Follow-on backlog
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
@@ -7,6 +9,8 @@
 This backlog separates existing setup work from later numerical implementation.
 All links refer to K-NSFR. Production work items below are planning records, not
 created GitHub issues, scheduled commitments, or implemented features.
+
+<a id="existing-setup-delivery"></a>
 
 ## 🧩 Existing setup delivery
 
@@ -21,6 +25,8 @@ created GitHub issues, scheduled commitments, or implemented features.
 | Static checks and neutral harness | [#11](https://github.com/danielep71/K-NSFR/issues/11), [#12](https://github.com/danielep71/K-NSFR/issues/12) | Meaningful failure/pass checks with no NSFR claims |
 | Host packaging and actual evidence | [#13](https://github.com/danielep71/K-NSFR/issues/13), [#14](https://github.com/danielep71/K-NSFR/issues/14) | Reproducible import and genuine supported-host execution |
 | Setup certification | [#22](https://github.com/danielep71/K-NSFR/issues/22) | Exact-candidate setup readiness, subject to all milestone dependencies |
+
+<a id="later-calculation-work"></a>
 
 ## 🚀 Later calculation work
 

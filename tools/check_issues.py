@@ -8,6 +8,7 @@ maintainer to resolve by hand (docs/GOVERNANCE.md, Issues).
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import os
 import re
@@ -22,6 +23,7 @@ from typing import Any
 OWNER = "danielep71"
 PRIORITIES = ("P1", "P2", "P3")
 BLOCKED = "blocked"
+ACTIVE_MILESTONE = "v0.1.0"
 FORM_PRIORITIES = {"bug.yml": "P2", "enhancement.yml": "P3", "documentation.yml": "P3"}
 DEPENDENCY_STATUS_WORDS = re.compile(r"block|ready|waiting|depend|on[ -]hold|prerequisite", re.I)
 HEADING = re.compile(r"^#{2,3}\s+(.*)$")
@@ -37,6 +39,7 @@ class Issue:
     assignees: tuple[str, ...]
     milestone: str | None
     body: str
+    milestone_state: str | None = "open"
 
 
 @dataclass(frozen=True)
@@ -55,6 +58,7 @@ def issue_from_api(item: Mapping[str, Any]) -> Issue:
         assignees=tuple(str(user["login"]) for user in item.get("assignees", [])),
         milestone=str(milestone["title"]) if milestone else None,
         body=str(item.get("body") or ""),
+        milestone_state=str(milestone.get("state", "")).lower() if milestone else None,
     )
 
 
@@ -83,6 +87,15 @@ def references(lines: Iterable[str], repository: str, own: int) -> set[int]:
     return found
 
 
+def target_end_date(body: str) -> str | None:
+    """Read the planning line or the GitHub issue-form field without guessing a date."""
+    planning = re.search(r"(?im)^\s*[-*]\s*Target end date:\s*(\S+)(?:\s+\(Europe/Rome\))?\s*$", body)
+    if planning:
+        return planning.group(1)
+    field = re.search(r"(?im)^###\s+(?:🗓️\s*)?Target end date(?:\s*\(Europe/Rome\))?\s*$\n\s*(\S+)", body)
+    return field.group(1) if field else None
+
+
 def metadata_findings(issue: Issue) -> list[Finding]:
     findings = []
     if OWNER not in issue.assignees:
@@ -97,6 +110,16 @@ def metadata_findings(issue: Issue) -> list[Finding]:
                                 "has P1 without bug: P1 is reserved for confirmed calculation bugs"))
     if not issue.milestone:
         findings.append(Finding(issue.number, "milestone", "has no milestone"))
+    elif issue.milestone_state != "open" or issue.milestone.split(" ", 1)[0] != ACTIVE_MILESTONE:
+        findings.append(Finding(issue.number, "milestone",
+                                f"milestone must be open and target {ACTIVE_MILESTONE}"))
+    date = target_end_date(issue.body)
+    try:
+        if date is None or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+            raise ValueError("missing or non-ISO date")
+        dt.date.fromisoformat(date)
+    except ValueError:
+        findings.append(Finding(issue.number, "target-date", "needs a valid ISO YYYY-MM-DD target end date (Europe/Rome)"))
     return findings
 
 
@@ -171,6 +194,8 @@ def config_findings(root: Path) -> list[str]:
                      for label in form_labels if label not in labels]
         if flow_list(text, "assignees") != [OWNER]:
             problems.append(f"{name} must assign {OWNER}")
+        if not re.search(r"^\s*id:\s*target_end_date\s*$", text, re.M):
+            problems.append(f"{name} has no target end date field")
         if not re.search(r"^\s*id:\s*dependencies\s*$", text, re.M):
             problems.append(f"{name} has no dependencies field")
     config = forms / "config.yml"
