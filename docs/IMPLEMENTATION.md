@@ -1,4 +1,8 @@
-# Implementation, host and API conventions
+# ✍️ Implementation, host and API conventions
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 This is the implementation contract for the planned K-NSFR Excel/VBA reference
 engine. The repository is in setup: there is no numerical engine, workbook or
@@ -6,7 +10,7 @@ validated regulatory profile. [Architecture](ARCHITECTURE.md) selected VBA;
 Python and JavaScript remain repository tooling, not parallel NSFR engines.
 These conventions constrain later code without asserting a regulatory formula.
 
-## Public boundary and deterministic core
+## 🧩 Public boundary and deterministic core
 
 The only planned calculation entry point is an explicitly named
 `NSFR_API_Run` procedure. It accepts a typed request containing validated
@@ -30,7 +34,7 @@ effective date, reporting perimeter, currency basis or missing value is
 inferred. Unknown or unapproved configuration is rejected. Regulatory
 methodology and accepted parameter versions belong to #8 and #9.
 
-## Numbers, validation and diagnostics
+## 🧮 Numbers, validation and diagnostics
 
 Represent quantities and money with an explicit unit and decimal scale in
 the #9 contract. For amounts whose accepted scale is at most four fractional
@@ -55,7 +59,7 @@ result contains no authoritative totals. Host errors remain distinguishable
 from calculation validation. The host restores any Excel state it changed
 even after failure and does not suppress the original diagnostic.
 
-## Supported and tested environments
+## 💻 Supported and tested environments
 
 | Environment | Declared support | Execution evidence at v0.1.0 setup |
 | --- | --- | --- |
@@ -69,7 +73,7 @@ Host evidence in #14 binds the exact candidate commit, builds, bitness, source
 import/export and observed outcome; follow-up host variants need their own
 record. #13 owns packaging and a reproducible source-to-workbook process.
 
-## VBA source and environment
+## 📦 VBA source and environment
 
 Every exported module starts with `Option Explicit`; keep its module name and
 source filename in sync. Use the repository's [source-control policy](SOURCE_CONTROL.md):
@@ -101,7 +105,7 @@ workbook, selection or active sheet as an input; pass the workbook and ranges
 explicitly. Static checks in #11 will enforce feasible source rules once
 modules exist, and a neutral harness in #12 will test the interfaces.
 
-## Repository tooling
+## 🛠️ Repository tooling
 
 Python governance utilities use explicit arguments and typed, deterministic
 checks; JavaScript label tools retain their manifest-driven behavior. They

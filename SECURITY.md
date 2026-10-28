@@ -1,4 +1,10 @@
-# Security policy
+# 🔒 Security policy
+
+**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Data policy](docs/DATA_POLICY.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
+
+## 📨 Report a vulnerability
 
 K-NSFR is private during setup and is intended to become public. Report
 suspected vulnerabilities privately to the repository owner through a private
@@ -9,6 +15,8 @@ attach exploit details, credentials, client data, or personal data to an issue o
 PR. The owner will acknowledge, triage, and coordinate remediation and any
 necessary disclosure; no response-time or security-support guarantee is claimed.
 
+## 🔑 Handle secrets and incidents
+
 Never commit secrets, tokens, connection strings, real customer records, or
 workbooks containing them. Use the least-privilege credential store for local
 work, review staged changes, and keep diagnostic logs free of secrets. If a
@@ -16,6 +24,8 @@ secret or sensitive record is exposed, stop sharing it, alert the owner privatel
 revoke/rotate affected credentials, assess exposure and remove the material from
 active artifacts. History cleanup requires a separate coordinated decision; a
 normal deletion commit does not erase previous versions.
+
+## 🛡️ Existing controls
 
 GitHub Actions has a read-only default token and SHA-pinned actions; these
 configuration controls do not constitute a security certification. Dependency

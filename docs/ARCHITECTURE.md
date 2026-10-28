@@ -1,6 +1,10 @@
-# Architecture and implementation profile
+# 🏗️ Architecture and implementation profile
 
-## Evidence and selection
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+## 🔎 Evidence and selection
 
 At baseline commit `0708e5b3bdd6564c2c99fd63d1f0500594864583`,
 K-NSFR contains a short README, governance documentation, GitHub issue forms,
@@ -22,7 +26,7 @@ add hosting, authentication, and operational concerns outside setup scope.
 Neither alternative is selected for the initial engine. Python is not a second
 regulatory implementation or an automatic test oracle.
 
-## Host and tooling profile
+## 🧰 Host and tooling profile
 
 | Surface | Declared target | Execution evidence |
 | --- | --- | --- |
@@ -40,7 +44,7 @@ genuine host evidence. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
 be justified and isolated.
 
-## Dependency and responsibility boundaries
+## 🧱 Dependency and responsibility boundaries
 
 | Layer | Responsibility | Permitted dependencies |
 | --- | --- | --- |
@@ -63,7 +67,7 @@ Invalid inputs must produce explicit diagnostics, never fabricated zero results.
 The host owns cleanup and restoration of any Excel state it changes, including
 on failure; host failures must remain distinguishable from calculation failures.
 
-## Layout and stable names
+## 🗂️ Layout and stable names
 
 The following is the intended layout. Create a directory only when it contains a
 real deliverable; this issue adds documentation only, with no empty scaffolding.
@@ -97,7 +101,7 @@ define encoding, line endings, generated files and exact binary exceptions,
 and #13 implements the manifest and synchronization controls. Preserve existing
 governance tooling in place; do not move tests merely to match the future layout.
 
-## Validation boundaries
+## ✅ Validation boundaries
 
 Portable CI checks label policy, issue triage and committed source conventions. It does not compile
 VBA, run Excel, or validate regulatory results. Future static checks (#11),

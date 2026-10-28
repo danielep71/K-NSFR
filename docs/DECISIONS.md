@@ -1,10 +1,18 @@
-# Decision log
+# 🧭 Decision log
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+
+## 📌 Baseline decision
 
 Issue: [#2](https://github.com/danielep71/K-NSFR/issues/2).
 Decision date: 2026-10-28.
 Status: selected implementation baseline for the development branch after
 integration of issue #2. These decisions do not certify host execution or
 regulatory correctness.
+
+## 🗂️ Recorded decisions
 
 | ID | Decision and rationale | Consequence / revisit trigger |
 | --- | --- | --- |
@@ -14,6 +22,8 @@ regulatory correctness.
 | ADR-004 | Separate core, API, and host with one-way dependencies | Determinism and independent testing take precedence over worksheet convenience; no hidden host inputs in calculations |
 | ADR-005 | Keep exported source canonical and data synthetic | #4 defines text conventions, #13 packaging; real data and operational deployment require separate approval and controls |
 | ADR-006 | Distinguish planned support, portable checks, host execution, and numerical validation | A green repository workflow cannot be cited as proof of Excel or NSFR correctness |
+
+## 🔄 Changing a decision
 
 Alternatives and the selected layout are documented in
 [ARCHITECTURE.md](ARCHITECTURE.md). Regulatory versions, interpretation choices,

@@ -1,4 +1,8 @@
-# Source-control and generated-file conventions
+# 🧰 Source-control and generated-file conventions
+
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 Repository source is canonical. Cross-platform text uses UTF-8 without a BOM,
 LF in committed text, and a final newline. Remove trailing spaces or tabs except
@@ -21,7 +25,7 @@ The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md). This
 change adds only configuration, a committed-content check and its tests; future
 source, fixtures and templates directories are created with real deliverables.
 
-## Generated files and intentional binaries
+## 📦 Generated files and intentional binaries
 
 `.gitignore` excludes the named root build/release staging and local test-output
 directories, caches, virtual environments, local editor files, credentials,
@@ -39,7 +43,7 @@ Never allow a template directory or extension wholesale. Future templates must
 follow #13's manifest and data-policy review. Do not use git add -f as a substitute
 for an approved exception. Existing license and attribution text remains intact.
 
-## Validation
+## ✅ Validation
 
 After committing the candidate, run:
 
