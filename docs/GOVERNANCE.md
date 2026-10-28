@@ -1,6 +1,6 @@
 # Issue and label governance
 
-K-NSFR adopts the 20-label catalogue and issue-triage rules from K-LCR.
+K-NSFR uses a 20-label catalogue and the issue-triage rules defined below.
 Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json).
 The application profile has no additional labels.
 
@@ -47,12 +47,10 @@ python tools/check_issues.py --check-config
 python -m unittest discover -s tools -p 'test_check_issues.py'
 ```
 
-## Source
+## Repository configuration
 
-Initial configuration copied from danielep71/K-LCR at commit
-ff01720c79633d28ba342a7a1ac2c6836aafdf95 on 2026-10-28 and adapted for K-NSFR.
-The 20-label manifest, synchronization and drift workflows match that source.
-Repository references in issue forms and triage tooling target K-NSFR.
+The label manifest, synchronization and drift workflows are versioned in this
+repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates
