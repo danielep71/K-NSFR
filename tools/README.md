@@ -75,9 +75,12 @@ passing forms tests does not prove every live issue satisfies governance.
 
 ## ☁️ Continuous integration
 
-Four workflows run from `.github/workflows/`. Every checkout sets
+Four workflows run from `.github/workflows/`. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
-the default token is read-only; only label reconciliation can write.
+the default token is read-only; only label reconciliation can write. CodeQL
+code scanning also runs, as GitHub's default setup with no workflow file here;
+its [risk surface](../SECURITY.md#automation-risk-surface) is described in the
+security policy.
 
 | Workflow | Triggers | Runs | Writes |
 | --- | --- | --- | --- |
