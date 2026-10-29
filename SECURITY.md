@@ -89,18 +89,26 @@ workflow token; no repository secret or other credential is configured in them.
 | `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
 | `Sync issue labels` | `contents: read`; `issues: write` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
 
-Every checkout sets `persist-credentials: false`, every action is pinned to a
-full commit SHA, and the workflow-level default permission is
-`contents: read`. No workflow approves, merges or dismisses alerts. The
+In these four workflows every checkout sets `persist-credentials: false`, every
+action is pinned to a full commit SHA, and the workflow-level default permission
+is `contents: read`. No workflow approves, merges or dismisses alerts. The
 [tooling guide](tools/README.md) describes what each
 workflow runs.
+
+CodeQL code scanning runs separately as GitHub's default setup: a
+GitHub-managed workflow with no file in this repository. It analyzes the
+workflows and the Python tools on GitHub's default-setup triggers and weekly,
+and uploads its results to code scanning. It uses GitHub's actions by version
+tag (its first run used `github/codeql-action/analyze@v4`), so the full-SHA
+pins above do not apply to it.
 
 <a id="existing-controls"></a>
 <a id="security-features"></a>
 
 ## 🛡️ Security features
 
-Recorded on **2026-10-28** for the public repository. The source column says
+Recorded on **2026-10-28** for the public repository and updated on
+**2026-10-29** (#75). The source column says
 how each state is known; a state marked *not verified* has not been read back
 and must not be assumed.
 
@@ -116,7 +124,7 @@ and must not be assumed.
 | Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
 | Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
 | Dependabot alerts | Enabled by inference: security updates require alerts | Not readable without admin access; not verified directly |
-| Code scanning | Not configured: no code-scanning workflow exists | Repository configuration |
+| Code scanning | CodeQL default setup, enabled 2026-10-29: Actions and Python, default query suite, remote threat model, weekly schedule. It covers the workflows and Python tools, not the VBA | GitHub API read-back, 2026-10-29. The first analysis, on `main` at `d272338`, succeeded and scanned 4 of 4 workflow files and 8 of 8 Python files ([run 40838760015](https://github.com/danielep71/K-NSFR/actions/runs/40838760015)). Alerts are not readable without security-events access; *not verified* |
 
 Update this table, with its date and source, when a feature is enabled,
 changed or read back. These controls do not constitute a security
