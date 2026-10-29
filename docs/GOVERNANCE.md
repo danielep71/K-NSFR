@@ -201,7 +201,9 @@ read access; Dependabot targets `release/0.1.0` from the configuration
 installed on `main`. Activation was verified in #6. Branch-rule enforcement scenarios are tracked by #15. These are
 observed configuration and workflow baselines. The repository became public on
 2026-10-28; the security features enabled for it are recorded, with their
-sources, in [SECURITY.md](../SECURITY.md#security-features).
+sources, in [SECURITY.md](../SECURITY.md#security-features). The owner enabled
+CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
+(#75).
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
