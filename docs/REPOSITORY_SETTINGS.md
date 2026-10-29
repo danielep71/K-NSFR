@@ -1,8 +1,10 @@
+<a id="repository-settings"></a>
+
 # ⚙️ Repository settings · Non-default configuration
 
-[![Scope](https://img.shields.io/badge/Scope-Non--default_settings-00338D?style=flat-square)](#scope)
-[![Format](https://img.shields.io/badge/Format-Portable-005EB8?style=flat-square)](#reuse)
-[![Comparison](https://img.shields.io/badge/Comparison-Documented_defaults-483698?style=flat-square)](#sources)
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 **Only deliberate differences · No repository identifiers · Reusable configuration**
 
@@ -23,7 +25,9 @@ creating and activating that targeted ruleset is still a customization.
 
 Reference documentation checked: **2026-10-29**. Repository-specific evidence,
 observation dates and rule IDs belong in the local evidence record, not in this
-portable file. Copying this file does not apply settings or verify another repository.
+portable file; for this repository they are in the
+[settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md). Copying this file
+does not apply settings or verify another repository.
 
 [General differences](#general) · [Custom protection](#rulesets) · [Reuse](#reuse) · [Sources](#sources)
 
@@ -59,6 +63,8 @@ as separate deviations from GitHub defaults.
 | Protect release tags | `refs/tags/v*` | Block updates, deletion and force pushes. |
 | Protect traffic history | `refs/heads/traffic-history` | Block deletion and force pushes; allow the intended data-writing automation. |
 
+<a id="supporting-parameters"></a>
+
 ### 🔬 Supporting parameters for the two PR rulesets
 
 | Parameter | Default-branch rule | Release-branch rule |
@@ -86,7 +92,9 @@ reports on every relevant PR before adopting these rules.
 
 ## ♻️ Reuse and maintenance
 
-- Keep repository names, usernames, URLs, issue numbers and rule IDs out of this file.
+- Keep repository names, usernames, URLs, issue numbers and rule IDs out of this
+  file. The navigation line and stage badge at the top follow this repository's
+  [documentation style](WRITING_STYLE.md#page-structure); replace them when reusing the file.
 - Verify the destination's actual default and inherited policies before copying a value.
 - Include a setting only when both its configured value and comparison default are known.
 - Remove rows that match the destination's default; retain only its actual differences.

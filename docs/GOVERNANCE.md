@@ -203,7 +203,10 @@ observed configuration and workflow baselines. The repository became public on
 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). The owner enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
-(#75).
+(#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
+deliberate differences from GitHub's defaults, and the
+[settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md) holds their dated
+read-back, with ruleset IDs.
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.

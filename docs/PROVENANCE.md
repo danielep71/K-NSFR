@@ -72,6 +72,8 @@ license in #70, and the publication review is recorded in #19.
 | Check runner and runner tests | Adapted from the immutable source in the import register; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
+| Repository settings reference | Imported from K-SFTs (see the import register) and adapted to the local documentation style; its settings rows are unchanged |
+| Repository settings evidence | Authored locally in #80 from the GitHub API read-back of 2026-10-29 |
 
 <a id="runtime-tools"></a>
 

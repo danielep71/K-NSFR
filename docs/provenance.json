@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "review_date": "2026-10-28",
+  "review_date": "2026-10-29",
   "imports": [
     {
       "local_paths": [
@@ -50,6 +50,15 @@
       "source_url": "https://github.com/danielep71/K-SFTs/tree/e6bae6df272083ba596c9eb866b14e6f9152bc15",
       "source_revision": "e6bae6df272083ba596c9eb866b14e6f9152bc15",
       "note": "Runner/tests and quality configuration adapted; content dependencies and NSFR gates added. House style adapted to existing NSFR architecture, status-based API and provisional numeric contract. Source-specific capability claims removed.",
+      "license": "MPL-2.0"
+    },
+    {
+      "local_paths": [
+        "docs/REPOSITORY_SETTINGS.md"
+      ],
+      "source_url": "https://github.com/danielep71/K-SFTs/blob/3a6ed87388cd0f65c4665c84f2c41f59ff688715/docs/REPOSITORY_SETTINGS.md",
+      "source_revision": "3a6ed87388cd0f65c4665c84f2c41f59ff688715",
+      "note": "Portable non-default settings reference (K-SFTs PR #163, blob a938d562878b4b785815699c4794dea387b243ca), imported by #78. Adapted to the local documentation style: page anchor, navigation line and stage badge replace the source badges, a supporting-parameters anchor is added, and links point to the local evidence record. The settings rows are unchanged and were compared with the live configuration on 2026-10-29 (#80).",
       "license": "MPL-2.0"
     }
   ]
