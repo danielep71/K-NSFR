@@ -12,9 +12,9 @@
 
 Baseline reviewed for issue #3: K-NSFR release branch after issue #2, at
 `68263b950d5fda7ff31e9ac7780f15390fce7190`. The initial governance
-import came from K-LCR at `ff01720c79633d28ba342a7a1ac2c6836aafdf95` and is
-recorded in repository history at `926e49f5de0221953a5147b562631c0081f7ae06`
-and in the [import register](provenance.json). Imported text was adapted
+import is recorded in repository history at `926e49f5de0221953a5147b562631c0081f7ae06`;
+its source, revision and license are in the
+[third-party notices](licenses/THIRD_PARTY_NOTICES.txt). Imported text was adapted
 for this repository, with unrelated repository references removed. This inventory
 records origins at the repository level; it does not establish transferable
 copyright ownership or permission to redistribute.
@@ -25,9 +25,9 @@ copyright ownership or permission to redistribute.
 
 | Surface | Origin and current status | Attribution/obligation review |
 | --- | --- | --- |
-| Label catalogue, policy and sync/drift scripts | Imported from K-LCR (see the import register), then K-NSFR-specific edits | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
-| Issue templates and triage Python code/tests | Imported from K-LCR, adapted for the K-NSFR issue model | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
-| GitHub Actions workflows and Dependabot configuration | Imported from K-LCR, adapted to local checks | Actions use SHA-pinned upstream components; inventory each action license and notice before redistribution of bundled code |
+| Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
+| Issue templates and triage Python code/tests | Imported (see the third-party notices), adapted for the K-NSFR issue model | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
+| GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `pr-milestones.yml` is under the MIT License | Actions use SHA-pinned upstream components; inventory each action license and notice before redistribution of bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; owner confirms notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook, regulatory parameters, numerical fixtures | None in the setup baseline | Future source/version, licensing and independent validation required |
@@ -60,22 +60,22 @@ under SECURITY.md without copying it into issue evidence.
 
 ## 🔄 Maintenance inventory
 
-The baseline above is historical. The machine-readable
-[import register](provenance.json) records immutable reference revisions,
-local import evidence, adaptations and license identity for later configuration,
-quality tooling and coding-style adoption. Origin URLs in that register are
-attribution records, not project dependencies or product claims. The initial
-governance import from K-LCR is recorded there too; the owner confirmed its
-license in #70, and the publication review is recorded in #19.
+The baseline above is historical. The
+[third-party notices](licenses/THIRD_PARTY_NOTICES.txt) record, for every
+copied or adapted file, the source revision, local import evidence,
+adaptations and license, including the initial governance import, whose
+license the owner confirmed in #70. Source URLs there are attribution
+records, not project dependencies or product claims. The publication review is
+recorded in #19.
 
 | Added surface | Origin / control |
 | --- | --- |
 | Source-control checker and fixtures | Authored locally in #4; isolation correction and regression fixture are local maintenance work |
 | Markdown/YAML checker | Authored locally in #6; parsed navigation and explicit-anchor validation added during maintenance |
-| Check runner and runner tests | Adapted from the immutable source in the import register; current gates cover only delivered capabilities |
+| Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
-| Repository settings reference | Imported from K-SFTs (see the import register) and adapted to the local documentation style; its settings rows are unchanged |
+| Repository settings reference | Imported (see the third-party notices) and adapted to the local documentation style; its settings rows are unchanged |
 | Repository settings evidence | Authored locally in #80 from the GitHub API read-back of 2026-10-29 |
 
 <a id="runtime-tools"></a>
