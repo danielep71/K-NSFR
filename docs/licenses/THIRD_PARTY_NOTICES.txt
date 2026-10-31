@@ -2,10 +2,78 @@ THIRD-PARTY NOTICES
 ===================
 
 K-NSFR is licensed under the Mozilla Public License, version 2.0 (see
-LICENSE). The file listed below is copied from another project under the MIT
-License and remains under the MIT License. It is not relicensed under
-MPL-2.0. The MIT License applies only to that file; every other file of this
-repository keeps its own license.
+LICENSE). This file records every file copied or adapted from another
+project: its source, the source revision, the local import commit where it is
+known, what was changed, and its license. A copied or adapted file keeps the
+license of its source; the license applies file by file, and every file not
+listed here is original to this repository. The sources below are by the same
+author, Daniele Penza.
+
+Files under MPL-2.0 copied or adapted from other projects
+---------------------------------------------------------
+
+From K-LCR (https://github.com/danielep71/K-LCR), commit
+ff01720c79633d28ba342a7a1ac2c6836aafdf95, imported by local commit
+926e49f5de0221953a5147b562631c0081f7ae06 (initial governance import). The
+source revision carries no LICENSE file; the author confirmed MPL-2.0 on
+2026-10-28 (#70). Repository references were adapted and unverified
+repository-settings claims were not copied.
+
+.github/ISSUE_TEMPLATE/bug.yml, config.yml, documentation.yml, enhancement.yml
+.github/dependabot.yml
+.github/workflows/issue-triage.yml, labels-drift.yml, labels-sync.yml,
+    repository-integrity.yml
+docs/GOVERNANCE.md
+    Adapted for this repository and extended since.
+
+From K-SACCR (https://github.com/danielep71/K-SACCR), commit
+a950f36e8fae8a70b7ba3520437219c626b4abda, imported by local commit
+5457438b50fccf95ea67d1253318c32405ea5928.
+
+.editorconfig, .gitattributes, .gitignore
+    Repository-name comments adapted, the unrelated workbook allowlist
+    removed, and local rules added since.
+
+From K-SFTs (https://github.com/danielep71/K-SFTs), commit
+e6bae6df272083ba596c9eb866b14e6f9152bc15.
+
+tools/check.py, tools/test_check.py, tools/requirements-quality-ci.txt,
+pyproject.toml
+    Runner, tests and quality configuration adapted; content dependencies
+    and the NSFR gates added.
+docs/VBA_HOUSE_STYLE.md
+    Adapted to this repository's architecture, status-based API and
+    provisional numeric contract; source-specific capability claims removed.
+
+From K-SFTs, docs/REPOSITORY_SETTINGS.md at commit
+3a6ed87388cd0f65c4665c84f2c41f59ff688715 (blob
+a938d562878b4b785815699c4794dea387b243ca), imported by #78 and completed
+from main at commit dfed6bc079cb83f751a0778684e2d436378398b7 by #98.
+
+docs/REPOSITORY_SETTINGS.md
+    Adapted to the local documentation style (page anchor, navigation line
+    and stage badge in place of the source badges); links to the local
+    evidence record and a security-features section added.
+
+From K-SFTs main at commit dfed6bc079cb83f751a0778684e2d436378398b7, imported
+on 2026-10-31.
+
+.github/labels.json
+    First imported from K-LCR; moved to the source's schema 2 catalogue by
+    #84, with the source's label descriptions by #88.
+.github/scripts/labels-drift.mjs
+    Copied by #84.
+.github/scripts/labels-sync.mjs
+    Adapted by #84: keeps the guard that refuses to delete a label still used
+    by an issue or pull request, including names that contain commas, and its
+    self-tests.
+tools/check_issues.py, tools/test_check_issues.py
+    Adapted by #90: keeps the active-milestone, target-date and
+    milestone-due rules and the target_end_date form field, with their tests.
+tools/check_workflows.py, tools/test_check_workflows.py
+    Adapted by #94: the allowed write permissions and test fixtures follow
+    this repository's workflows; .yaml workflow files are read and the whole
+    label-reconcile condition is compared (review of #94).
 
 Files under the MIT License
 ---------------------------
