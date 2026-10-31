@@ -81,7 +81,7 @@ to it (API branch-rules read-back). Traffic collection itself is tracked in #16.
 | Setting | State | Source |
 | --- | --- | --- |
 | Full-SHA action pins required | Required | Owner statement in [governance](GOVERNANCE.md#installed-settings-and-limits); the Actions permissions API is not readable from the maintenance environment, so this is **unverified** on the snapshot date |
-| Default workflow token | Read-only | Owner statement in governance; **unverified** on the snapshot date. Each workflow also declares `contents: read` |
+| Default workflow token | Read-only | Owner statement in governance; **unverified** on the snapshot date. Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back on 2026-10-28 and 2026-10-29, with each row's source |
 
 <a id="maintenance"></a>

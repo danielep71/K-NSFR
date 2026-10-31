@@ -39,6 +39,15 @@ External condition: for an external blocker. Apply blocked only while a
 named prerequisite is unresolved. Review dependent issues when a prerequisite
 closes. Pull-request references do not count as blocking prerequisites.
 
+The workflow *Keep milestones issue-only*
+([.github/workflows/pr-milestones.yml](../.github/workflows/pr-milestones.yml))
+removes a milestone set on a pull request: when a pull request is opened,
+reopened, edited or given a milestone, and on a daily scan of every pull
+request, closed and merged ones included. It runs only its own inline code,
+from the base branch for pull request events and from the default branch for
+the schedule, a push or a manual run, and never a pull request's contents. Its
+only permission is `pull-requests: write`, and it refuses to change an issue.
+
 The read-only Issue triage workflow audits open issues on issue events and
 manual dispatch. Findings require maintainer triage; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
