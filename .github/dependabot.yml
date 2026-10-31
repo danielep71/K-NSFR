@@ -1,8 +1,8 @@
-# Proposes updates to the SHA-pinned GitHub Actions used by the workflows.
-# Every update arrives as a pull request for maintainer review; nothing merges
-# automatically. See docs/GOVERNANCE.md.
-# Updates target the active release/0.1.0 development branch.
-# Review and integrate into main through release governance.
+# Proposes updates to the SHA-pinned GitHub Actions used by the workflows and
+# to the hash-locked Python quality tools in /tools. Every update arrives as a
+# pull request for review; nothing merges automatically. See tools/README.md,
+# "Dependency updates".
+# target-branch must name the active release branch in docs/GOVERNANCE.md.
 # Milestones belong to issues only; link each PR to a tracking issue in triage.
 version: 2
 updates:
@@ -24,5 +24,28 @@ updates:
       prefix: ci
     groups:
       github-actions:
+        patterns:
+          - "*"
+  - package-ecosystem: pip
+    directory: /tools
+    target-branch: release/0.1.0
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Europe/Rome
+    cooldown:
+      default-days: 14
+    open-pull-requests-limit: 5
+    labels:
+      - ci
+      - P3
+    assignees:
+      - danielep71
+    commit-message:
+      prefix: ci
+    groups:
+      python-tools:
+        applies-to: version-updates
         patterns:
           - "*"

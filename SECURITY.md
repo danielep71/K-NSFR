@@ -117,7 +117,7 @@ and must not be assumed.
 | Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
 | Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` |
 | Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
-| Dependabot version updates for GitHub Actions | Configured and active; proposals arrive as pull requests for review | `.github/dependabot.yml`; activation evidenced in #6 by Dependabot PR #41 |
+| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85); not yet observed running. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41 |
 | Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
