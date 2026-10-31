@@ -144,7 +144,15 @@ Review upstream release notes and licensing, download the intended wheels,
 verify their hashes, update the lock and provenance together, and rerun all
 gates. Do not remove hash enforcement to admit an update. The narrow mypy
 configuration applies to every Python tool and test without blanket exclusions.
-Actionlint has its own pinned version/checksum in the workflow. Dependabot
-proposes GitHub Actions pin updates only, as pull requests into the active
-release branch; each is reviewed by the owner before merge (for example #41,
-reviewed in #42).
+Actionlint has its own pinned version/checksum in the workflow.
+
+`.github/dependabot.yml` proposes weekly updates, each Monday at 05:00
+Europe/Rome, for the pinned GitHub Actions and for the Python requirements in
+`/tools`. The two are grouped separately, as `github-actions` and
+`python-tools`, and target the active release branch with the `ci` and `P3`
+labels and danielep71 as assignee. Python updates wait 14 days after an upstream
+release. Each update is a pull request that the owner reviews before merge
+(for example #41, reviewed in #42); a Python update must still pass the hash and
+provenance review above. Dependabot reads the configuration from `main`, so a
+change takes effect once it is integrated there. When a new release branch
+opens, update both `target-branch` values. Milestones stay on issues only.
