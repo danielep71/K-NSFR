@@ -24,14 +24,63 @@ guessing it. The active milestone is `v0.1.0 - Repo setup`; update the triage
 configuration when a new release branch becomes active. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
-- P1: confirmed calculation bug producing wrong results for valid inputs; requires bug.
-- P2: material correctness, robustness or maintainability defect.
-- P3: non-blocking quality, testing, documentation or setup work.
+<a id="priorities"></a>
 
-P1 is reserved for a confirmed wrong calculation on valid inputs and requires
-the bug label; P3 covers planned setup work. Keep intentional labels and valid
-assignments when triaging. Forms cannot preselect a milestone; the owner assigns
-it and resolves read-only triage findings.
+### Priorities
+
+| Priority | Use |
+| --- | --- |
+| `P1` | Reserved for a **confirmed calculation bug**: wrong results for valid inputs. Requires `bug`; never for setup, documentation or tooling work. |
+| `P2` | Material correctness, robustness or maintainability defect. Default of the Bug report form. |
+| `P3` | Non-blocking quality, testing, documentation or setup work. Default of the Enhancement and Documentation forms. |
+
+Triage confirms or changes the form's default priority. Raise a bug to `P1`
+only once the calculation defect is confirmed. Keep intentional labels and
+valid assignments when triaging. Forms cannot preselect a milestone; the owner
+assigns it and resolves read-only triage findings.
+
+<a id="types"></a>
+
+### Types
+
+An issue or pull request carries every type that describes its work.
+
+| Label | Use |
+| --- | --- |
+| `bug` | A confirmed defect in behavior, correctness, error handling or a documented contract. The Bug report form sets it. |
+| `enhancement` | A new capability or a meaningful improvement to supported behavior. The Enhancement form sets it. |
+| `documentation` | Documentation for users or for repository maintenance. The Documentation form sets it. |
+| `behavior-change` | Work that changes externally observable behavior, such as calculated results or the layout of inputs and outputs. |
+| `refactor` | Internal restructuring that preserves supported behavior; if supported behavior changes, use `behavior-change` instead. |
+| `tests` | Regression coverage, test harnesses, fixtures or manual validation. |
+| `ci` | Automated quality checks and workflow maintenance, including Dependabot pull requests. |
+| `repository` | Repository structure, governance, metadata, tooling or maintenance. |
+| `release` | Release preparation, certification, evidence or publication, including integration and synchronization pull requests. |
+| `security` | Security boundaries, supply chain or hardening. Never for an undisclosed vulnerability: report it privately, as [SECURITY.md](../SECURITY.md) says. |
+
+<a id="status-and-triage-labels"></a>
+
+### Status and triage labels
+
+| Label | Use |
+| --- | --- |
+| `question` | Information or an owner decision is needed before the work can go on. |
+| `help wanted` | External investigation, implementation, validation or review is welcome. |
+| `good first issue` | A well-scoped task suitable for a first contribution. |
+| `duplicate` | Another issue or pull request already covers the work: close this one and link the one that covers it. |
+| `invalid` | Close it: the report is incomplete, unsupported or not actionable as submitted. |
+| `wontfix` | Close it: the owner has decided not to implement or continue the work. |
+
+<a id="dependency-status"></a>
+
+### Dependency status
+
+`blocked` is the only dependency status label. Ready issues carry no status
+label.
+
+| Label | Use |
+| --- | --- |
+| `blocked` | A named, unresolved prerequisite prevents the work from starting. |
 
 Every issue includes a Dependencies and blocking status section. Write None
 if ready, name prerequisite issues with #number, or use a line beginning
@@ -51,7 +100,11 @@ only permission is `pull-requests: write`, and it refuses to change an issue.
 The read-only Issue triage workflow audits open issues on issue events and
 manual dispatch. Findings require maintainer triage; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
-remains a maintainer decision.
+remains a maintainer decision. `python tools/check.py` (gate `issue-config`)
+fails when a catalogue label is not explained exactly once in the tables above,
+when a form or `.github/dependabot.yml` sets a label outside the catalogue, or
+when either assigns someone other than the assignee configured in the Bug
+report form.
 
 <a id="label-workflows"></a>
 
