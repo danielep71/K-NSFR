@@ -25,7 +25,9 @@ source files and contributions for which the contributors can grant those
 rights; it cannot relicense material owned by others. Preserve existing notices
 and add the MPL Exhibit A notice to new source files or a location where a
 recipient is likely to find it. Do not add an Exhibit B incompatibility notice
-without a separate decision. The licensing and policy setup is complete in issue #3. Record the remaining
+without a separate decision. A file copied under another license keeps that
+license and its notice: [THIRD_PARTY_NOTICES.txt](licenses/THIRD_PARTY_NOTICES.txt)
+lists each such file with its license text and copyright. The licensing and policy setup is complete in issue #3. Record the remaining
 ownership and attribution evidence for publication under issue #19.
 
 <a id="publication-gate"></a>

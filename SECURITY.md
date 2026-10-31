@@ -88,10 +88,15 @@ workflow token; no repository secret or other credential is configured in them.
 | `Issue triage` | `contents: read`, `issues: read`, `pull-requests: read` | Issue events, from the default branch; manual dispatch |
 | `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
 | `Sync issue labels` | `contents: read`; `issues: write` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
+| `Keep milestones issue-only` | None at workflow level; `pull-requests: write` in its one job | `pull_request_target` (opened, reopened, edited, milestoned); daily schedule; its own pushes to `main`; manual dispatch on the default branch |
 
-In these four workflows every checkout sets `persist-credentials: false`, every
-action is pinned to a full commit SHA, and the workflow-level default permission
-is `contents: read`. No workflow approves, merges or dismisses alerts. The
+In these workflows every checkout sets `persist-credentials: false` and every
+action is pinned to a full commit SHA. The workflow-level default permission is
+`contents: read`, except in `Keep milestones issue-only`, which declares none.
+That workflow uses `pull_request_target`, so it runs with write access on pull
+requests from forks. It never checks out code and runs only its inline script,
+from the base branch; the script refuses to change an issue and only clears PR
+milestones. No workflow approves, merges or dismisses alerts. The
 [tooling guide](tools/README.md) describes what each
 workflow runs.
 
@@ -115,7 +120,7 @@ and must not be assumed.
 | Feature | State | Source |
 | --- | --- | --- |
 | Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
-| Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` |
+| Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
 | Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85); not yet observed running. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41 |
 | Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
