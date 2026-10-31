@@ -7,6 +7,8 @@ import copy
 import io
 import os
 import re
+import shutil
+import tempfile
 import unittest
 from collections.abc import Callable
 from pathlib import Path
@@ -61,7 +63,7 @@ class WorkflowInvariantTests(unittest.TestCase):
         self.assertEqual(self.repo.findings(), [])
 
     def test_every_workflow_is_read(self) -> None:
-        names = {path.name for path in (ROOT / cw.WORKFLOWS).glob("*.yml")}
+        names = {path.name for path in cw.workflow_files(ROOT)}
         self.assertEqual(set(self.repo.workflows), names)
         self.assertIn(cw.MILESTONES_FILE, names)
 
@@ -159,8 +161,30 @@ class WorkflowInvariantTests(unittest.TestCase):
 
     # labels-sync and pr-milestones
     def test_labels_sync_condition(self) -> None:
-        self.repo.job("labels-sync.yml", "reconcile")["if"] = "github.event_name != 'pull_request'"
-        self.assertFinding("reconcile's condition no longer checks the default branch")
+        job = self.repo.job("labels-sync.yml", "reconcile")
+        condition = job["if"]
+        for changed in ("github.event_name != 'pull_request'", condition + " || true",
+                        f"!({condition})"):
+            with self.subTest(condition=changed):
+                job["if"] = changed
+                self.assertFinding("labels-sync.yml: reconcile's condition must be")
+
+    def test_yaml_extension_workflows_are_read(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shutil.copytree(ROOT / cw.WORKFLOWS, root / cw.WORKFLOWS)
+            (root / cw.WORKFLOWS / "extra.yaml").write_text(
+                "on: push\npermissions: {}\njobs:\n  x:\n    runs-on: ubuntu-24.04\n"
+                "    steps:\n      - uses: actions/checkout@v7\n", encoding="utf-8")
+            workflows = {path.name for path in cw.workflow_files(root)}
+            self.assertIn("extra.yaml", workflows)
+            loaded = {path.name: YAML.load(path.read_text(encoding="utf-8"), Loader=cw.strict_loader(YAML))
+                      for path in cw.workflow_files(root)}
+            findings = cw.action_findings("extra.yaml", loaded["extra.yaml"])
+            findings += cw.permission_findings("extra.yaml", loaded["extra.yaml"])
+            self.assertIn("extra.yaml: job x step 1: `actions/checkout@v7` is not pinned to a 40-character SHA",
+                          findings)
+            self.assertIn("extra.yaml: job x has no timeout-minutes", findings)
 
     def test_milestones_events(self) -> None:
         self.repo.on("pr-milestones.yml")["pull_request"] = None

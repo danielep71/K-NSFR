@@ -34,6 +34,8 @@ ALLOWED_WRITES: dict[tuple[str, str], frozenset[str]] = {
     ("pr-milestones.yml", "reconcile"): frozenset({"pull-requests"}),
 }
 
+LABELS_RECONCILE_IF = "github.event_name != 'pull_request' && " + DEFAULT_BRANCH_REF
+
 MILESTONES_FILE = "pr-milestones.yml"
 MILESTONES_EVENTS: dict[str, Any] = {
     "push": {"branches": ["main"], "paths": [".github/workflows/pr-milestones.yml"]},
@@ -184,8 +186,9 @@ def labels_sync_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     job = dict(jobs(workflows.get("labels-sync.yml", {}))).get("reconcile")
     if job is None:
         return ["labels-sync.yml: no reconcile job"]
-    if DEFAULT_BRANCH_REF not in squash(job.get("if", "")):
-        return ["labels-sync.yml: reconcile's condition no longer checks the default branch"]
+    # The whole condition, so that a negation or an appended `|| true` cannot pass.
+    if squash(job.get("if", "")) != LABELS_RECONCILE_IF:
+        return [f"labels-sync.yml: reconcile's condition must be: {LABELS_RECONCILE_IF}"]
     return []
 
 
@@ -263,10 +266,16 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
     return findings
 
 
+def workflow_files(root: Path) -> list[Path]:
+    """Every workflow file: GitHub runs both the .yml and the .yaml extension."""
+    folder = root / WORKFLOWS
+    return sorted([*folder.glob("*.yml"), *folder.glob("*.yaml")])
+
+
 def load(root: Path, yaml: Any) -> tuple[dict[str, Workflow], Any, str, str]:
     loader = strict_loader(yaml)
     workflows = {path.name: yaml.load(path.read_text(encoding="utf-8"), Loader=loader)
-                 for path in sorted((root / WORKFLOWS).glob("*.yml"))}
+                 for path in workflow_files(root)}
     dependabot = yaml.load((root / DEPENDABOT).read_text(encoding="utf-8"), Loader=loader)
     return (workflows, dependabot, (root / GOVERNANCE).read_text(encoding="utf-8"),
             (root / SETTINGS).read_text(encoding="utf-8"))
