@@ -7,8 +7,8 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 K-NSFR uses a 20-label catalogue and the issue-triage rules defined below.
-Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json).
-The application profile has no additional labels.
+Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json):
+one `labels` list (schema version 2), with no profile or domain overlays.
 
 <a id="issues"></a>
 
@@ -51,7 +51,9 @@ remains a maintainer decision.
 - Sync issue labels validates and self-tests changes on pull requests into
   main and release/**. Relevant pushes to main, or manual dispatch on the
   default branch, reconcile the live catalogue and verify an exact match.
-  Labels outside the selected catalogue are removed (prune is enabled).
+  Labels outside the catalogue are removed (prune is enabled). If the final
+  verification still finds a difference, the run fails and writes one failure
+  summary that lists the planned changes.
 - Detect issue-label drift runs offline fixtures on relevant pull requests
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
