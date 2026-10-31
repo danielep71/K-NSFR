@@ -102,7 +102,7 @@ wheels and the checksum-verified actionlint archive.
 
 `check_issues.py` applies the [issue rules](../docs/GOVERNANCE.md#issues) to
 every open issue and reports findings; it never changes an issue. It checks the
-assignee, exactly one priority (P1 only with `bug`), an open milestone of the
+assignee configured in the Bug report form, exactly one priority (P1 only with `bug`), an open milestone of the
 active release, a valid ISO target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a
@@ -112,9 +112,18 @@ default branch, so a rule change takes effect after integration into `main`.
 
 ```sh
 GITHUB_TOKEN=<token with issues:read and pull-requests:read> python tools/check_issues.py --repository danielep71/K-NSFR
-python tools/check_issues.py --input issues.json   # issues and pull requests exported as GitHub REST JSON
-python tools/check_issues.py --check-config        # issue forms and label catalogue only, offline
+python tools/check_issues.py --input issues.json --repo-name danielep71/K-NSFR   # exported GitHub REST JSON
+python tools/check_issues.py --check-config        # configuration only, offline
 ```
+
+A repository is always given as `owner/name`; `--input` requires
+`--repo-name`. `--check-config` validates the label catalogue with
+`.github/scripts/labels-sync.mjs`, the same validator synchronization uses, so
+it needs Node. It also checks that every issue form sets its default priority,
+known labels, the assignee and the `dependencies` and `target_end_date` fields;
+that the label tables of [governance](../docs/GOVERNANCE.md#issues) explain
+each catalogue label exactly once; and that `.github/dependabot.yml` uses only
+catalogue labels and the same assignee.
 
 Exit code 0 means no findings, 1 means findings, 2 means the audit could not
 run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
