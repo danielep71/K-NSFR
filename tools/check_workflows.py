@@ -31,6 +31,8 @@ DEFAULT_BRANCH_REF = "github.ref == format('refs/heads/{0}', github.event.reposi
 # The only write permissions a job may hold: (workflow file, job id) -> scopes.
 ALLOWED_WRITES: dict[tuple[str, str], frozenset[str]] = {
     ("labels-sync.yml", "reconcile"): frozenset({"issues"}),
+    ("traffic-history.yml", "collect"): frozenset({"contents"}),
+    ("traffic-history.yml", "alert"): frozenset({"issues"}),
     ("pr-milestones.yml", "reconcile"): frozenset({"pull-requests"}),
 }
 

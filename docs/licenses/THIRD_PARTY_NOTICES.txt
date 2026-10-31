@@ -75,6 +75,25 @@ tools/check_workflows.py, tools/test_check_workflows.py
     this repository's workflows; .yaml workflow files are read and the whole
     label-reconcile condition is compared (review of #94).
 
+From K-SFTs main at commit dfed6bc079cb83f751a0778684e2d436378398b7, imported
+by #104 (traffic history).
+
+.github/workflows/traffic-history.yml
+    Copied.
+tools/traffic_history.py, tools/test_traffic_history.py
+    Adapted: the alert issue carries a Planning section with a target end
+    date before the milestone's due date, as this repository's issue triage
+    requires, with tests that the alert issue passes tools/check_issues.py.
+    The latest-observation watermarks (views_observed_at, clones_observed_at,
+    observed_at), which stop a replayed older collection from overwriting a
+    newer unchanged one, are ported from K-LCR
+    (https://github.com/danielep71/K-LCR) commit
+    87686caaf4bcf5770fce278b9dafc57071dc735d, MPL-2.0, and fitted to this
+    script's repository counts and legacy layouts.
+docs/TRAFFIC.md
+    Adapted to this repository: its branch, credential, visibility and
+    protection, and badge files that the README does not display.
+
 Files under the MIT License
 ---------------------------
 
