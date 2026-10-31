@@ -254,6 +254,22 @@ issues and their blocked labels.
 
 ## 🔐 Installed settings and limits
 
+Applies to `main` and every `release/**` branch:
+
+| Rule | Policy |
+| --- | --- |
+| Pull request required | Yes; 0 approving reviews (sole owner). |
+| Required status check | `Repository integrity`, the job of `.github/workflows/repository-integrity.yml`. |
+| Branch up to date before merge | Required. |
+| Conversations resolved before merge | Required. |
+| Force pushes and deletion | Blocked. |
+| Bypass | None. |
+
+`python tools/check.py` (gate `workflow-invariants`) reads the check name and
+the branches from this table and from the
+[settings reference](REPOSITORY_SETTINGS.md#supporting-parameters), and fails
+if the workflow's job, its conditions or its branch filters drift from them.
+
 The public repository currently has active rulesets for `main` and
 `release/**`: pull requests, resolved review threads, no required approving
 reviews, no bypass actors, strict Repository integrity status checks, and

@@ -44,6 +44,7 @@ and missing tools. No gate is skipped after an earlier gate fails.
 | Ruff | Import/error rules and complexity ceiling 15; a probe proves 15 passes and 16 fails |
 | mypy | Strict typing for every Python tool and test; annotated/unannotated probe |
 | actionlint | Workflow syntax and expressions |
+| Workflow invariants | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile and milestone conditions, events and permissions; one inline milestone script; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 Internal links to Markdown sections must point to explicit `<a id="..."></a>`
 anchors. This policy avoids reliance on renderer-specific heading slugs and
