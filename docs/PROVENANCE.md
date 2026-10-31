@@ -40,7 +40,10 @@ GitHub-hosted actions are fetched at pinned revisions and are not vendored in
 this tree. No third-party application package manifest or binary is present.
 A future dependency entry must record its exact version, upstream URL, license,
 notices, and use/redistribution decision. Regulatory text is source material to
-cite and interpret, not an assumed software license.
+cite and interpret, not an assumed software license. A retained copy of a
+regulatory source follows the byte-for-byte
+[convention](SOURCE_CONTROL.md#regulatory-source-copies), with its source,
+version and SHA-256 recorded beside it.
 
 <a id="confidentiality-review"></a>
 
