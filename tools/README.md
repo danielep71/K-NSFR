@@ -76,10 +76,10 @@ passing forms tests does not prove every live issue satisfies governance.
 
 ## ☁️ Continuous integration
 
-Five workflows run from `.github/workflows/`. In them every checkout sets
+Six workflows run from `.github/workflows/`. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
-the default token is read-only. Only label reconciliation and the milestone
-workflow can write. CodeQL
+the default token is read-only. Only label reconciliation, the milestone
+workflow and the two traffic jobs can write. CodeQL
 code scanning also runs, as GitHub's default setup with no workflow file here;
 its [risk surface](../SECURITY.md#automation-risk-surface) is described in the
 security policy.
@@ -90,6 +90,7 @@ security policy.
 | Issue triage | Issue events (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
 | Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`) |
+| Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
 | Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`) |
 
 Repository integrity checks out the exact commit under review and verifies that

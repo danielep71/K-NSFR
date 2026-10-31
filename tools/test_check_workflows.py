@@ -112,6 +112,14 @@ class WorkflowInvariantTests(unittest.TestCase):
         self.repo.job("labels-sync.yml", "reconcile")["permissions"]["contents"] = "write"
         self.assertFinding("job reconcile has write permission ['contents']")
 
+    def test_traffic_alert_cannot_write_contents(self) -> None:
+        self.repo.job("traffic-history.yml", "alert")["permissions"]["contents"] = "write"
+        self.assertFinding("traffic-history.yml: job alert has write permission ['contents']")
+
+    def test_traffic_collect_cannot_write_issues(self) -> None:
+        self.repo.job("traffic-history.yml", "collect")["permissions"]["issues"] = "write"
+        self.assertFinding("traffic-history.yml: job collect has write permission ['issues']")
+
     def test_write_all(self) -> None:
         self.repo.job("labels-sync.yml", "reconcile")["permissions"] = "write-all"
         self.assertFinding("job reconcile has write permission ['*']")

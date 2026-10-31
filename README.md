@@ -88,6 +88,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
 | [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights and attribution inventory |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
+| [Traffic history](docs/TRAFFIC.md) | Daily traffic collection, its credential and its alert |
 
 <a id="validation"></a>
 
