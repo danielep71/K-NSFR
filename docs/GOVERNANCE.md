@@ -141,8 +141,9 @@ The label manifest, synchronization and drift workflows are versioned in this
 repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
-into main and release/**. Dependabot proposes grouped GitHub Actions updates to `release/0.1.0`
-weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
+into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
+updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on Mondays at
+05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
 
 <a id="branches-and-integration"></a>
