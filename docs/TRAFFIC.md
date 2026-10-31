@@ -67,8 +67,8 @@ not rewritten.
 
 | File | Key | Contents |
 | --- | --- | --- |
-| `daily.csv` | `date` | Views and unique views, clones and unique clones per UTC day. `views_collected_at` and `clones_collected_at` give the collection that last changed each pair. |
-| `snapshots.csv` | `snapshot_date` | One row per collection day: the first and last day the API reported, the 14-day totals, the repository's `stars`, `forks`, `watchers` and `open_issues` at collection time, and `collected_at`, the collection that last changed that day's snapshot, referrers or paths. |
+| `daily.csv` | `date` | Views and unique views, clones and unique clones per UTC day. `views_collected_at` and `clones_collected_at` give the collection that last changed each pair; `views_observed_at` and `clones_observed_at` give the latest collection that observed it, changed or not. |
+| `snapshots.csv` | `snapshot_date` | One row per collection day: the first and last day the API reported, the 14-day totals, the repository's `stars`, `forks`, `watchers` and `open_issues` at collection time, `collected_at`, the collection that last changed that day's snapshot, referrers or paths, and `observed_at`, the latest collection that observed them. |
 | `referrers.csv` | `snapshot_date`, `rank` | The top 10 referrers over the 14 days before each collection. |
 | `paths.csv` | `snapshot_date`, `rank` | The top 10 repository paths over the same window. |
 | `badges/*.json` | — | Badge files rewritten from the stored data after each merge (*Badges* below). |
@@ -100,18 +100,25 @@ file changes only when its value does.
 - **Overlapping windows:** for every date the collection reports, its values
   replace the stored ones, so a day that was incomplete when first collected
   is corrected later. Views and clones are merged separately, each with its
-  own collection time, which stays unchanged when its values do not change.
+  own collection time, which stays unchanged when its values do not change,
+  and its own observed-at watermark, which advances on every newer
+  observation, even with identical values.
 - **Older history:** dates the collection does not report keep their values.
   Nothing is deleted.
 - **No double counting:** values are replaced, never added. Unique counts are
   never summed across days or windows; a 14-day unique count is only in
   `snapshots.csv`.
 - **Same-day runs:** a collection day's snapshot, referrers and paths are one
-  unit, replaced only if any of the three changed. Running the workflow twice
-  with the same data changes nothing.
-- **Order:** "newest" means the latest collection time. Merging an older
-  collection after a newer one never replaces what the newer one stored; it
-  can only fill a date or metric that nothing newer reported.
+  unit, replaced only if any of the three changed; an unchanged later
+  collection advances only `observed_at`. Replaying a collection with its own
+  collection time changes nothing.
+- **Order:** "newest" means the latest collection time. Freshness is judged
+  by the observed-at watermark, not by the time of the last change, so merging
+  an older collection after a newer one never replaces what the newer one
+  observed, even when the newer one found the same values or counts were
+  later revised. It can only fill a date or metric that nothing newer
+  reported. Rows written before the watermarks existed have them blank and
+  fall back to the time of the last change.
 
 <a id="zero-or-unavailable"></a>
 

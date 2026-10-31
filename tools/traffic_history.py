@@ -37,16 +37,23 @@ REFERRERS = "referrers.csv"
 PATHS = "paths.csv"
 HEADERS: dict[str, tuple[str, ...]] = {
     DAILY: ("date", "views", "unique_views", "views_collected_at",
-            "clones", "unique_clones", "clones_collected_at"),
+            "clones", "unique_clones", "clones_collected_at",
+            "views_observed_at", "clones_observed_at"),
     SNAPSHOTS: ("snapshot_date", "collected_at", "first_date", "last_date",
                 "views_14d", "unique_views_14d", "clones_14d", "unique_clones_14d",
-                "stars", "forks", "watchers", "open_issues"),
+                "stars", "forks", "watchers", "open_issues", "observed_at"),
     REFERRERS: ("snapshot_date", "rank", "referrer", "count", "uniques"),
     PATHS: ("snapshot_date", "rank", "path", "title", "count", "uniques"),
 }
-# A snapshots.csv written before the repository counts were added; read as
-# having them blank, and rewritten with the current header on the next merge.
-LEGACY_HEADERS: dict[str, tuple[str, ...]] = {SNAPSHOTS: HEADERS[SNAPSHOTS][:8]}
+# Earlier layouts, read with the missing columns blank and rewritten with the
+# current header on the next merge: snapshots without the repository counts or
+# the observed_at watermark, and daily rows without the observed-at watermarks.
+LEGACY_HEADERS: dict[str, tuple[tuple[str, ...], ...]] = {
+    SNAPSHOTS: (HEADERS[SNAPSHOTS][:8], HEADERS[SNAPSHOTS][:12]),
+    DAILY: (HEADERS[DAILY][:7],),
+}
+# Latest-observation watermarks: blank in a row written before they existed.
+OBSERVED = {"views_observed_at", "clones_observed_at", "observed_at"}
 RESPONSES = ("views.json", "clones.json", "referrers.json", "paths.json", "repository.json")
 # Snapshot column, and the repository API field it is read from.
 REPOSITORY_COUNTS = {"stars": "stargazers_count", "forks": "forks_count",
@@ -59,7 +66,7 @@ ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 NUMERIC = {"views", "unique_views", "clones", "unique_clones", "views_14d", "unique_views_14d",
            "clones_14d", "unique_clones_14d", "rank", "count", "uniques", *REPOSITORY_COUNTS}
-STAMPS = {"collected_at", "views_collected_at", "clones_collected_at"}
+STAMPS = {"collected_at", "views_collected_at", "clones_collected_at", *OBSERVED}
 Row = dict[str, str]
 
 
@@ -196,7 +203,7 @@ def read_history(path: Path) -> list[Row]:
         raise TrafficError(f"{path.name}: unreadable ({error})") from error
     reader = csv.DictReader(io.StringIO(content))
     found = tuple(reader.fieldnames or ())
-    if found != header and found != LEGACY_HEADERS.get(path.name):
+    if found != header and found not in LEGACY_HEADERS.get(path.name, ()):
         raise TrafficError(f"{path.name}: header is {reader.fieldnames}, expected {list(header)}")
     rows = []
     for number, row in enumerate(reader, start=2):
@@ -218,7 +225,7 @@ def check_fields(name: str, number: int, row: Mapping[str, str]) -> None:
     when it was collected before they were recorded.
     """
     def blank_metric(key: str) -> bool:
-        if name == SNAPSHOTS and key in REPOSITORY_COUNTS:
+        if name == SNAPSHOTS and key in REPOSITORY_COUNTS or key in OBSERVED:
             return row[key] == ""
         metric = key.removesuffix("_collected_at").removeprefix("unique_")
         return (name == DAILY and row[metric] == "" and row[f"unique_{metric}"] == ""
@@ -249,21 +256,23 @@ def merge_daily(rows: list[Row], collection: Collection) -> list[Row]:
     """Newest collection wins per date and metric; unreported dates keep their values.
 
     Views and clones each carry the time of the collection that last changed
-    them. A metric stored by a later collection than this one is never
-    replaced, so replaying an older collection cannot undo newer counts, yet it
-    can still fill a metric that no newer collection reported.
+    them, and separately the time of the latest collection that observed
+    them, changed or not. A metric observed by a later collection than this
+    one is never replaced, so replaying an older collection cannot undo newer
+    counts, yet it can still fill a metric that no newer collection reported.
     """
     by_date = {row["date"]: row for row in rows}
     for prefix, series in (("views", collection.views), ("clones", collection.clones)):
-        stamp_key = f"{prefix}_collected_at"
+        stamp_key, observed_key = f"{prefix}_collected_at", f"{prefix}_observed_at"
         for day, (total, unique) in series.days.items():
             row = by_date.setdefault(day, {key: "" for key in HEADERS[DAILY]} | {"date": day})
-            if row[stamp_key] > collection.stamp:
+            if (row[observed_key] or row[stamp_key]) > collection.stamp:
                 continue
             values = {prefix: str(total), f"unique_{prefix}": str(unique)}
             if any(row[key] != value for key, value in values.items()):
                 row.update(values)
                 row[stamp_key] = collection.stamp
+            row[observed_key] = collection.stamp
     return [by_date[day] for day in sorted(by_date)]
 
 
@@ -272,6 +281,7 @@ def snapshot_row(collection: Collection) -> Row:
     return {
         "snapshot_date": collection.snapshot_date,
         "collected_at": collection.stamp,
+        "observed_at": collection.stamp,
         "first_date": reported[0] if reported else "",
         "last_date": reported[-1] if reported else "",
         "views_14d": str(collection.views.count),
@@ -296,20 +306,22 @@ def merge_day(current: Mapping[str, list[Row]], collection: Collection) -> dict[
     """Merge a collection day's snapshot, referrers and paths as one unit.
 
     The snapshot's ``collected_at`` is the time of the collection that last
-    changed any of the three. A later collection replaces the unit only if
-    something in it differs; an earlier one replayed afterwards never does.
+    changed any of the three, and ``observed_at`` that of the latest
+    collection that observed the unit, changed or not. A later collection
+    replaces the unit only if something in it differs, and otherwise advances
+    ``observed_at`` only; an earlier one replayed afterwards never changes it.
     """
     day = collection.snapshot_date
     unit = {name: current[name] for name in (SNAPSHOTS, REFERRERS, PATHS)}
     stored = on_day(current[SNAPSHOTS], day)
-    if stored and stored[0]["collected_at"] > collection.stamp:
+    if stored and (stored[0]["observed_at"] or stored[0]["collected_at"]) > collection.stamp:
         return unit
     new = {
         SNAPSHOTS: [snapshot_row(collection)],
         REFERRERS: [{"snapshot_date": day} | row for row in collection.referrers],
         PATHS: [{"snapshot_date": day} | row for row in collection.paths],
     }
-    ignore = {"collected_at"}
+    ignore = {"collected_at", "observed_at"}
     unchanged = (
         bool(stored)
         and all(stored[0][key] == new[SNAPSHOTS][0][key]
@@ -318,7 +330,10 @@ def merge_day(current: Mapping[str, list[Row]], collection: Collection) -> dict[
         and on_day(current[PATHS], day) == new[PATHS]
     )
     if unchanged:
-        return unit
+        if stored[0]["observed_at"] == collection.stamp:
+            return unit
+        # Same values: keep the time they last changed, record the newer observation.
+        new[SNAPSHOTS][0]["collected_at"] = stored[0]["collected_at"]
     return {name: replace_day(current[name], day, rows) for name, rows in new.items()}
 
 
