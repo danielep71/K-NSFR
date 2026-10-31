@@ -29,7 +29,7 @@ portable file; for this repository they are in the
 [settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md). Copying this file
 does not apply settings or verify another repository.
 
-[General differences](#general) · [Custom protection](#rulesets) · [Reuse](#reuse) · [Sources](#sources)
+[General differences](#general) · [Custom protection](#rulesets) · [Security features](#security-features) · [Reuse](#reuse) · [Sources](#sources)
 
 <a id="general"></a>
 
@@ -41,9 +41,11 @@ does not apply settings or verify another repository.
 | Always suggest updating PR branches | Off (`allow_update_branch: false`) | **On** | Offers updates even without a freshness requirement; local governance still governs use on shared integration branches. |
 | Repository Projects feature | On (`has_projects: true`) | **Off** | Disables the repository feature; this does not describe account-level project boards. Organization defaults may differ. |
 | Legacy downloads flag | On (`has_downloads: true`) | **Off** | API metadata difference; not a prohibition on release assets or source downloads. |
+| Private vulnerability reporting | Off | **On** | Available for public repositories only. Lets anyone report a vulnerability privately; the reporting procedure itself is in `SECURITY.md`. |
 
-Source: GitHub's [repository REST documentation][repo-api]. These values are
-configuration differences, not blanket recommendations for every project.
+Sources: GitHub's [repository REST documentation][repo-api] and
+[private vulnerability reporting][pvr]. These values are configuration
+differences, not blanket recommendations for every project.
 
 <a id="rulesets"></a>
 
@@ -57,7 +59,7 @@ as separate deviations from GitHub defaults.
 
 | Custom ruleset | Target | Added restrictions |
 | --- | --- | --- |
-| Protect default branch | `~DEFAULT_BRANCH` | Require PR, resolved conversations and strict up-to-date `Repository integrity` from GitHub Actions; allow merge commits only; block deletion and force pushes. |
+| Protect main | `~DEFAULT_BRANCH`, the default branch (`main`) | Require PR, resolved conversations and strict up-to-date `Repository integrity` from GitHub Actions; allow merge commits only; block deletion and force pushes. |
 | Protect release branches | `refs/heads/release/**` | Require PR, resolved conversations and the same strict required check; allow squash or merge commits; block deletion and force pushes. |
 | Prevent release branch deletion | `refs/heads/release/**` | Independent deletion restriction. |
 | Protect release tags | `refs/tags/v*` | Block updates, deletion and force pushes. |
@@ -88,6 +90,29 @@ The check name and branch patterns are reusable conventions, not built-in
 GitHub jobs or automatically existing branches. Confirm that the required job
 reports on every relevant PR before adopting these rules.
 
+<a id="security-features"></a>
+
+## 🔒 Active security features
+
+The security features below are configured as shown. Apart from private
+vulnerability reporting, listed above, their initial state depends on the
+account, the visibility or an applied security configuration, so they are
+recorded as the configured state, not as differences from a default. Their
+dated read-back belongs in the local evidence record.
+
+| Feature | Configured state | Notes |
+| --- | --- | --- |
+| Private vulnerability reporting | **On** | The difference listed under [General](#general). |
+| Secret scanning | **On** | Provider patterns. Non-provider patterns and validity checks are **off**. |
+| Secret scanning push protection | **On** | Blocks pushes that contain a supported secret. |
+| Dependabot alerts | **On** | Required by Dependabot security updates; the public API does not report it directly. |
+| Dependabot security updates | **On** | Proposes fixes as pull requests for review. |
+| Dependabot version updates | Configured in `.github/dependabot.yml` | A repository file, not a setting; it takes effect from the default branch. |
+| Code scanning | **On**: CodeQL default setup, default query suite, weekly | Languages follow the repository's code. Alerts are not part of this comparison. |
+
+Rulesets do not require a code-scanning result: the required status check
+above is the only check that blocks a merge.
+
 <a id="reuse"></a>
 
 ## ♻️ Reuse and maintenance
@@ -116,11 +141,13 @@ reports on every relevant PR before adopting these rules.
 | [Repository REST API][repo-api] | Declared option defaults and parameter meanings |
 | [Creating rulesets][ruleset-create] | Custom targets, bypass configuration and activation; the editor initially uses Disabled enforcement |
 | [Available rules][ruleset-rules] | Meaning of selected protection rules, including editor defaults |
+| [Configuring private vulnerability reporting][pvr] | Its default (Off) and the restriction to public repositories |
 | [Security configuration defaults][security-defaults] | Why organization-applied defaults must be distinguished from a standalone baseline |
 
 [repo-api]: https://docs.github.com/en/rest/repos/repos
 [ruleset-create]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository
 [ruleset-rules]: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
+[pvr]: https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository
 [security-defaults]: https://docs.github.com/en/enterprise-cloud@latest/code-security/how-tos/secure-at-scale/configure-enterprise-security/establish-complete-coverage/create-custom-configuration
 
 ---
