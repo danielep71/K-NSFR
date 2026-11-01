@@ -36,8 +36,8 @@ milestone as a fallback. Forms default bugs to P2 and enhancements/documentation
 
 Triage confirms or changes the form's default priority. Raise a bug to `P1`
 only once the calculation defect is confirmed. Keep intentional labels and
-valid assignments when triaging. Forms cannot preselect a milestone; the owner
-assigns it and resolves read-only triage findings.
+valid assignments when triaging. Forms cannot preselect a milestone; I
+assign it and resolve read-only triage findings.
 
 <a id="types"></a>
 
@@ -64,12 +64,12 @@ An issue or pull request carries every type that describes its work.
 
 | Label | Use |
 | --- | --- |
-| `question` | Information or an owner decision is needed before the work can go on. |
+| `question` | I need further information or must make a decision before the work can go on. |
 | `help wanted` | External investigation, implementation, validation or review is welcome. |
 | `good first issue` | A well-scoped task suitable for a first contribution. |
 | `duplicate` | Another issue or pull request already covers the work: close this one and link the one that covers it. |
 | `invalid` | Close it: the report is incomplete, unsupported or not actionable as submitted. |
-| `wontfix` | Close it: the owner has decided not to implement or continue the work. |
+| `wontfix` | Close it: I have decided not to implement or continue the work. |
 
 <a id="dependency-status"></a>
 
@@ -98,9 +98,9 @@ the schedule, a push or a manual run, and never a pull request's contents. Its
 only permission is `pull-requests: write`, and it refuses to change an issue.
 
 The read-only Issue triage workflow audits open issues on issue events and
-manual dispatch. Findings require maintainer triage; the workflow never edits
+manual dispatch. I triage findings; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
-remains a maintainer decision. `python tools/check.py` (gate `issue-config`)
+remains my decision. `python tools/check.py` (gate `issue-config`)
 fails when a catalogue label is not explained exactly once in the tables above,
 when a form or `.github/dependabot.yml` sets a label outside the catalogue, or
 when either assigns someone other than the assignee configured in the Bug
@@ -125,7 +125,7 @@ report form.
   findings without changing issues. A pull request is never a prerequisite.
 - Before label synchronization deletes a label outside the manifest, it checks
   all-state issues and PRs for use. A used label prevents reconciliation;
-  the owner decides whether to retain or migrate it. Dry runs make no writes.
+  I decide whether to retain or migrate it. Dry runs make no writes.
 
 <a id="local-validation"></a>
 
@@ -153,7 +153,32 @@ Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
 updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on Mondays at
 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
+Dependabot reads this configuration from `main`. As of 2026-11-01, the
+Python entry is staged on `release/0.1.0`; only the Actions entry has the
+activation evidence in #6. Schema 2 label reconciliation and the updated
+issue-triage implementation likewise await default-branch integration.
 This configuration does not set branch protections or other repository settings.
+
+<a id="traffic-history"></a>
+
+### Traffic history
+
+The [Traffic history workflow](../.github/workflows/traffic-history.yml)
+collects repository traffic daily at 06:17 UTC or by manual dispatch on the
+default branch. Its `collect` job uses the `analytics` environment and
+`contents: write` to append history on the protected, data-only
+`traffic-history` branch. Only its fetch step receives `TRAFFIC_TOKEN` and
+runs `curl`; the merge script runs without that secret. The dependent `alert`
+job has `issues: write` and `contents: read`, has no environment and receives
+no traffic token. It opens at most one alert issue per snapshot date with an
+assignee, priority, open milestone and target date before the milestone due date.
+
+As of 2026-11-01, this workflow is integrated into `release/0.1.0` by #104 but
+is not on `main`. Default-branch integration, a restricted `analytics`
+environment and the credential setup must precede live operation. Follow the
+[operating guide](TRAFFIC.md) for stored-data meaning, setup, renewal and
+recovery. No live collection, history push or alert is verified; #16 tracks
+operational acceptance. The workflow builds and tests nothing.
 
 <a id="branches-and-integration"></a>
 
@@ -173,21 +198,21 @@ review and evidence whenever the head changes. A green check on an earlier head
 is not evidence for a later one.
 
 For a task PR, review the diff, resolve review threads and wait for the required
-Repository integrity check on the current head. The owner makes the integration
-decision and squashes the task PR into `release/0.1.0`. The squash commit
+Repository integrity check on the current head. I make the integration
+decision and squash the task PR into `release/0.1.0`. The squash commit
 subject is the PR title in the [commit convention](../CONTRIBUTING.md#commit-messages)
 ending with the PR number, for example `docs: define review evidence (#<PR>)`.
 Its body says what changed and why, what was validated on the final head and
 what was not, and ends with `Refs #<issue>`. Do not record self-review
 as an independent approval. The installed rulesets require zero approving reviews
-and resolved review threads; this policy asks for an explicit owner decision,
+and resolved review threads; this policy asks for my explicit decision,
 not a fictitious second reviewer. [Review evidence](#review) is recorded in the
 PR. Close the linked issue only after its criteria and evidence are complete on
 the integrated release branch, as [closing issues](#closing-issues) describes. Review dependent
 issues and their blocked labels then.
 
 For release integration, open a PR from `release/0.1.0` into `main`. Record the
-candidate head and validation, resolve discussions, obtain the owner's explicit
+candidate head and validation, resolve discussions, obtain my explicit
 integration decision, and wait for the required check at the current head.
 Pause task merges into the release branch after selecting the candidate until
 the release PR has merged and `main` has been synchronized back. If a task merge
@@ -199,24 +224,24 @@ or delete protected branches. Release tags, publication and version claims
 require their own release procedure (#19).
 
 Record exceptions or deferred acceptance criteria in the linked issue and PR,
-including the reason, owner decision, affected candidate SHA and follow-up
+including the reason, my decision, affected candidate SHA and follow-up
 issue. A skipped check or unresolved criterion is visible evidence of a gap,
-not an implicit pass. The owner decides whether to defer or rework before
+not an implicit pass. I decide whether to defer or rework before
 integration; branch rules remain in force.
 
 <a id="review"></a>
 
 ## 🔎 Review
 
-The owner is the sole maintainer and reviewer. Review evidence has three
+I am the sole maintainer and reviewer. Review evidence has three
 separate parts, and none stands in for another:
 
-- the owner's review of the final diff and head commit;
+- my review of the final diff and head commit;
 - the automated code review, which runs on PRs opened by people;
 - the required Repository integrity check on the current head.
 
 The code-review bot reviews a PR when it is opened or marked ready, not after
-later pushes. When the head changes after a completed review, the owner decides
+later pushes. When the head changes after a completed review, I decide
 whether to request a new review by posting the bot's review command as a
 top-level comment. Before merging, wait until the review shows completed for the
 recorded head SHA, then fix or answer every finding and resolve its thread.
@@ -224,8 +249,8 @@ Record the reviewed SHA and the result as text in the PR (for example "no
 findings", or each finding and how it was settled): the bot's summary comment
 is edited in place, so a link to it later describes another commit.
 
-The bot does not review PRs authored by bots such as Dependabot. For those, the
-owner's review of the final diff and head SHA is the only review; do not claim
+The bot does not review PRs authored by bots such as Dependabot. For those, my
+review of the final diff and head SHA is the only review; do not claim
 automated coverage that did not run. A `main` to `release/0.1.0`
 synchronization PR whose diff is empty changes no file: it needs the required
 check only. Confirm that `git diff` between the two branches is empty and
@@ -282,7 +307,7 @@ read access; Dependabot targets `release/0.1.0` from the configuration
 installed on `main`. Activation was verified in #6. Branch-rule enforcement scenarios are tracked by #15. These are
 observed configuration and workflow baselines. The repository became public on
 2026-10-28; the security features enabled for it are recorded, with their
-sources, in [SECURITY.md](../SECURITY.md#security-features). The owner enabled
+sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
 (#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
 deliberate differences from GitHub's defaults, and the

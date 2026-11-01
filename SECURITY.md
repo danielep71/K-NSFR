@@ -24,7 +24,7 @@ Report a suspected vulnerability privately through GitHub's private
 vulnerability reporting: **Security → Report a vulnerability**
 (<https://github.com/danielep71/K-NSFR/security/advisories/new>). Do not open a public issue or
 attach exploit details, credentials, client data, or personal data to an issue or
-PR. The owner will acknowledge, triage, and coordinate remediation and any
+PR. I will acknowledge, triage, and coordinate remediation and any
 necessary disclosure within the targets below.
 
 Include the full commit SHA and the affected file, procedure or workflow; the
@@ -70,7 +70,7 @@ workbook template and tests.
 Never commit secrets, tokens, connection strings, real customer records, or
 workbooks containing them. Use the least-privilege credential store for local
 work, review staged changes, and keep diagnostic logs free of secrets. If a
-secret or sensitive record is exposed, stop sharing it, alert the owner privately,
+secret or sensitive record is exposed, stop sharing it, alert me privately,
 revoke/rotate affected credentials, assess exposure and remove the material from
 active artifacts. History cleanup requires a separate coordinated decision; a
 normal deletion commit does not erase previous versions.
@@ -79,10 +79,15 @@ normal deletion commit does not erase previous versions.
 
 ## ⚙️ Automation risk surface
 
+The table describes the workflows defined on the release branch. As of
+2026-11-01, Traffic history is not yet on `main`; the `analytics` environment
+restriction and credential below are required setup, not verified provisioned
+controls. Live collection remains tracked in #16.
+
 No workflow runs VBA, Excel or an NSFR calculation. The workflows use the
 workflow token, except one step: the fetch step of `Traffic history` reads the
-`TRAFFIC_TOKEN` secret from the `analytics` environment, which only the
-default branch can use. That fine-grained token has only *Administration: read*
+`TRAFFIC_TOKEN` secret from the `analytics` environment, which must be restricted to the
+default branch before the secret is added. That fine-grained token has only *Administration: read*
 on this repository, and the step runs `curl` and no repository code
 ([traffic history](docs/TRAFFIC.md#credential-setup-and-renewal)).
 

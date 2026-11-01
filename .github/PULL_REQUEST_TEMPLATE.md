@@ -1,5 +1,5 @@
 <!--
-Target release/0.1.0 for task work. Use main only for owner-requested integration.
+Target release/0.1.0 for task work. Use main only for integration I explicitly request.
 Never include secrets, client data or vulnerability details. Mark unavailable
 checks NOT RUN with a reason; a portable check is not Excel evidence.
 -->
@@ -33,13 +33,13 @@ check as NOT RUN and explain it.
 ## 🔍 Final-head review
 
 Record the review as text; the code-review summary comment is edited in place,
-so a link to it later shows another commit. For a bot-authored PR, record the
-owner's review of the final head and that automated review did not run. An
+so a link to it later shows another commit. For a bot-authored PR, record my
+review of the final head and that automated review did not run. An
 empty-diff synchronization PR needs the required check only: record the empty
 diff instead. See [governance](https://github.com/danielep71/K-NSFR/blob/release/0.1.0/docs/GOVERNANCE.md#review).
 
 - Final PR head (full SHA):
-- Review type (automated and owner / owner only for a bot-authored PR / not required: empty-diff synchronization):
+- Review type (automated and my review / my review only for a bot-authored PR / not required: empty-diff synchronization):
 - Reviewed commit SHA and result (no findings, or each finding and how it was settled):
 
 <a id="scope-and-risk"></a>
@@ -62,9 +62,9 @@ Excel runs and numerical evidence. Write "Nothing" only if that is true.
 
 ## ✅ Review checklist
 
-- [ ] The PR targets the correct branch and links an issue with owner, one priority, an open active-release milestone and an ISO target end date before the milestone due date.
+- [ ] The PR targets the correct branch and links an issue assigned to me, one priority, an open active-release milestone and an ISO target end date before the milestone due date.
 - [ ] The diff is focused; no secrets, real data, generated output or unapproved binary files.
 - [ ] The current head has a successful required Repository integrity check and review conversations are resolved.
 - [ ] The final-head review covers the current head; every finding is fixed or answered.
 - [ ] Any host or numerical claim has separate evidence bound to the candidate.
-- [ ] Owner integration decision and merge method follow [governance](https://github.com/danielep71/K-NSFR/blob/release/0.1.0/docs/GOVERNANCE.md#branches-and-integration).
+- [ ] My explicit integration decision and merge method follow [governance](https://github.com/danielep71/K-NSFR/blob/release/0.1.0/docs/GOVERNANCE.md#branches-and-integration).
