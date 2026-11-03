@@ -153,6 +153,28 @@ class SourceControlTests(unittest.TestCase):
         self.assertEqual(len(tracked.stdout.splitlines()), 4)
         self.assertTrue(all(line.startswith("::\t") for line in tracked.stdout.splitlines()))
 
+    def test_regulatory_source_copies_are_kept_byte_for_byte(self) -> None:
+        copy = "docs/methodology/sources/example-standard.txt"
+        original = b"Paragraph 1  \r\nParagraph 2\r\n\r\n"
+        self.write(copy, original)
+        self.write("docs/methodology/sources/README.md", b"# Sources\n\n| File | SHA-256 |\n")
+        self.commit()
+        self.assertEqual(git("cat-file", "blob", f"HEAD:{copy}", cwd=self.repo), original)
+        self.assertEqual(check(cwd=self.repo)[2],
+                         [f"{copy}: binary format requires an exact allowlist entry"])
+        self.write("tools/binary-allowlist.json", json.dumps([copy]).encode() + b"\n")
+        self.commit()
+        self.assertEqual(check(cwd=self.repo)[2], [])
+        for setting in ("true", "input"):
+            with self.subTest(autocrlf=setting):
+                clone = Path(self.temp.name) / f"sources-{setting}"
+                git("clone", "-q", "-c", f"core.autocrlf={setting}", str(self.repo), str(clone))
+                self.assertEqual((clone / copy).read_bytes(), original)
+        self.write("docs/methodology/sources/README.md", b"# Sources  \n\n")
+        self.commit()
+        self.assertEqual(check(cwd=self.repo)[2],
+                         ["docs/methodology/sources/README.md: blank line at end of file"])
+
     def test_markdown_breaks_and_host_encoding_are_preserved(self) -> None:
         self.write("docs/example.md", b"line  \nnext\n")
         self.write("src/example.bas", b"' synthetic accented byte: \xe9\n")

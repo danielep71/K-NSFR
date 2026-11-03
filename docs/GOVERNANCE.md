@@ -7,8 +7,8 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 K-NSFR uses a 20-label catalogue and the issue-triage rules defined below.
-Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json).
-The application profile has no additional labels.
+Names, colors and descriptions are versioned in [.github/labels.json](../.github/labels.json):
+one `labels` list (schema version 2), with no profile or domain overlays.
 
 <a id="issues"></a>
 
@@ -24,14 +24,63 @@ guessing it. The active milestone is `v0.1.0 - Repo setup`; update the triage
 configuration when a new release branch becomes active. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
-- P1: confirmed calculation bug producing wrong results for valid inputs; requires bug.
-- P2: material correctness, robustness or maintainability defect.
-- P3: non-blocking quality, testing, documentation or setup work.
+<a id="priorities"></a>
 
-P1 is reserved for a confirmed wrong calculation on valid inputs and requires
-the bug label; P3 covers planned setup work. Keep intentional labels and valid
-assignments when triaging. Forms cannot preselect a milestone; the owner assigns
-it and resolves read-only triage findings.
+### Priorities
+
+| Priority | Use |
+| --- | --- |
+| `P1` | Reserved for a **confirmed calculation bug**: wrong results for valid inputs. Requires `bug`; never for setup, documentation or tooling work. |
+| `P2` | Material correctness, robustness or maintainability defect. Default of the Bug report form. |
+| `P3` | Non-blocking quality, testing, documentation or setup work. Default of the Enhancement and Documentation forms. |
+
+Triage confirms or changes the form's default priority. Raise a bug to `P1`
+only once the calculation defect is confirmed. Keep intentional labels and
+valid assignments when triaging. Forms cannot preselect a milestone; the owner
+assigns it and resolves read-only triage findings.
+
+<a id="types"></a>
+
+### Types
+
+An issue or pull request carries every type that describes its work.
+
+| Label | Use |
+| --- | --- |
+| `bug` | A confirmed defect in behavior, correctness, error handling or a documented contract. The Bug report form sets it. |
+| `enhancement` | A new capability or a meaningful improvement to supported behavior. The Enhancement form sets it. |
+| `documentation` | Documentation for users or for repository maintenance. The Documentation form sets it. |
+| `behavior-change` | Work that changes externally observable behavior, such as calculated results or the layout of inputs and outputs. |
+| `refactor` | Internal restructuring that preserves supported behavior; if supported behavior changes, use `behavior-change` instead. |
+| `tests` | Regression coverage, test harnesses, fixtures or manual validation. |
+| `ci` | Automated quality checks and workflow maintenance, including Dependabot pull requests. |
+| `repository` | Repository structure, governance, metadata, tooling or maintenance. |
+| `release` | Release preparation, certification, evidence or publication, including integration and synchronization pull requests. |
+| `security` | Security boundaries, supply chain or hardening. Never for an undisclosed vulnerability: report it privately, as [SECURITY.md](../SECURITY.md) says. |
+
+<a id="status-and-triage-labels"></a>
+
+### Status and triage labels
+
+| Label | Use |
+| --- | --- |
+| `question` | Information or an owner decision is needed before the work can go on. |
+| `help wanted` | External investigation, implementation, validation or review is welcome. |
+| `good first issue` | A well-scoped task suitable for a first contribution. |
+| `duplicate` | Another issue or pull request already covers the work: close this one and link the one that covers it. |
+| `invalid` | Close it: the report is incomplete, unsupported or not actionable as submitted. |
+| `wontfix` | Close it: the owner has decided not to implement or continue the work. |
+
+<a id="dependency-status"></a>
+
+### Dependency status
+
+`blocked` is the only dependency status label. Ready issues carry no status
+label.
+
+| Label | Use |
+| --- | --- |
+| `blocked` | A named, unresolved prerequisite prevents the work from starting. |
 
 Every issue includes a Dependencies and blocking status section. Write None
 if ready, name prerequisite issues with #number, or use a line beginning
@@ -39,10 +88,23 @@ External condition: for an external blocker. Apply blocked only while a
 named prerequisite is unresolved. Review dependent issues when a prerequisite
 closes. Pull-request references do not count as blocking prerequisites.
 
+The workflow *Keep milestones issue-only*
+([.github/workflows/pr-milestones.yml](../.github/workflows/pr-milestones.yml))
+removes a milestone set on a pull request: when a pull request is opened,
+reopened, edited or given a milestone, and on a daily scan of every pull
+request, closed and merged ones included. It runs only its own inline code,
+from the base branch for pull request events and from the default branch for
+the schedule, a push or a manual run, and never a pull request's contents. Its
+only permission is `pull-requests: write`, and it refuses to change an issue.
+
 The read-only Issue triage workflow audits open issues on issue events and
 manual dispatch. Findings require maintainer triage; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
-remains a maintainer decision.
+remains a maintainer decision. `python tools/check.py` (gate `issue-config`)
+fails when a catalogue label is not explained exactly once in the tables above,
+when a form or `.github/dependabot.yml` sets a label outside the catalogue, or
+when either assigns someone other than the assignee configured in the Bug
+report form.
 
 <a id="label-workflows"></a>
 
@@ -51,7 +113,9 @@ remains a maintainer decision.
 - Sync issue labels validates and self-tests changes on pull requests into
   main and release/**. Relevant pushes to main, or manual dispatch on the
   default branch, reconcile the live catalogue and verify an exact match.
-  Labels outside the selected catalogue are removed (prune is enabled).
+  Labels outside the catalogue are removed (prune is enabled). If the final
+  verification still finds a difference, the run fails and writes one failure
+  summary that lists the planned changes.
 - Detect issue-label drift runs offline fixtures on relevant pull requests
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
@@ -86,8 +150,9 @@ The label manifest, synchronization and drift workflows are versioned in this
 repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
-into main and release/**. Dependabot proposes grouped GitHub Actions updates to `release/0.1.0`
-weekly on Mondays at 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
+into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
+updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on Mondays at
+05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 This configuration does not set branch protections or other repository settings.
 
 <a id="branches-and-integration"></a>
@@ -189,6 +254,22 @@ issues and their blocked labels.
 
 ## 🔐 Installed settings and limits
 
+Applies to `main` and every `release/**` branch:
+
+| Rule | Policy |
+| --- | --- |
+| Pull request required | Yes; 0 approving reviews (sole owner). |
+| Required status check | `Repository integrity`, the job of `.github/workflows/repository-integrity.yml`. |
+| Branch up to date before merge | Required. |
+| Conversations resolved before merge | Required. |
+| Force pushes and deletion | Blocked. |
+| Bypass | None. |
+
+`python tools/check.py` (gate `workflow-invariants`) reads the check name and
+the branches from this table and from the
+[settings reference](REPOSITORY_SETTINGS.md#supporting-parameters), and fails
+if the workflow's job, its conditions or its branch filters drift from them.
+
 The public repository currently has active rulesets for `main` and
 `release/**`: pull requests, resolved review threads, no required approving
 reviews, no bypass actors, strict Repository integrity status checks, and
@@ -203,7 +284,10 @@ observed configuration and workflow baselines. The repository became public on
 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). The owner enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
-(#75).
+(#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
+deliberate differences from GitHub's defaults, and the
+[settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md) holds their dated
+read-back, with ruleset IDs.
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.

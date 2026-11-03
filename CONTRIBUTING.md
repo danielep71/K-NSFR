@@ -9,7 +9,8 @@
 ## 🧭 Start here
 
 Read [scope](docs/SCOPE.md), [architecture](docs/ARCHITECTURE.md) and
-[governance](docs/GOVERNANCE.md). The project is setup-only: no calculation
+[governance](docs/GOVERNANCE.md). The editorial and assistant rules for every
+change are in [AGENTS.md](AGENTS.md). The project is setup-only: no calculation
 engine or workbook is available. Use synthetic data and retain source notices.
 Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 

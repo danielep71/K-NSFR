@@ -48,6 +48,22 @@ Never allow a template directory or extension wholesale. Future templates must
 follow #13's manifest and data-policy review. Do not use git add -f as a substitute
 for an approved exception. Existing license and attribution text remains intact.
 
+<a id="regulatory-source-copies"></a>
+
+### Regulatory source copies
+
+Convention for when a regulatory source is retained in the repository: keep
+the copy byte for byte in `docs/methodology/sources/`, never edited or
+normalized, so that its SHA-256 matches the published file. `.gitattributes`
+unsets `text` there and `.editorconfig` leaves line endings, final newlines and
+white space unchanged. `docs/methodology/sources/README.md` is ordinary
+documentation: it records each copy's source URL, version or publication date,
+retrieval date and SHA-256. Because the copies have no text attribute, the
+committed-content check treats them as binaries, so each one also needs an
+exact entry in `tools/binary-allowlist.json` and the review described above.
+The directory does not exist yet; [provenance](PROVENANCE.md#external-tools-and-future-dependencies)
+covers the source and licensing review of such copies.
+
 <a id="validation"></a>
 
 ## ✅ Validation

@@ -285,7 +285,7 @@ generated, names the generator and says it must not be edited by hand.
   Never change these rules or the export header lines when reformatting.
 - **Document modules:** `ThisWorkbook` and the sheet modules are exported as
   `.cls` files in `src/host/`. They are pasted into the workbook, never
-  imported ([INSTALLATION.md](IMPLEMENTATION.md)).
+  imported ([implementation conventions](IMPLEMENTATION.md)).
 - **Forms:** a `.frm` and its `.frx` are one component, kept side by side in
   `src/host/`. The `.frx` is binary and never edited as text.
 - **Workbooks and macro-enabled files** are generated outputs. No workbook is

@@ -11,6 +11,8 @@
 #   - Binary payloads never receive text normalization or line-based merges.
 #   - GitHub Linguist reports exported modules as VBA and treats visual assets
 #     as documentation rather than vendored code.
+#   - Copies of regulatory sources in docs/methodology/sources/ are stored byte
+#     for byte and never normalized (convention; see docs/SOURCE_CONTROL.md).
 #
 # PLACEMENT
 #   Keep this file at the repository root. Custom [attr] macros are honored only
@@ -241,6 +243,18 @@ Makefile        text eol=lf
 # Documentation images, not vendored code.
 docs/assets/**              linguist-documentation
 docs/user-manual/**/assets/** linguist-documentation
+
+
+#------------------------------------------------------------------------------
+# REGULATORY SOURCE COPIES
+#------------------------------------------------------------------------------
+# Convention: byte-for-byte copies whose SHA-256 is registered in
+# docs/methodology/sources/README.md. Never normalized, so the checked-out bytes
+# keep the registered hash. Unsetting text also makes the committed-content
+# check treat each copy as binary: list it in tools/binary-allowlist.json. The
+# README itself is ordinary documentation.
+docs/methodology/sources/**             -text
+docs/methodology/sources/README.md      text eol=lf
 
 
 #------------------------------------------------------------------------------

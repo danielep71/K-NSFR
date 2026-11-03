@@ -44,6 +44,7 @@ and missing tools. No gate is skipped after an earlier gate fails.
 | Ruff | Import/error rules and complexity ceiling 15; a probe proves 15 passes and 16 fails |
 | mypy | Strict typing for every Python tool and test; annotated/unannotated probe |
 | actionlint | Workflow syntax and expressions |
+| Workflow invariants | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile and milestone conditions, events and permissions; one inline milestone script; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 Internal links to Markdown sections must point to explicit `<a id="..."></a>`
 anchors. This policy avoids reliance on renderer-specific heading slugs and
@@ -75,9 +76,10 @@ passing forms tests does not prove every live issue satisfies governance.
 
 ## ☁️ Continuous integration
 
-Four workflows run from `.github/workflows/`. In them every checkout sets
+Six workflows run from `.github/workflows/`. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
-the default token is read-only; only label reconciliation can write. CodeQL
+the default token is read-only. Only label reconciliation, the milestone
+workflow and the two traffic jobs can write. CodeQL
 code scanning also runs, as GitHub's default setup with no workflow file here;
 its [risk surface](../SECURITY.md#automation-risk-surface) is described in the
 security policy.
@@ -88,6 +90,8 @@ security policy.
 | Issue triage | Issue events (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
 | Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`) |
+| Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
+| Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`) |
 
 Repository integrity checks out the exact commit under review and verifies that
 `HEAD` is that commit; for a pull request this is GitHub's test merge of the
@@ -102,7 +106,7 @@ wheels and the checksum-verified actionlint archive.
 
 `check_issues.py` applies the [issue rules](../docs/GOVERNANCE.md#issues) to
 every open issue and reports findings; it never changes an issue. It checks the
-assignee, exactly one priority (P1 only with `bug`), an open milestone of the
+assignee configured in the Bug report form, exactly one priority (P1 only with `bug`), an open milestone of the
 active release, a valid ISO target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a
@@ -112,9 +116,18 @@ default branch, so a rule change takes effect after integration into `main`.
 
 ```sh
 GITHUB_TOKEN=<token with issues:read and pull-requests:read> python tools/check_issues.py --repository danielep71/K-NSFR
-python tools/check_issues.py --input issues.json   # issues and pull requests exported as GitHub REST JSON
-python tools/check_issues.py --check-config        # issue forms and label catalogue only, offline
+python tools/check_issues.py --input issues.json --repo-name danielep71/K-NSFR   # exported GitHub REST JSON
+python tools/check_issues.py --check-config        # configuration only, offline
 ```
+
+A repository is always given as `owner/name`; `--input` requires
+`--repo-name`. `--check-config` validates the label catalogue with
+`.github/scripts/labels-sync.mjs`, the same validator synchronization uses, so
+it needs Node. It also checks that every issue form sets its default priority,
+known labels, the assignee and the `dependencies` and `target_end_date` fields;
+that the label tables of [governance](../docs/GOVERNANCE.md#issues) explain
+each catalogue label exactly once; and that `.github/dependabot.yml` uses only
+catalogue labels and the same assignee.
 
 Exit code 0 means no findings, 1 means findings, 2 means the audit could not
 run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
@@ -144,7 +157,15 @@ Review upstream release notes and licensing, download the intended wheels,
 verify their hashes, update the lock and provenance together, and rerun all
 gates. Do not remove hash enforcement to admit an update. The narrow mypy
 configuration applies to every Python tool and test without blanket exclusions.
-Actionlint has its own pinned version/checksum in the workflow. Dependabot
-proposes GitHub Actions pin updates only, as pull requests into the active
-release branch; each is reviewed by the owner before merge (for example #41,
-reviewed in #42).
+Actionlint has its own pinned version/checksum in the workflow.
+
+`.github/dependabot.yml` proposes weekly updates, each Monday at 05:00
+Europe/Rome, for the pinned GitHub Actions and for the Python requirements in
+`/tools`. The two are grouped separately, as `github-actions` and
+`python-tools`, and target the active release branch with the `ci` and `P3`
+labels and danielep71 as assignee. Python updates wait 14 days after an upstream
+release. Each update is a pull request that the owner reviews before merge
+(for example #41, reviewed in #42); a Python update must still pass the hash and
+provenance review above. Dependabot reads the configuration from `main`, so a
+change takes effect once it is integrated there. When a new release branch
+opens, update both `target-branch` values. Milestones stay on issues only.

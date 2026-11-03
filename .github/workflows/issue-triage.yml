@@ -60,6 +60,12 @@ jobs:
         with:
           python-version: "3.13"
 
+      # check_issues.py validates the label catalogue with labels-sync.mjs.
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+
       - name: Audit open issues
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
