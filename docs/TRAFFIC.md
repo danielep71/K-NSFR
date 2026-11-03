@@ -14,6 +14,11 @@ branch, so the history outlives that window. It also writes badge files
 there, and opens an issue when traffic stands out (*Traffic alert* below). It
 is repository analytics, not CI: it builds and tests nothing.
 
+The workflow is on `main` since the integration of 2026-11-03 (#107). The
+schedule and manual dispatch described below also require the credential
+setup; until it exists the collect job fails with `TRAFFIC_TOKEN is not set`. No live collection,
+push or alert is verified; operational validation remains tracked in #16.
+
 <a id="schedule"></a>
 
 ## ⏱️ Schedule
@@ -105,9 +110,11 @@ file changes only when its value does.
   observation, even with identical values.
 - **Older history:** dates the collection does not report keep their values.
   Nothing is deleted.
-- **No double counting:** values are replaced, never added. Unique counts are
-  never summed across days or windows; a 14-day unique count is only in
-  `snapshots.csv`.
+- **No double counting:** values are replaced, never added. Distinct visitors
+  across days or windows cannot be derived by summing daily
+  unique counts; the API's 14-day unique count is stored in `snapshots.csv`.
+  The `visits` badge does sum daily unique visitors, so it counts daily visits,
+  not distinct visitors over the whole stored history.
 - **Same-day runs:** a collection day's snapshot, referrers and paths are one
   unit, replaced only if any of the three changed; an unchanged later
   collection advances only `observed_at`. Replaying a collection with its own

@@ -24,7 +24,7 @@ Report a suspected vulnerability privately through GitHub's private
 vulnerability reporting: **Security → Report a vulnerability**
 (<https://github.com/danielep71/K-NSFR/security/advisories/new>). Do not open a public issue or
 attach exploit details, credentials, client data, or personal data to an issue or
-PR. The owner will acknowledge, triage, and coordinate remediation and any
+PR. I will acknowledge, triage, and coordinate remediation and any
 necessary disclosure within the targets below.
 
 Include the full commit SHA and the affected file, procedure or workflow; the
@@ -70,7 +70,7 @@ workbook template and tests.
 Never commit secrets, tokens, connection strings, real customer records, or
 workbooks containing them. Use the least-privilege credential store for local
 work, review staged changes, and keep diagnostic logs free of secrets. If a
-secret or sensitive record is exposed, stop sharing it, alert the owner privately,
+secret or sensitive record is exposed, stop sharing it, alert me privately,
 revoke/rotate affected credentials, assess exposure and remove the material from
 active artifacts. History cleanup requires a separate coordinated decision; a
 normal deletion commit does not erase previous versions.
@@ -79,10 +79,15 @@ normal deletion commit does not erase previous versions.
 
 ## ⚙️ Automation risk surface
 
+All the workflows below are on `main` since the integration of 2026-11-03
+(#107). Traffic history has not collected yet: the `analytics` environment
+restriction and credential below are required setup, not verified provisioned
+controls. Live collection remains tracked in #16.
+
 No workflow runs VBA, Excel or an NSFR calculation. The workflows use the
 workflow token, except one step: the fetch step of `Traffic history` reads the
-`TRAFFIC_TOKEN` secret from the `analytics` environment, which only the
-default branch can use. That fine-grained token has only *Administration: read*
+`TRAFFIC_TOKEN` secret from the `analytics` environment, which must be restricted to the
+default branch before the secret is added. That fine-grained token has only *Administration: read*
 on this repository, and the step runs `curl` and no repository code
 ([traffic history](docs/TRAFFIC.md#credential-setup-and-renewal)).
 
@@ -127,7 +132,7 @@ and must not be assumed.
 | Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
 | Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
-| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85); not yet observed running. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41 |
+| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85) and read from `main` since 2026-11-03; no update PR yet. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41; Python dependency graph built on 2026-11-03 ([run 41699792588](https://github.com/danielep71/K-NSFR/actions/runs/41699792588)) |
 | Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
