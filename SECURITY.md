@@ -79,8 +79,8 @@ normal deletion commit does not erase previous versions.
 
 ## ⚙️ Automation risk surface
 
-The table describes the workflows defined on the release branch. As of
-2026-11-01, Traffic history is not yet on `main`; the `analytics` environment
+All the workflows below are on `main` since the integration of 2026-11-03
+(#107). Traffic history has not collected yet: the `analytics` environment
 restriction and credential below are required setup, not verified provisioned
 controls. Live collection remains tracked in #16.
 
@@ -132,7 +132,7 @@ and must not be assumed.
 | Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
 | Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
-| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85); not yet observed running. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41 |
+| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85) and read from `main` since 2026-11-03; no update PR yet. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41; Python dependency graph built on 2026-11-03 ([run 41699792588](https://github.com/danielep71/K-NSFR/actions/runs/41699792588)) |
 | Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |

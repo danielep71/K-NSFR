@@ -14,9 +14,9 @@ branch, so the history outlives that window. It also writes badge files
 there, and opens an issue when traffic stands out (*Traffic alert* below). It
 is repository analytics, not CI: it builds and tests nothing.
 
-As of 2026-11-01, the implementation is integrated into `release/0.1.0` by
-#104 but is not on `main`. The schedule and manual dispatch described below
-require default-branch integration and the credential setup. No live collection,
+The workflow is on `main` since the integration of 2026-11-03 (#107). The
+schedule and manual dispatch described below also require the credential
+setup; until it exists the collect job fails with `TRAFFIC_TOKEN is not set`. No live collection,
 push or alert is verified; operational validation remains tracked in #16.
 
 <a id="schedule"></a>

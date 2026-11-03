@@ -153,10 +153,13 @@ Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
 updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on Mondays at
 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
-Dependabot reads this configuration from `main`. As of 2026-11-01, the
-Python entry is staged on `release/0.1.0`; only the Actions entry has the
-activation evidence in #6. Schema 2 label reconciliation and the updated
-issue-triage implementation likewise await default-branch integration.
+Dependabot reads this configuration from `main`. The Actions entry's
+activation is evidenced in #6. The Python entry reached `main` with #107 on
+2026-11-03, when Dependabot read the configuration and built the `/tools`
+dependency graph; no Python update PR has been observed yet. The schema 2
+label reconciliation ran on `main` the same day and left the live labels
+matching the catalogue; the updated issue-triage implementation runs from
+`main` since then.
 This configuration does not set branch protections or other repository settings.
 
 <a id="traffic-history"></a>
@@ -173,9 +176,10 @@ job has `issues: write` and `contents: read`, has no environment and receives
 no traffic token. It opens at most one alert issue per snapshot date with an
 assignee, priority, open milestone and target date before the milestone due date.
 
-As of 2026-11-01, this workflow is integrated into `release/0.1.0` by #104 but
-is not on `main`. Default-branch integration, a restricted `analytics`
-environment and the credential setup must precede live operation. Follow the
+The workflow reached `main` with #107 on 2026-11-03. A restricted
+`analytics` environment and the credential setup must precede live
+operation; until they exist the collect job fails with
+`TRAFFIC_TOKEN is not set`. Follow the
 [operating guide](TRAFFIC.md) for stored-data meaning, setup, renewal and
 recovery. No live collection, history push or alert is verified; #16 tracks
 operational acceptance. The workflow builds and tests nothing.

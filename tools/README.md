@@ -76,12 +76,11 @@ passing forms tests does not prove every live issue satisfies governance.
 
 ## ☁️ Continuous integration
 
-Six workflows are defined in `.github/workflows/` on the release branch.
-Scheduled and issue-event changes take effect from `main`; the new Traffic
-history schedule additionally requires the setup in [traffic history](../docs/TRAFFIC.md).
-The milestone workflow can run from the PR base branch on pull-request events.
-As of 2026-11-01, its scheduled/default-branch operation and the traffic collector
-are staged on `release/0.1.0`, not yet integrated into `main`. In them every checkout sets
+Six workflows run from `.github/workflows/`, all on `main` since the
+integration of 2026-11-03 (#107). Scheduled and issue-event runs use the copy
+on `main`; the Traffic history schedule also requires the setup in
+[traffic history](../docs/TRAFFIC.md). The milestone workflow also runs from
+the PR base branch on pull-request events. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
 the default token is read-only. Only label reconciliation, the milestone
 workflow and the two traffic jobs can write. CodeQL
