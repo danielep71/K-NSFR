@@ -108,7 +108,7 @@ independent numerical validation comes later. Follow the commands in
 
 The [v0.1.0 repository setup milestone](https://github.com/danielep71/K-NSFR/milestone/1)
 uses `release/0.1.0` as its active development branch. Task PRs target that
-branch; the owner controls integration into `main`. The
+branch; I control integration into `main`. The
 [follow-on backlog](docs/BACKLOG.md) separates future calculation work from
 this setup milestone. No release or numerical capability is implied by the
 branch name.

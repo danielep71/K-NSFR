@@ -18,7 +18,7 @@ Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 
 ## 🌿 Make a bounded change
 
-1. Use an issue form; assign the owner, one priority, an open active milestone,
+1. Use an issue form; assign me, set one priority, an open active milestone,
    an ISO target date and an explicit dependency section.
 2. Branch from `release/0.1.0`; keep one coherent issue or correction per PR.
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),
@@ -30,7 +30,7 @@ Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
    check run, results, risks and deferred criteria. Mark unavailable host tests
    **NOT RUN** with their follow-up issue, and state what was not validated.
 6. Resolve findings and refresh evidence after changes; record review evidence
-   as [governance](docs/GOVERNANCE.md#review) describes. The owner decides
+   as [governance](docs/GOVERNANCE.md#review) describes. I decide
    integration; task PRs are squashed. Main integration follows governance.
 
 <a id="commit-messages"></a>
