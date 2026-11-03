@@ -76,7 +76,11 @@ passing forms tests does not prove every live issue satisfies governance.
 
 ## ☁️ Continuous integration
 
-Six workflows run from `.github/workflows/`. In them every checkout sets
+Six workflows run from `.github/workflows/`, all on `main` since the
+integration of 2026-11-03 (#107). Scheduled and issue-event runs use the copy
+on `main`; the Traffic history schedule also requires the setup in
+[traffic history](../docs/TRAFFIC.md). The milestone workflow also runs from
+the PR base branch on pull-request events. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
 the default token is read-only. Only label reconciliation, the milestone
 workflow and the two traffic jobs can write. CodeQL
@@ -164,7 +168,7 @@ Europe/Rome, for the pinned GitHub Actions and for the Python requirements in
 `/tools`. The two are grouped separately, as `github-actions` and
 `python-tools`, and target the active release branch with the `ci` and `P3`
 labels and danielep71 as assignee. Python updates wait 14 days after an upstream
-release. Each update is a pull request that the owner reviews before merge
+release. Each update is a pull request that I review before merge
 (for example #41, reviewed in #42); a Python update must still pass the hash and
 provenance review above. Dependabot reads the configuration from `main`, so a
 change takes effect once it is integrated there. When a new release branch
