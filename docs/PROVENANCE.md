@@ -91,11 +91,11 @@ license does not relicense these dependencies.
 | --- | --- | --- | --- |
 | GitHub checkout, Python/Node setup, artifact upload actions | Full SHA in each workflow | MIT | CI execution |
 | actionlint | 1.7.12 plus archive SHA-256 in workflow | MIT | Workflow validation |
-| Ruff | 0.16.6 plus wheel hash | MIT | Python lint and complexity |
-| mypy and runtime dependencies | 2.3.1; exact transitive pins/hashes in lock | Licenses retained in installed distributions | Strict typing |
+| Ruff | 0.17.1 plus the hashes of its published files | MIT | Python lint and complexity |
+| mypy and runtime dependencies | 2.4.0 (ast-serialize 0.13.1); exact transitive pins/hashes in lock | Licenses retained in installed distributions | Strict typing |
 | PyYAML | 6.0.3 plus wheel hash | MIT | YAML parsing |
 | types-PyYAML | 6.0.12.20260906 plus wheel hash | Apache-2.0 | YAML type stubs |
-| markdown-it-py / mdurl | 4.0.0 / 0.1.2 plus wheel hashes | MIT | Markdown parsing and URL handling |
+| markdown-it-py / mdurl | 4.2.0 / 0.1.2 plus hashes of their published files | MIT | Markdown parsing and URL handling |
 
 Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
 [markdown-it-py](https://github.com/executablebooks/markdown-it-py),
