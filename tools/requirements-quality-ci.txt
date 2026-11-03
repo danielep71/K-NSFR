@@ -1,7 +1,9 @@
-# Hash-locked CPython 3.13 / Linux x86_64 CI requirements for quality and content checks,
-# including PyYAML for the content and workflow-invariants gates.
-# Every hash was checked against PyPI. Regenerate only after reviewing package
-# provenance and wheel hashes; see tools/README.md, "Dependency updates".
+# Hash-locked CI requirements for the quality and content checks, installed
+# on CPython 3.13 / Linux x86_64, including PyYAML for the content and
+# workflow-invariants gates. A package updated by Dependabot lists the hashes
+# of every file published for its version; the others list the CPython 3.13
+# Linux x86_64 wheel. Every hash was checked against PyPI. Regenerate only after
+# reviewing package provenance and hashes; see tools/README.md, "Dependency updates".
 # CI installs with --only-binary=:all: --require-hashes.
 
 ruff==0.17.1 \
