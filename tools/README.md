@@ -145,8 +145,8 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 | --- | --- | --- |
 | Python | 3.13 | `actions/setup-python` in the workflows; `pyproject.toml` targets |
 | Node.js | 22 | `actions/setup-node` in the workflows |
-| Ruff, mypy | 0.16.6, 2.3.1 | `requirements-quality-ci.txt`, hash-locked for CPython 3.13 on Linux x86_64 |
-| PyYAML, markdown-it-py | 6.0.3, 4.0.0 | `requirements-quality-ci.txt` (content gate) |
+| Ruff, mypy | 0.17.1, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
+| PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (content and workflow-invariants gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
 Update a version only as [dependency updates](#dependency-updates) describes,
@@ -156,7 +156,11 @@ and change every place that pins it in the same pull request.
 
 ## 📦 Dependency updates
 
-Quality/content tools are hash-locked in `requirements-quality-ci.txt`.
+Quality/content tools are hash-locked in `requirements-quality-ci.txt`. A
+package that Dependabot has updated lists the hashes of every file published
+for its version, sdist included; the others list only the CPython 3.13 Linux
+x86_64 wheel. Either way CI installs wheels only (`--only-binary=:all:`), and
+each hash must match a file published on PyPI for that version.
 Review upstream release notes and licensing, download the intended wheels,
 verify their hashes, update the lock and provenance together, and rerun all
 gates. Do not remove hash enforcement to admit an update. The narrow mypy
