@@ -81,6 +81,7 @@ recorded in #19.
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
 | Repository settings reference | Imported (see the third-party notices) and adapted to the local documentation style; its settings rows are unchanged |
 | Repository settings evidence | Authored locally in #80 from the GitHub API read-back of 2026-10-29 |
+| Social-preview image | Original image I made with a generative image tool for #17; uploaded in the repository settings only, not stored here |
 
 <a id="runtime-tools"></a>
 
