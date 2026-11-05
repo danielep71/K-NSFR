@@ -126,6 +126,29 @@ class TypeAndEnumTests(unittest.TestCase):
             "Record.Evaluate = True",
         ), [])
 
+    def test_procedures_and_variables_named_like_builtins_are_not_calls(self) -> None:
+        self.assertEqual(rules(
+            CORE,
+            "Public Function Evaluate(ByVal Amount As Long) As Long",
+            "        Evaluate = Amount",
+            "End Function",
+            "Private Sub Report(ByVal CallByName As String)",
+            "    Dim CreateObject As Boolean",
+            "    Total = Evaluate(3)",
+            "End Sub",
+        ), [])
+
+    def test_a_procedure_declared_in_another_module_is_not_a_builtin(self) -> None:
+        procedures = frozenset({"evaluate"})
+        found = check_vba.check_source(CORE, source(CORE, "Total = Evaluate(3)"),
+                                       procedures=procedures)
+        self.assertEqual(found, [])
+
+    def test_the_excel_function_stays_forbidden_when_qualified(self) -> None:
+        self.assertEqual(rules(
+            CORE, "Public Function Evaluate() As Long", "End Function",
+            'Total = Application.Evaluate("1+1")'), ["dynamic-call"])
+
     def test_code_after_the_block_is_checked(self) -> None:
         self.assertEqual(rules(
             CORE, "Private Type TRecord", "    Evaluate As Boolean", "End Type",

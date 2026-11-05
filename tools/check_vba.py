@@ -44,6 +44,12 @@ HEADER_OPEN = re.compile(r"^\s*BEGIN(?:PROPERTY)?\b", re.I)
 HEADER_CLOSE = re.compile(r"^\s*END(?:PROPERTY)?\s*$", re.I)
 VB_NAME = re.compile(r'^\s*Attribute\s+VB_Name\s*=\s*"([^"]*)"', re.I)
 DIRECTIVE = re.compile(r"^\s*#\s*(\w+)\b(.*)$")
+PROCEDURE = re.compile(
+    r"^\s*(?:(?:Public|Private|Friend|Static|Global)\s+)*"
+    r"(?:Sub|Function|Property\s+(?:Get|Let|Set)|Declare\s+(?:PtrSafe\s+)?(?:Sub|Function))"
+    r"\s+([A-Za-z_][A-Za-z0-9_]*)", re.I)
+# A name right after these words is being declared, not called.
+DECLARING_WORDS = frozenset({"sub", "function", "get", "let", "event"})
 
 
 @dataclass(frozen=True)
@@ -72,6 +78,7 @@ class Module:
     path: str
     layer: str
     classes: frozenset[str]
+    procedures: frozenset[str] = frozenset()
     findings: list[Finding] = field(default_factory=list)
     in_block: bool = False
 
@@ -163,9 +170,17 @@ def qualifier(tokens: list[str], index: int) -> str | None:
     return None
 
 
-def is_call(tokens: list[str], index: int, extra: frozenset[str] = frozenset()) -> bool:
+def is_builtin_call(tokens: list[str], index: int, procedures: frozenset[str],
+                    extra: frozenset[str] = frozenset()) -> bool:
+    """Whether a name refers to the VBA or Excel function rather than a declaration."""
     owner = qualifier(tokens, index)
-    return owner is None or owner in QUALIFIERS | extra
+    if owner is not None:
+        return owner in QUALIFIERS | extra
+    previous = tokens[index - 1].lower() if index > 0 else ""
+    declared = (tokens[index + 1:index + 2] and tokens[index + 1].lower() == "as") \
+        or previous in DECLARING_WORDS \
+        or (previous == "set" and index > 1 and tokens[index - 2].lower() == "property")
+    return not declared and tokens[index].lower() not in procedures
 
 
 def jump_findings(tokens: list[str], layer: str) -> list[tuple[str, str]]:
@@ -215,11 +230,12 @@ def new_findings(tokens: list[str], index: int, classes: frozenset[str]) -> list
     return []
 
 
-def com_findings(tokens: list[str], layer: str, classes: frozenset[str]) -> list[tuple[str, str]]:
+def com_findings(tokens: list[str], module: Module) -> list[tuple[str, str]]:
+    layer, classes = module.layer, module.classes
     messages = []
     for index, token in enumerate(tokens):
         word = token.lower()
-        if word in ("createobject", "getobject") and is_call(tokens, index):
+        if word in ("createobject", "getobject") and is_builtin_call(tokens, index, module.procedures):
             messages.append(f"{token} creates or binds an external object")
         elif word == "new" and qualifier(tokens, index) is None:
             messages += new_findings(tokens, index, classes)
@@ -228,12 +244,13 @@ def com_findings(tokens: list[str], layer: str, classes: frozenset[str]) -> list
     return [("com-object", message + suffix) for message in messages]
 
 
-def dynamic_findings(tokens: list[str], layer: str) -> list[tuple[str, str]]:
+def dynamic_findings(tokens: list[str], module: Module) -> list[tuple[str, str]]:
+    layer = module.layer
     messages = []
     for index, token in enumerate(tokens):
         word = token.lower()
         if word in ("callbyname", "evaluate", "executeexcel4macro") \
-                and is_call(tokens, index, frozenset({"application"})):
+                and is_builtin_call(tokens, index, module.procedures, frozenset({"application"})):
             messages.append(f"{token} builds a call or expression at run time")
         elif word == "run" and qualifier(tokens, index) == "application":
             messages.append("Application.Run calls a procedure by name")
@@ -259,8 +276,8 @@ def check_statement(module: Module, line: int, statement: str) -> None:
         return
     for rule, message in (jump_findings(tokens, module.layer)
                           + declare_findings(tokens, module.layer)
-                          + com_findings(tokens, module.layer, module.classes)
-                          + dynamic_findings(tokens, module.layer)):
+                          + com_findings(tokens, module)
+                          + dynamic_findings(tokens, module)):
         module.add(line, rule, message, statement)
 
 
@@ -302,9 +319,26 @@ def module_findings(module: Module, options: set[str], name: str | None) -> None
         module.add(1, "vb-name", f'Attribute VB_Name "{name}" differs from the file name "{stem}"')
 
 
-def check_source(path: str, raw: bytes, classes: frozenset[str] = frozenset()) -> list[Finding]:
+def source_statements(raw: bytes) -> Iterable[tuple[int, str]]:
+    """(line, statement) for the code of a module, after its header and attributes."""
+    lines = raw.decode("ascii", errors="replace").splitlines()
+    for line, text in logical_lines(lines, strip_header(lines)):
+        if re.match(r"^\s*(?:Attribute\s|#)", text, re.I):
+            continue
+        for statement in statements(strip_comment(text)):
+            yield line, statement
+
+
+def declared_procedures(raw: bytes) -> frozenset[str]:
+    """Lower-case names of the procedures a module declares."""
+    names = (PROCEDURE.match(statement) for _, statement in source_statements(raw))
+    return frozenset(match.group(1).lower() for match in names if match)
+
+
+def check_source(path: str, raw: bytes, classes: frozenset[str] = frozenset(),
+                 procedures: frozenset[str] = frozenset()) -> list[Finding]:
     """All findings for one exported module, before exceptions are applied."""
-    module = Module(path, layer_of(path), classes)
+    module = Module(path, layer_of(path), classes, procedures | declared_procedures(raw))
     if module.layer == "unknown":
         module.add(1, "vba-location", "VBA source belongs in src/core, src/api, src/host, tests or examples")
     ascii_findings(module, raw)
@@ -393,9 +427,11 @@ def tracked_sources(root: Path) -> list[str]:
 def check_files(root: Path, paths: Sequence[str], exceptions_raw: str) -> list[Finding]:
     classes = frozenset(PurePosixPath(path).stem.lower() for path in paths
                         if path.lower().endswith((".cls", ".frm")))
+    sources = {path: (root / path).read_bytes() for path in paths}
+    procedures = frozenset().union(*(declared_procedures(raw) for raw in sources.values()))
     findings: list[Finding] = []
-    for path in paths:
-        findings += check_source(path, (root / path).read_bytes(), classes)
+    for path, raw in sources.items():
+        findings += check_source(path, raw, classes, procedures)
     exceptions, problems = load_exceptions(exceptions_raw)
     return problems + apply_exceptions(findings, exceptions)
 

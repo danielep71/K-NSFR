@@ -143,6 +143,10 @@ reported as `exception-unused`, so the file never keeps a stale exception.
   call through a variable (`Obj.Run`, `Sheet.Evaluate`) is not seen as a
   dynamic call, and `New` on an unqualified class is judged only against the
   `.cls` and `.frm` files checked in the same run.
+- A procedure, variable or parameter declared in the checked files with the
+  name of a built-in (a function called `Evaluate`, for example) is taken to
+  be that declaration, so unqualified calls to it are not reported; the
+  qualified forms (`Application.Evaluate`, `VBA.CreateObject`) always are.
 - A finding is reported on the first line of a statement continued with
   ` _`; a statement after a colon is reported on its line.
 - Bracket evaluation such as `[A1]` is indistinguishable from an escaped
