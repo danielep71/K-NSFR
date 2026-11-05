@@ -32,7 +32,8 @@ copyright ownership or permission to redistribute.
 | GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
-| Workbook, regulatory parameters, numerical fixtures | None in the setup baseline | Future source/version, licensing and independent validation required |
+| Workbook, regulatory parameters, numerical fixtures | None admitted in the setup baseline | Future source/version, licensing and independent validation required |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 
@@ -74,11 +75,16 @@ recorded in #19.
 | --- | --- |
 | Source-control checker and fixtures | Authored locally in #4; isolation correction and regression fixture are local maintenance work |
 | Markdown/YAML checker | Authored locally in #6; parsed navigation and explicit-anchor validation added during maintenance |
+| Contracts, contract checker and synthetic examples | Authored locally in #9; the examples are synthetic |
+| Validation rules, fixture checker and neutral fixture | Authored locally in #10; the fixture's data and factors are synthetic and its derivation was worked out by hand |
+| VBA static checker, exceptions file and fixtures | Authored locally in #11 |
+| Neutral VBA test harness and its self-test | Authored locally in #12; neutral, with no NSFR calculation |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
 | Repository settings reference | Imported (see the third-party notices) and adapted to the local documentation style; its settings rows are unchanged |
 | Repository settings evidence | Authored locally in #80 from the GitHub API read-back of 2026-10-29 |
+| Social-preview image | Original image I made with a generative image tool for #17; uploaded in the repository settings only, not stored here |
 
 <a id="runtime-tools"></a>
 

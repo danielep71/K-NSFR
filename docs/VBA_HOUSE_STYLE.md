@@ -6,9 +6,11 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
-These rules govern future VBA implementation. No VBA module exists yet. Mechanical
-VBA enforcement belongs to #11; host import, compilation and execution belong
-to #13/#14. Current portable CI validates repository tooling only. The public
+These rules govern VBA implementation. The only VBA modules are the
+[neutral test harness](../tests/README.md) and its self-test (#12). The
+`vba-static` gate enforces the mechanical rules
+([VBA static checks](../tools/README.md#vba-static-checks)); host import,
+compilation and execution belong to #13/#14. Current portable CI validates repository tooling only. The public
 boundary and numeric decisions remain in [IMPLEMENTATION.md](IMPLEMENTATION.md).
 
 <a id="naming"></a>
@@ -142,8 +144,8 @@ signature. Omit sections that are empty.
 - A `Public` procedure in `src/core/` is internal: `Option Private Module`
   keeps it off the workbook's external surface.
 - The only planned calculation entry point is `NSFR_API_Run` in `src/api/`.
-  Its request/result types and declarations are finalized by #9. #11 introduces
-  the public-declaration inventory and static gate with the first real modules.
+  Its request/result types and declarations are finalized by #9. A
+  public-declaration inventory arrives with the first real modules.
   Internal helpers are explicitly `Private`; cross-module core procedures may
   be `Public` only inside an `Option Private Module` standard module.
 - Changing arguments, defaults, units, errors or return values requires an issue,
@@ -172,8 +174,9 @@ it.
    caller, also when the primary error is re-raised. When only cleanup
    failed, the procedure raises `ERR_CLEANUP_FAILED`, never success.
 
-The following is a design sketch, not compiled or executed evidence. #12/#14
-must exercise success, primary-error-plus-cleanup-failure and cleanup-only failure.
+The following is a design sketch, not compiled or executed evidence. #14
+must exercise success, primary-error-plus-cleanup-failure and cleanup-only
+failure; the harness (#12) reports a cleanup failure apart from the outcome.
 
 ```vb
 'In a standard module named NSFR_Host_Example
@@ -270,8 +273,8 @@ generated, names the generator and says it must not be edited by hand.
 
   ```vb
   Public Function ValidateRecord( _
-      ByVal Amount As Currency, _
-      ByVal Proportion As Currency) _
+      ByVal RecordId As String, _
+      ByVal AsOfDate As Date) _
       As Boolean
   ```
 

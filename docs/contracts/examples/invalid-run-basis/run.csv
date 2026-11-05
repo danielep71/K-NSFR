@@ -1,0 +1,2 @@
+contract_version,profile_id,profile_version,register_version,parameter_set_id,parameter_set_version,as_of_date,reporting_entity_id,basis,reporting_currency,amount_unit,source_system,extracted_at
+1.0.0,eu-crr-standard,1,1,synthetic-parameters,1,2026-06-30,SYNTHETIC-BANK-A,consolidated,EUR,units,synthetic-ledger,2026-07-01T08:00:00Z

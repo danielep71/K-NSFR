@@ -24,8 +24,9 @@
 </div>
 
 > [!IMPORTANT]
-> **Repository setup (v0.1.0).** No NSFR calculation engine, workbook or
-> validated regulatory profile exists yet. Do not use this baseline for
+> **Repository setup (v0.1.0).** No admitted NSFR calculation engine, workbook
+> or validated regulatory profile exists yet; the benchmark
+> [prototype](prototype/README.md) is stored but not admitted. Do not use this baseline for
 > regulatory reporting, production decisions or a claim of compliance.
 
 <a id="what-this-project-is"></a>
@@ -46,7 +47,8 @@ must be approved before any numerical implementation.
 | Area | Current state |
 | --- | --- |
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
-| Calculation | Not implemented; no ASF, RSF or ratio output is available |
+| Calculation | Not implemented; no ASF, RSF or ratio output is available. A benchmark [prototype](prototype/README.md) is stored but not admitted |
+| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; Excel execution **NOT RUN** |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
 | Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT RUN** |
 | Data | Synthetic-only policy; no production or client data |
@@ -82,7 +84,12 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
+| [Regulatory source register](docs/methodology/SOURCE_REGISTER.md) | NSFR sources, their verification, concept mapping and applicability of the planned profile |
+| [Input and result contracts](docs/contracts/CONTRACTS.md) | Field dictionary, parameter and result schemas, diagnostics and synthetic examples |
+| [Numerical fixtures and validation rules](docs/validation/VALIDATION.md) | Fixture schema, independent derivation, scales, rounding, comparison and the case plan |
 | [Contributor guide](CONTRIBUTING.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Editorial rules, reproducible checks and implementation review |
+| [Neutral test harness](tests/README.md) | The VBA test harness, its self-test and how to run it in Excel |
+| [NSFR benchmark prototype](prototype/README.md) | My prototype, stored as delivered and not admitted (ADR-011) |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
@@ -96,7 +103,8 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 
 The required **Repository integrity** check validates committed text, Markdown
 file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
-typing/lint/tests, the label catalogue and the issue-form configuration. Live
+typing/lint/tests, the VBA static rules, the label catalogue and the
+issue-form configuration. Live
 issues are audited separately by the issue triage workflow. The check runs on
 documentation-only and synchronization PRs. Actual Excel import/export and
 host evidence are planned under issues #13 and #14;

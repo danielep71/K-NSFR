@@ -20,8 +20,11 @@ Europe/Rome, and belongs to an open milestone for the active release selected
 during triage. The target end date must be earlier than the milestone's due
 date, so every milestone carries a due date; triage reads the calendar date of
 the milestone's `due_on` and reports a milestone without one rather than
-guessing it. The active milestone is `v0.1.0 - Repo setup`; update the triage
-configuration when a new release branch becomes active. Never assign a closed
+guessing it. The active milestone is `v0.1.0 - Repo setup`. Issues for the next
+release may already be planned in its milestone, `v0.2.0 - Prototype Setup`,
+before its release branch exists; triage accepts exactly these two
+(`ACTIVE_MILESTONES` in `tools/check_issues.py`). Update the list when a release
+branch becomes active or a further release is planned. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
 <a id="priorities"></a>
@@ -330,9 +333,9 @@ Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
 It checks committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,
-strict Python typing, lint and tests, and committed blob whitespace (trailing
-whitespace outside Markdown and `LICENSE`, final newline and blank lines at end
-of file). Python 3.13 and Node 22
-are selected explicitly in the workflow. These portable checks do not run Excel
+strict Python typing, lint and tests, the VBA static rules, and committed
+blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
+newline and blank lines at end of file). Python 3.13 and Node 22 are selected
+explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.

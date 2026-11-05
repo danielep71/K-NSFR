@@ -74,3 +74,17 @@ relicense them.
 | PyYAML | MIT |
 | types-PyYAML | Apache-2.0 |
 | markdown-it-py and mdurl | MIT |
+
+<a id="prototype-tool-licenses"></a>
+
+### Prototype tool licenses
+
+The tools of the [non-admitted prototype](../prototype/README.md) need the
+following, which CI neither locks nor installs. None is vendored, and the
+workbook they generate is not committed.
+
+| Tool | License |
+| --- | --- |
+| XlsxWriter | BSD-2-Clause |
+| openpyxl | MIT |
+| LibreOffice | MPL-2.0 |

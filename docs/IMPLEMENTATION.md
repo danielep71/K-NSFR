@@ -20,8 +20,8 @@ The only planned calculation entry point is an explicitly named
 `NSFR_API_Run` procedure. It accepts a typed request containing validated
 records, an as-of date, reporting perimeter, and explicit methodology/profile
 and parameter identities. It returns a status plus a structured result with
-diagnostics and provenance. #9 will finalize field names, units, requiredness,
-and serialization before code is added. Standard modules start
+diagnostics and provenance. The [contracts](contracts/CONTRACTS.md) (#9) define
+its field names, units, requiredness and serialization. Standard modules start
 `NSFR_API_`, `NSFR_Core_` or `NSFR_Host_` by layer; classes, forms, sheet code
 names, tests and examples follow the
 [VBA house style](VBA_HOUSE_STYLE.md#naming). Exported filenames match
@@ -45,17 +45,17 @@ methodology and accepted parameter versions belong to #8 and #9.
 ## 🧮 Numbers, validation and diagnostics
 
 Represent quantities and money with an explicit unit and decimal scale in
-the #9 contract. For amounts whose accepted scale is at most four fractional
-digits and whose full aggregation range fits, use VBA `Currency`; it is a
-fixed-point type with four decimal places. For a calculation that requires
-another scale or larger range, define a reviewed alternative before coding:
-a `Variant` containing a `Decimal` subtype may be used with explicit `CDec`
-conversion, but `Decimal` is not a directly declared VBA variable type.
-Do not silently round into `Currency`, accumulate past its range, or use
-binary `Double` as an authoritative money or ratio representation. The
-ratio's exact scale, rounding mode, zero-denominator behavior, aggregation
-order and tolerance are contract/validation decisions in #9/#10; no
-regulatory percentages or results are set here. Reject NaN/infinite or
+the #9 contract. Amounts, weighted amounts, totals and the ratio are held in
+a `Variant` containing a `Decimal` subtype, built with explicit `CDec`
+conversion; `Decimal` is not a directly declared VBA variable type.
+`Currency` cannot hold the contract's largest amount, so it is not used for
+them (ADR-010, superseding the preference of ADR-007). Do not silently round,
+accumulate past the `Decimal` range, or use binary `Double` as an
+authoritative money or ratio representation. The
+[validation rules](validation/VALIDATION.md#arithmetic-scale-and-rounding)
+fix the ratio's scale and rounding, the zero-denominator behavior, the
+aggregation order and the comparison; no regulatory percentages or results
+are set here. Reject NaN/infinite or
 non-numeric host values before constructing a valid typed request.
 
 Return a documented status and diagnostics for invalid input, unknown
@@ -118,8 +118,9 @@ to restore state, emit a diagnostic and exit;
 do not use `GoTo` for ordinary branching. Use explicit argument types,
 qualified calls, and no implicit coercion from Excel cells. Avoid active
 workbook, selection or active sheet as an input; pass the workbook and ranges
-explicitly. Static checks in #11 will enforce feasible source rules once
-modules exist, and a neutral harness in #12 will test the interfaces.
+explicitly. The `vba-static` gate enforces the feasible source rules
+([VBA static checks](../tools/README.md#vba-static-checks)), and the
+[neutral harness](../tests/README.md) (#12) runs test suites in the host.
 
 <a id="repository-tooling"></a>
 
@@ -137,21 +138,21 @@ dependency is introduced by this document.
 
 ## 📏 Numeric design rationale and admission tests
 
-The initial fixed-point preference is intended to make decimal scale and
-rounding explicit and avoid accidental binary rounding in monetary inputs.
-It is a design preference, not proof of a suitable numeric engine. Unlike a
-binary-floating-point design, `Currency` has a limited range and four fractional
-digits; intermediate weighted amounts and ratios may exceed that precision.
-`Decimal` requires a Variant subtype and careful coercion control. Neither
-choice is admitted to production merely by this document.
+Decimal arithmetic keeps scale and rounding explicit and avoids accidental
+binary rounding. The initial preference for `Currency`, a fixed-point type
+with four fractional digits, did not survive the range check: the contract
+admits amounts up to 999,999,999,999,999.9999, beyond the `Currency` maximum,
+and weighted amounts carry up to eight decimals. ADR-010 therefore selects
+`Decimal`, whose Variant subtype needs careful coercion control. This choice
+is not admitted to production merely by this document.
 
-Before #9 finalizes types, record maximum input, aggregate and intermediate
-magnitudes; accepted decimal scales; parsing rules; currency/unit identity;
-rounding mode and location; overflow behavior; and ratio representation.
-#10 must independently test range boundaries, fractional weights, cancellation,
-aggregation order, zero denominators and serialization round trips. If these
-show the initial preference is unsuitable, supersede it in the decision log
-before implementation. Never cast silently between Currency, Decimal and Double.
+The [validation rules](validation/VALIDATION.md) record the input, weighted,
+aggregate and ratio magnitudes, the scales, the rounding mode and where it is
+applied, the zero-denominator behavior and the comparison. Their
+[case plan](validation/VALIDATION.md#case-plan) assigns the tests of range
+boundaries, fractional weights, cancellation, aggregation order, zero
+denominators and serialization round trips to the engine work. Never cast
+silently between `Currency`, `Decimal` and `Double`.
 
 The detailed [VBA house style](VBA_HOUSE_STYLE.md) defines procedure banners,
 visibility, argument ownership, array bounds, module layout and cleanup sketches.

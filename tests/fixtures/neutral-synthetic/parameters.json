@@ -1,0 +1,16 @@
+{
+  "parameter_set_id": "synthetic-neutral",
+  "parameter_set_version": 1,
+  "profile_id": "eu-crr-standard",
+  "register_version": 1,
+  "effective_from": "2026-06-30",
+  "review_status": "synthetic",
+  "factors": [
+    {"classification": "428k", "factor": "0", "source_id": "synthetic", "locator": "none"},
+    {"classification": "428l", "factor": "0.5", "source_id": "synthetic", "locator": "none"},
+    {"classification": "428o", "factor": "1", "source_id": "synthetic", "locator": "none"},
+    {"classification": "428ah", "factor": "0.25", "source_id": "synthetic", "locator": "none"},
+    {"classification": "428r", "factor": "0.2", "source_id": "synthetic", "locator": "none"},
+    {"classification": "428s", "factor": "0.75", "source_id": "synthetic", "locator": "none"}
+  ]
+}

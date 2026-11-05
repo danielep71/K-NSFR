@@ -33,6 +33,11 @@ anchors), follow [documentation style](docs/WRITING_STYLE.md).
   and [THIRD_PARTY_NOTICES.txt](docs/licenses/THIRD_PARTY_NOTICES.txt). A file
   copied or adapted under another license keeps that license and its notice;
   never relabel it as MPL-2.0.
+- Cite a regulatory rule in the README, fixtures, examples or parameter sets
+  only through an entry of the
+  [regulatory source register](docs/methodology/SOURCE_REGISTER.md), by its ID
+  and article. Cite an entry still marked "to verify" as unverified, and never
+  use it for an expected result.
 - Keep editorial and assistant rules in this file only. Other documents link
   here instead of repeating them.
 

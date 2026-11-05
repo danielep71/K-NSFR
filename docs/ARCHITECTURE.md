@@ -90,12 +90,15 @@ real deliverable; the repository holds no empty scaffolding.
 | `src/core/` | Exported pure VBA calculation modules; later production work |
 | `src/api/` | Public validation and result boundary; #9 defines the contracts |
 | `src/host/` | Workbook adapters, isolated from core; #13 |
-| `tests/core/`, `tests/api/` | Deterministic neutral harness first (#12), then reviewed numerical cases |
+| `tests/core/`, `tests/api/` | The deterministic [neutral harness](../tests/README.md) and its self-test (#12), then reviewed numerical cases |
 | `tests/host/` | Import, cleanup, and workbook round-trip tests; #13/#14 |
-| `tests/fixtures/` | Synthetic input/expected-result records and provenance; #10 |
+| `tests/fixtures/` | Registered numerical fixtures: synthetic inputs, parameters, independently derived expected results and provenance; #10 |
 | `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
 | `docs/` | Scope, architecture, decisions, governance, and future methodology/evidence guides |
+| `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
+| `docs/validation/` | Numerical fixture rules and their machine-readable schema; #10 |
 | `tools/` | Existing Python governance tools; future checks and sync utilities |
+| `prototype/` | My benchmark prototype, stored as delivered and not admitted ([ADR-011](DECISIONS.md#recorded-decisions)); v0.2.0 moves it into this layout piece by piece |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |
 | `templates/` | Only the exact approved macro-free workbook template when delivered by #13 |
@@ -121,9 +124,9 @@ governance tooling in place; do not move tests merely to match the future layout
 
 ## ✅ Validation boundaries
 
-Portable CI checks the label catalogue, the issue-form configuration and
-committed source conventions. It does not compile
-VBA, run Excel, or validate regulatory results. Future static checks (#11),
+Portable CI checks the label catalogue, the issue-form configuration,
+committed source conventions and the VBA static rules. It does not compile
+VBA, run Excel, or validate regulatory results. The VBA static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different
 evidence and must report their own status. Independent numerical validation is
 later production work, gated by #8-#10 and the [backlog](BACKLOG.md).
