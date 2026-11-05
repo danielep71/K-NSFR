@@ -74,7 +74,3 @@ relicense them.
 | PyYAML | MIT |
 | types-PyYAML | Apache-2.0 |
 | markdown-it-py and mdurl | MIT |
-
-The social-preview image `docs/assets/k-nsfr-social.png` is rendered with the
-Inter typeface, under the SIL Open Font License 1.1; no font file is stored in
-this repository.

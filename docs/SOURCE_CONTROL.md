@@ -42,8 +42,7 @@ wholesale. Exported VBA and .frx companions remain trackable. Ignore rules are
 not secret scanning and do not protect
 already tracked files or forced additions. Review staged changes before commits.
 
-One binary is approved: `docs/assets/k-nsfr-social.png`, the social-preview
-image rendered from its SVG source (#17), listed in `tools/binary-allowlist.json`.
+No binary is approved at this baseline: `tools/binary-allowlist.json` is empty.
 For an intentional binary, obtain review of the exact path, purpose, source,
 rights and data contents; add that path to the allowlist, add an exact negation
 in .gitignore if needed, and ensure binary attributes prevent text conversion.
