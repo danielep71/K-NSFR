@@ -46,6 +46,24 @@ decisions, 🏗️ architecture, 🧰 tools, ✅ checks, 🗺️ roadmap, ⚖️
 license, 🔒 security, 🧪 synthetic data and 🔗 provenance. The text of each
 heading carries the meaning even if a glyph does not render.
 
+<a id="repository-identity"></a>
+
+## 🖼️ Repository identity
+
+The repository presents itself with these texts (#17); keep them in line
+with [scope](SCOPE.md) and never claim performance, compliance or a
+calculation that does not exist.
+
+| Item | Value |
+| --- | --- |
+| About description | Planned Excel/VBA reference implementation of the EU CRR Net Stable Funding Ratio (NSFR). Repository setup stage: no calculation engine yet; synthetic data only. |
+| Topics | `nsfr`, `net-stable-funding-ratio`, `liquidity-risk`, `crr`, `basel-iii`, `banking-regulation`, `excel-vba`, `vba` |
+| Website | None; no Pages site is published |
+| Social preview | An image I make and upload in **Settings → General → Social preview**; it is not stored in the repository |
+
+Changing the About text, topics or social preview, or enabling a website,
+needs an issue I approve; none changes the repository's visibility.
+
 <a id="maintenance"></a>
 
 ## ✅ Maintenance
