@@ -21,9 +21,11 @@ The only planned calculation entry point is an explicitly named
 records, an as-of date, reporting perimeter, and explicit methodology/profile
 and parameter identities. It returns a status plus a structured result with
 diagnostics and provenance. #9 will finalize field names, units, requiredness,
-and serialization before code is added. Public names start `NSFR_API_`;
-core and host modules use `NSFR_Core_` and `NSFR_Host_`. Exported filenames
-match module names; procedures and types use PascalCase. An API change requires
+and serialization before code is added. Standard modules start
+`NSFR_API_`, `NSFR_Core_` or `NSFR_Host_` by layer; classes, forms, sheet code
+names, tests and examples follow the
+[VBA house style](VBA_HOUSE_STYLE.md#naming). Exported filenames match
+component names; procedures and types use PascalCase. An API change requires
 a documented contract version and compatibility decision, not an implicit
 worksheet-column change.
 
@@ -57,7 +59,11 @@ regulatory percentages or results are set here. Reject NaN/infinite or
 non-numeric host values before constructing a valid typed request.
 
 Return a documented status and diagnostics for invalid input, unknown
-profile/version, arithmetic overflow, and host/import failures. Never turn
+profile/version, arithmetic overflow, and host/import failures. Core and API
+detect overflow, division by zero and other invalid arithmetic with range
+checks before the operation and return that status; they hold no `On Error`
+handler, and an unexpected runtime error propagates to the host boundary
+([ADR-008](DECISIONS.md#recorded-decisions)). Never turn
 an error, blank, or missing value into zero, a plausible NSFR result, or a
 partially successful response. Define diagnostic codes and field paths in
 #9; use stable codes for tests and descriptive text for people. An error
@@ -88,11 +94,11 @@ record. #13 owns packaging and a reproducible source-to-workbook process.
 Every exported module starts with `Option Explicit`; keep its module name and
 source filename in sync. Use the repository's [source-control policy](SOURCE_CONTROL.md):
 committed text uses LF, Git checks `.bas`, `.cls` and `.frm` out as CRLF.
-The VBE exports according to the host system code page. No charset or Git
-working-tree encoding is imposed on VBA. Until #13/#14 verifies an exact host
-code page and export/import round trip, keep source identifiers and literals
-within the portable ASCII repertoire; review any non-ASCII source separately
-with its byte-level round-trip evidence. Never normalize an exported module
+The VBE exports according to the host system code page, which differs between
+hosts, so VBA source is ASCII only and a non-ASCII character is built at run
+time with `ChrW` ([ADR-008](DECISIONS.md#recorded-decisions)). No charset or
+Git working-tree encoding is configured for VBA. #13/#14 verify the
+export/import round trip on the intended host. Never normalize an exported module
 with a text editor merely to make a test pass. Keep form binaries (`.frx`)
 paired with their source and admit each through the exact binary allowlist.
 
@@ -105,10 +111,10 @@ explicit ownership/cleanup. A new external COM reference, library or macro
 trust requirement needs an approved dependency/host decision and evidence;
 do not require blanket macro enablement.
 
-Prohibit unstructured jumps, `On Error Resume Next` across logic,
-`CallByName`, `Application.Run`, `Evaluate` and dynamic procedure names
-in core and API. A narrow `On Error GoTo` handler is permitted at a host
-resource/Excel-state boundary to restore state, emit a diagnostic and exit;
+Prohibit `On Error`, unstructured jumps, `CallByName`, `Application.Run`,
+`Evaluate` and dynamic procedure names in core and API. A narrow
+`On Error GoTo` handler is permitted at a host resource/Excel-state boundary
+to restore state, emit a diagnostic and exit;
 do not use `GoTo` for ordinary branching. Use explicit argument types,
 qualified calls, and no implicit coercion from Excel cells. Avoid active
 workbook, selection or active sheet as an input; pass the workbook and ranges

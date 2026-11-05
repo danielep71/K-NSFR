@@ -10,12 +10,12 @@ Repository source is canonical. Cross-platform text uses UTF-8 without a BOM,
 LF in committed text, and exactly one final newline with no blank line at the end
 of the file. Remove trailing spaces or tabs except
 for intentional Markdown hard breaks. Preserve the standard license text.
-VBA and Windows-native source retain their host encoding contract: the editor
-configuration does not force a charset, and no Git working-tree-encoding rule is
-active. [Implementation conventions](IMPLEMENTATION.md) define the initial source
-repertoire and host boundary; #13/#14 must record the exact code page and prove
-source import/export on the supported host. ASCII remains a
-portable subset for test examples, not an imposed source-encoding conversion.
+VBA source is ASCII only, as the
+[VBA house style](VBA_HOUSE_STYLE.md#export-compatibility) requires
+([ADR-008](DECISIONS.md#recorded-decisions)); Windows-native scripts keep their
+host encoding. Neither is converted: the editor configuration does not force a
+charset, and no Git working-tree-encoding rule is active. #13/#14 must record
+the exact code page and prove source import/export on the intended host.
 
 `.editorconfig` defines editor defaults. `.gitattributes` normalizes repository
 text to LF and checks VBA and Windows-native scripts out as CRLF for the intended

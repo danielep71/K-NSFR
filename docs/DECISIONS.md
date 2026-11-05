@@ -23,12 +23,13 @@ regulatory correctness.
 | ID | Decision and rationale | Consequence / revisit trigger |
 | --- | --- | --- |
 | ADR-001 | Keep v0.1.0 setup-only; the repository has governance tools but no numerical engine | No regulatory formulas or parameter tables; production capability requires separately reviewed work |
-| ADR-002 | Use Excel/VBA for an inspectable workbook reference implementation; retain Python/JavaScript for repository tooling | Windows 11 / Microsoft 365 desktop / VBA7 / 64-bit is the initial host target; revisit if deployment or scale requirements exceed this profile |
+| ADR-002 | Use Excel/VBA for an inspectable workbook reference implementation; retain Python/JavaScript for repository tooling | Windows 11 / Microsoft 365 desktop Excel / VBA7 / 64-bit is the initial intended host; revisit if deployment or scale requirements exceed this profile |
 | ADR-003 | Select EU CRR standard NSFR as the first planned profile; Basel is reference-only | No executable profile is currently supported; #8 must establish exact applicability and version before implementation |
 | ADR-004 | Separate core, API, and host with one-way dependencies | Determinism and independent testing take precedence over worksheet convenience; no hidden host inputs in calculations |
 | ADR-005 | Keep exported source canonical and data synthetic | #4 defines text conventions, #13 packaging; real data and operational deployment require separate approval and controls |
 | ADR-006 | Distinguish planned support, portable checks, host execution, and numerical validation | A green repository workflow cannot be cited as proof of Excel or NSFR correctness |
 | ADR-007 | Prefer explicit decimal scale for monetary inputs; Currency/Decimal remain provisional pending #9/#10 range, rounding and coercion tests | Do not implement numerical logic before those tests; supersede the preference if domain limits require another representation |
+| ADR-008 | VBA source is ASCII only; standard modules carry the `NSFR_Core_`, `NSFR_API_` or `NSFR_Host_` prefix, and classes, forms, sheets, tests and examples follow the [house-style naming table](VBA_HOUSE_STYLE.md#naming); core and API validate before an operation instead of trapping errors, and `On Error` appears only at the host boundary. Decided on 2026-11-05 in #118, after the baseline | One rule each in the house style, implementation conventions, architecture and source-control documents; revisit if host round-trip evidence (#13/#14) or the static checks (#11) require otherwise |
 
 <a id="changing-a-decision"></a>
 
