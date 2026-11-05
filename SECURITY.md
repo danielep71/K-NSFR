@@ -123,16 +123,16 @@ pins above do not apply to it.
 ## 🛡️ Security features
 
 Recorded on **2026-10-28** for the public repository and updated on
-**2026-10-29** (#75). The source column says
+**2026-10-29** (#75) and **2026-11-05** (#115). The source column says
 how each state is known; a state marked *not verified* has not been read back
 and must not be assumed.
 
 | Feature | State | Source |
 | --- | --- | --- |
-| Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | Owner statement in governance; enforcement scenarios tracked in #15 |
-| Default workflow token | Read-only | Owner statement in governance; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
-| Full-SHA action pins | Required by the repository setting | Owner statement in governance; every `uses:` in the workflow files is a full SHA |
-| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85) and read from `main` since 2026-11-03; no update PR yet. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41; Python dependency graph built on 2026-11-03 ([run 41699792588](https://github.com/danielep71/K-NSFR/actions/runs/41699792588)) |
+| Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | GitHub API read-back, 2026-10-29 ([settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md#rulesets)); enforcement scenarios tracked in #15 |
+| Default workflow token | Read-only | My statement in governance, not read back; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
+| Full-SHA action pins | Required by the repository setting | My statement in governance, not read back; every `uses:` in the workflow files is a full SHA |
+| Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85), read from `main` since 2026-11-03 and active; the first update, #109, was integrated into `main` on 2026-11-04. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41; Python activation evidenced by Dependabot PR #109; Python dependency graph built on 2026-11-03 ([run 41699792588](https://github.com/danielep71/K-NSFR/actions/runs/41699792588)) |
 | Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |

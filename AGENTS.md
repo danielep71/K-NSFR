@@ -1,4 +1,10 @@
-# Working rules for this repository
+<a id="working-rules-for-this-repository"></a>
+
+# 📐 Working rules for this repository
+
+**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Governance](docs/GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
 
 These rules apply to everyone who edits this repository, people and
 automated assistants alike. They hold the editorial and assistant rules
@@ -7,14 +13,18 @@ only. The procedures are in [governance](docs/GOVERNANCE.md) and
 For the presentation of documents (page structure, badges, glyphs and
 anchors), follow [documentation style](docs/WRITING_STYLE.md).
 
-## Voice
+<a id="voice"></a>
+
+## 🗣️ Voice
 
 - Write my decisions and responsibilities in the first person: "I decided",
   "assign me", "my approval". Never write "the maintainer" or "the owner".
 - Address instructions to the reader directly: "run the check", "you need a
   Windows host".
 
-## What the documentation describes
+<a id="what-the-documentation-describes"></a>
+
+## 📄 What the documentation describes
 
 - Operational documentation describes only the files, configuration and
   behavior of this repository. Do not refer to other repositories, to history
@@ -26,7 +36,9 @@ anchors), follow [documentation style](docs/WRITING_STYLE.md).
 - Keep editorial and assistant rules in this file only. Other documents link
   here instead of repeating them.
 
-## Branches, commits and pull requests
+<a id="branches-commits-and-pull-requests"></a>
+
+## 🌿 Branches, commits and pull requests
 
 - Name a task branch with a descriptive prefix and its issue number:
   `docs/`, `fix/`, `feat/`, `chore/` or `test/`, for example
@@ -42,11 +54,13 @@ anchors), follow [documentation style](docs/WRITING_STYLE.md).
 - State in the pull request what was validated and what was not, for example
   a desktop Excel run.
 
-## Domain conventions are intended
+<a id="domain-conventions-are-intended"></a>
+
+## 🏦 Domain conventions are intended
 
 The reference engine targets Windows 11 and Microsoft 365 desktop Excel
 (VBA7, 64-bit). Its VBA keeps a deterministic core, a typed API and a narrow
-host adapter, exported as source modules. Calculations follow the NSFR rules
-recorded in the regulatory source register (#8), and numerical results are
-validated with independent synthetic fixtures (#10). These are deliberate defaults
-of this project: keep them unless an issue I approve changes them.
+host adapter, exported as source modules. Calculations, once implemented,
+follow the NSFR rules recorded in the regulatory source register (#8), and
+their numerical results are validated with independent synthetic fixtures
+(#10). These are deliberate defaults of this project: keep them unless an issue I approve changes them.

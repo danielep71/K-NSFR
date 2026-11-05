@@ -35,7 +35,8 @@ a950f36e8fae8a70b7ba3520437219c626b4abda, imported by local commit
     removed, and local rules added since.
 
 From K-SFTs (https://github.com/danielep71/K-SFTs), commit
-e6bae6df272083ba596c9eb866b14e6f9152bc15.
+e6bae6df272083ba596c9eb866b14e6f9152bc15, imported by local commit
+76faa8cd29b395817a6257b8f99743125f620155 (#44).
 
 tools/check.py, tools/test_check.py, tools/requirements-quality-ci.txt,
 pyproject.toml
@@ -60,16 +61,18 @@ on 2026-10-31.
 
 .github/labels.json
     First imported from K-LCR; moved to the source's schema 2 catalogue by
-    #84, with the source's label descriptions by #88.
+    #84, with the source's label descriptions by #88. The bug, ci and
+    security descriptions were later aligned with docs/GOVERNANCE.md (#115).
 .github/scripts/labels-drift.mjs
-    Copied by #84.
+    First imported from K-LCR in 926e49f; replaced by this copy in #84.
 .github/scripts/labels-sync.mjs
-    Adapted by #84: keeps the guard that refuses to delete a label still used
-    by an issue or pull request, including names that contain commas, and its
-    self-tests.
+    First imported from K-LCR in 926e49f; adapted by #84: keeps the guard
+    that refuses to delete a label still used by an issue or pull request,
+    including names that contain commas, and its self-tests.
 tools/check_issues.py, tools/test_check_issues.py
-    Adapted by #90: keeps the active-milestone, target-date and
-    milestone-due rules and the target_end_date form field, with their tests.
+    First imported from K-LCR in 926e49f; adapted by #90: keeps the
+    active-milestone, target-date and milestone-due rules and the
+    target_end_date form field, with their tests.
 tools/check_workflows.py, tools/test_check_workflows.py
     Adapted by #94: the allowed write permissions and test fixtures follow
     this repository's workflows; .yaml workflow files are read and the whole

@@ -82,11 +82,11 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
-| [Contributor guide](CONTRIBUTING.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Reproducible checks and implementation review |
+| [Contributor guide](CONTRIBUTING.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Editorial rules, reproducible checks and implementation review |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
-| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights and attribution inventory |
+| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights, attributions and provenance inventory |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
 | [Traffic history](docs/TRAFFIC.md) | Daily traffic collection, its credential and its alert |
 
@@ -96,9 +96,10 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 
 The required **Repository integrity** check validates committed text, Markdown
 file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
-typing/lint/tests, label policy and
-issue triage on PRs. It runs on documentation-only and synchronization PRs.
-Actual Excel import/export and host evidence are planned under issue #14;
+typing/lint/tests, the label catalogue and the issue-form configuration. Live
+issues are audited separately by the issue triage workflow. The check runs on
+documentation-only and synchronization PRs. Actual Excel import/export and
+host evidence are planned under issues #13 and #14;
 independent numerical validation comes later. Follow the commands in
 [governance](docs/GOVERNANCE.md#local-validation) for portable local checks.
 

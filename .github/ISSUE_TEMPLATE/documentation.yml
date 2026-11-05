@@ -18,7 +18,7 @@ body:
     attributes:
       label: "📍 Document and section"
       description: File and heading, or a link to the exact line on the relevant branch.
-      placeholder: docs/GOVERNANCE.md → Integration
+      placeholder: docs/GOVERNANCE.md → Branches and integration
     validations:
       required: true
 
@@ -90,7 +90,7 @@ body:
     id: dependencies
     attributes:
       label: "🔗 Dependencies and blocking status"
-      description: Name each prerequisite as an issue link (#12) or on a line starting "External condition:". Write "None" if nothing blocks this work. Triage adds `blocked` only while a named prerequisite is unresolved.
+      description: Name each prerequisite as an issue link (#12) or on a line starting "External condition:". Write "None" if nothing blocks this work. Triage adds `blocked` only while a named prerequisite or external condition is unresolved.
       placeholder: None
     validations:
       required: true

@@ -2,7 +2,9 @@
 
 # 🤝 Contributing
 
-**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation)
+**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Governance](docs/GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
 
 <a id="start-here"></a>
 
@@ -18,8 +20,10 @@ Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 
 ## 🌿 Make a bounded change
 
-1. Use an issue form; assign me, set one priority, an open active milestone,
-   an ISO target date and an explicit dependency section.
+1. Use an issue form: keep me as assignee and the form's priority, and give
+   an ISO target end date and an explicit dependency section. Triage confirms
+   the priority and sets an open active milestone; the target end date must
+   fall before that milestone's due date.
 2. Branch from `release/0.1.0`; keep one coherent issue or correction per PR.
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),
    [VBA house style](docs/VBA_HOUSE_STYLE.md) and
@@ -38,8 +42,8 @@ Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 ## ✍️ Commit messages
 
 Write a subject in the conventional form with a type and an optional scope:
-`fix:`, `docs:`, `ci:`, `test:`, `chore:` or `fix(ci):`. Use the imperative
-mood and no trailing period. The body states:
+`feat:`, `fix:`, `docs:`, `ci:`, `test:`, `chore:` or `fix(ci):`. Use the
+imperative mood and no trailing period. The body states:
 
 - **what** changed and **why**;
 - **what was validated** at that commit, with the commands run and their

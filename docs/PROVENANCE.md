@@ -1,6 +1,7 @@
+<a id="provenance-inventory"></a>
 <a id="provenance-and-attribution-inventory"></a>
 
-# 🔗 Provenance and attribution inventory
+# 🔗 Provenance inventory
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
@@ -13,8 +14,9 @@
 Baseline reviewed for issue #3: K-NSFR release branch after issue #2, at
 `68263b950d5fda7ff31e9ac7780f15390fce7190`. The initial governance
 import is recorded in repository history at `926e49f5de0221953a5147b562631c0081f7ae06`;
-its source, revision and license are in the
-[third-party notices](licenses/THIRD_PARTY_NOTICES.txt). Imported text was adapted
+its source and revision are in the
+[third-party notices](licenses/THIRD_PARTY_NOTICES.txt), which also record the
+license of every copied or adapted file. Imported text was adapted
 for this repository, with unrelated repository references removed. This inventory
 records origins at the repository level; it does not establish transferable
 copyright ownership or permission to redistribute.
@@ -23,12 +25,12 @@ copyright ownership or permission to redistribute.
 
 ## 🗂️ Tracked surfaces
 
-| Surface | Origin and current status | Attribution/obligation review |
+| Surface | Origin and current status | Obligation review |
 | --- | --- | --- |
-| Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
-| Issue templates and triage Python code/tests | Imported (see the third-party notices), adapted for the K-NSFR issue model | Owner-authored source; MPL-2.0 confirmed by the owner in #70 |
-| GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `pr-milestones.yml` is under the MIT License | Actions use SHA-pinned upstream components; inventory each action license and notice before redistribution of bundled code |
-| README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; owner confirms notices if external distribution is proposed |
+| Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits | Source, revision and license per file in the third-party notices |
+| Issue templates and triage Python code/tests | Imported (see the third-party notices), adapted for the K-NSFR issue model | Source, revision and license per file in the third-party notices |
+| GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
+| README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook, regulatory parameters, numerical fixtures | None in the setup baseline | Future source/version, licensing and independent validation required |
 
@@ -63,9 +65,9 @@ under SECURITY.md without copying it into issue evidence.
 The baseline above is historical. The
 [third-party notices](licenses/THIRD_PARTY_NOTICES.txt) record, for every
 copied or adapted file, the source revision, local import evidence,
-adaptations and license, including the initial governance import, whose
-license the owner confirmed in #70. Source URLs there are attribution
-records, not project dependencies or product claims. The publication review is
+adaptations and license, including the initial governance import. Source
+URLs there identify origins; they are not project dependencies or product
+claims. The publication review is
 recorded in #19.
 
 | Added surface | Origin / control |
@@ -80,22 +82,22 @@ recorded in #19.
 
 <a id="runtime-tools"></a>
 
-## 🧩 Runtime tools and licenses
+## 🧩 Runtime tools
 
 Tools are downloaded, not vendored. Python wheel versions and SHA-256 hashes
 are recorded in `tools/requirements-quality-ci.txt`; all transitive packages
-are locked. Their installed distributions retain license files. The root MPL
-license does not relicense these dependencies.
+are locked. Their licenses are listed in
+[licensing](LICENSING.md#runtime-tool-licenses).
 
-| Tool | Version identity | License | Purpose |
-| --- | --- | --- | --- |
-| GitHub checkout, Python/Node setup, artifact upload actions | Full SHA in each workflow | MIT | CI execution |
-| actionlint | 1.7.12 plus archive SHA-256 in workflow | MIT | Workflow validation |
-| Ruff | 0.17.1 plus the hashes of its published files | MIT | Python lint and complexity |
-| mypy and runtime dependencies | 2.4.0 (ast-serialize 0.13.1); exact transitive pins/hashes in lock | Licenses retained in installed distributions | Strict typing |
-| PyYAML | 6.0.3 plus wheel hash | MIT | YAML parsing |
-| types-PyYAML | 6.0.12.20260906 plus wheel hash | Apache-2.0 | YAML type stubs |
-| markdown-it-py / mdurl | 4.2.0 / 0.1.2 plus hashes of their published files | MIT | Markdown parsing and URL handling |
+| Tool | Version identity | Purpose |
+| --- | --- | --- |
+| GitHub checkout, Python/Node setup, artifact upload actions | Full SHA in each workflow | CI execution |
+| actionlint | 1.7.12 plus archive SHA-256 in workflow | Workflow validation |
+| Ruff | 0.17.1 plus the hashes of its published files | Python lint and complexity |
+| mypy and runtime dependencies | 2.4.0 (ast-serialize 0.13.1, with the hashes of its published files); exact transitive pins/hashes in lock | Strict typing |
+| PyYAML | 6.0.3 plus wheel hash | YAML parsing |
+| types-PyYAML | 6.0.12.20260906 plus wheel hash | YAML type stubs |
+| markdown-it-py / mdurl | 4.2.0 plus the hashes of its published files / 0.1.2 plus wheel hash | Markdown parsing and URL handling |
 
 Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
 [markdown-it-py](https://github.com/executablebooks/markdown-it-py),
