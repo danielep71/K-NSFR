@@ -20,8 +20,8 @@ The only planned calculation entry point is an explicitly named
 `NSFR_API_Run` procedure. It accepts a typed request containing validated
 records, an as-of date, reporting perimeter, and explicit methodology/profile
 and parameter identities. It returns a status plus a structured result with
-diagnostics and provenance. #9 will finalize field names, units, requiredness,
-and serialization before code is added. Standard modules start
+diagnostics and provenance. The [contracts](contracts/CONTRACTS.md) (#9) define
+its field names, units, requiredness and serialization. Standard modules start
 `NSFR_API_`, `NSFR_Core_` or `NSFR_Host_` by layer; classes, forms, sheet code
 names, tests and examples follow the
 [VBA house style](VBA_HOUSE_STYLE.md#naming). Exported filenames match
