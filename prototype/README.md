@@ -55,3 +55,15 @@ commands from here, for example `python tools/build_template.py`.
   resolve from this directory, and `templates/README.md` was added so that
   the output directory exists; every other file is byte for byte as
   delivered, apart from Git's line-end normalization of the `.bas` files.
+
+<a id="known-defects"></a>
+
+## 🐞 Known defects
+
+These defects were found while the prototype was incorporated. They are left
+in place, because the prototype stays as delivered, and are fixed when v0.2.0
+admits the piece concerned.
+
+| Where | Defect | Effect |
+| --- | --- | --- |
+| `src/core/NSFR_Core_Import.bas`, `ParseCsvLine` | An amount is checked only for its characters (`0-9 . - + E e`) before `Val`, not for its syntax | A malformed amount such as `-` or `123-45` is imported as `0` or `123` instead of being reported as a malformed line, so the reconciliation uses an altered bank figure |
