@@ -1,0 +1,4193 @@
+{
+ "profile": "eu-crr-standard",
+ "parameter_version": "CRR Part Six Title IV (Art. 428a-428ah, as amended by Regulation (EU) 2019/876); templates of Annex XII, Implementing Regulation (EU) 2021/451; prototype transcription 2026-11-05, not checked against registered sources",
+ "buckets": [
+  "<6M",
+  "6M-1Y",
+  ">=1Y",
+  "HQLA"
+ ],
+ "rows": [
+  {
+   "template": "C 80.00",
+   "row": "0010",
+   "id": "1",
+   "item": "REQUIRED STABLE FUNDING",
+   "kind": "AGG",
+   "amount_buckets": "123H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0020",
+    "0080",
+    "0560",
+    "0620",
+    "0850",
+    "0910",
+    "0920",
+    "0960",
+    "0970",
+    "1040"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0020",
+   "id": "1.1",
+   "item": "RSF from central bank assets",
+   "kind": "AGG",
+   "amount_buckets": "123H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0030",
+    "0070"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0030",
+   "id": "1.1.1",
+   "item": "cash, reserves and HQLA exposures to central banks",
+   "kind": "AGG",
+   "amount_buckets": "123H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0040",
+    "0050",
+    "0060"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0040",
+   "id": "1.1.1.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "123H",
+   "factor_buckets": "123H",
+   "regulatory": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "reference": "Art. 428r(1)(b)-(d)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0050",
+   "id": "1.1.1.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123H",
+   "factor_buckets": "123H",
+   "regulatory": [
+    0.5,
+    0.5,
+    0.5,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0060",
+   "id": "1.1.1.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123H",
+   "factor_buckets": "123H",
+   "regulatory": [
+    1,
+    1,
+    1,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0070",
+   "id": "1.1.2",
+   "item": "other non-HQLA central bank exposures",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428r(1)(d), 428ad(c), 428ah(1)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0080",
+   "id": "1.2",
+   "item": "RSF from liquid assets",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0090",
+    "0130",
+    "0170",
+    "0210",
+    "0250",
+    "0290",
+    "0330",
+    "0370",
+    "0410",
+    "0450",
+    "0490",
+    "0520",
+    "0550"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0090",
+   "id": "1.2.1",
+   "item": "level 1 assets eligible for 0% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0100",
+    "0110",
+    "0120"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0100",
+   "id": "1.2.1.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0110",
+   "id": "1.2.1.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0120",
+   "id": "1.2.1.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0130",
+   "id": "1.2.2",
+   "item": "level 1 assets eligible for 5% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0140",
+    "0150",
+    "0160"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0140",
+   "id": "1.2.2.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.05
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0150",
+   "id": "1.2.2.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0160",
+   "id": "1.2.2.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0170",
+   "id": "1.2.3",
+   "item": "level 1 eligible for 7% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0180",
+    "0190",
+    "0200"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0180",
+   "id": "1.2.3.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.07
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0190",
+   "id": "1.2.3.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0200",
+   "id": "1.2.3.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0210",
+   "id": "1.2.4",
+   "item": "level 1 assets eligible for 12% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0220",
+    "0230",
+    "0240"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0220",
+   "id": "1.2.4.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.12
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0230",
+   "id": "1.2.4.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0240",
+   "id": "1.2.4.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0250",
+   "id": "1.2.5",
+   "item": "level 2A assets eligible for 15% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0260",
+    "0270",
+    "0280"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0260",
+   "id": "1.2.5.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.15
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0270",
+   "id": "1.2.5.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0280",
+   "id": "1.2.5.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0290",
+   "id": "1.2.6",
+   "item": "level 2A assets eligible for 20% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0300",
+    "0310",
+    "0320"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0300",
+   "id": "1.2.6.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.2
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0310",
+   "id": "1.2.6.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0320",
+   "id": "1.2.6.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0330",
+   "id": "1.2.7",
+   "item": "level 2B securitizations eligible for 25% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0340",
+    "0350",
+    "0360"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0340",
+   "id": "1.2.7.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.25
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0350",
+   "id": "1.2.7.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0360",
+   "id": "1.2.7.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0370",
+   "id": "1.2.8",
+   "item": "level 2B assets eligible for 30% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0380",
+    "0390",
+    "0400"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0380",
+   "id": "1.2.8.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.3
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0390",
+   "id": "1.2.8.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0400",
+   "id": "1.2.8.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0410",
+   "id": "1.2.9",
+   "item": "level 2B assets eligible for 35% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0420",
+    "0430",
+    "0440"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0420",
+   "id": "1.2.9.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.35
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0430",
+   "id": "1.2.9.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0440",
+   "id": "1.2.9.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0450",
+   "id": "1.2.10",
+   "item": "level 2B assets eligible for 40% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0460",
+    "0470",
+    "0480"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0460",
+   "id": "1.2.10.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.4
+   ],
+   "reference": "Art. 428r-428ac (factor equal to the LCR haircut)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0470",
+   "id": "1.2.10.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0480",
+   "id": "1.2.10.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0490",
+   "id": "1.2.11",
+   "item": "level 2B assets eligible for 50% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0500",
+    "0510"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0500",
+   "id": "1.2.11.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.5
+   ],
+   "reference": "Art. 428ad(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0510",
+   "id": "1.2.11.2",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0520",
+   "id": "1.2.12",
+   "item": "level 2B assets eligible for 55% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "H",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0530",
+    "0540"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0530",
+   "id": "1.2.12.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.55
+   ],
+   "reference": "Art. 428ae",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0540",
+   "id": "1.2.12.2",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    1
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0550",
+   "id": "1.2.13",
+   "item": "HQLAs encumbered for a residual maturity of one year or more in cover pool",
+   "kind": "LEAF",
+   "amount_buckets": "H",
+   "factor_buckets": "H",
+   "regulatory": [
+    null,
+    null,
+    null,
+    0.85
+   ],
+   "reference": "Art. 428ag(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0560",
+   "id": "1.3",
+   "item": "RSF from securities other than liquid assets",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0570",
+    "0600",
+    "0610"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0570",
+   "id": "1.3.1",
+   "item": "non- HQLA securities and exchange traded equities",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0580",
+    "0590"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0580",
+   "id": "1.3.1.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428ad(d), 428ag(c)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0590",
+   "id": "1.3.1.2",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0600",
+   "id": "1.3.2",
+   "item": "non-HQLA non-exchange traded equities",
+   "kind": "LEAF",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(d)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0610",
+   "id": "1.3.3",
+   "item": "non-HQLA securities encumbered for a residual maturity of one year or more in a cover pool",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.85,
+    0.85,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428ag(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0620",
+   "id": "1.4",
+   "item": "RSF from loans",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0630",
+    "0640",
+    "0730",
+    "0740",
+    "0750",
+    "0800",
+    "0840"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0630",
+   "id": "1.4.1",
+   "item": "operational deposits",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428ad(e), 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0640",
+   "id": "1.4.2",
+   "item": "securities financing transactions with financial customers",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0650",
+    "0690"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0650",
+   "id": "1.4.2.1",
+   "item": "collateralized by level 1 assets eligible for 0% LCR haircut",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0660",
+    "0670",
+    "0680"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0660",
+   "id": "1.4.2.1.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428r(1)(g), 428ad, 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0670",
+   "id": "1.4.2.1.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428ad(b), 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0680",
+   "id": "1.4.2.1.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0690",
+   "id": "1.4.2.2",
+   "item": "collateralized by other assets",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0700",
+    "0710",
+    "0720"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0700",
+   "id": "1.4.2.2.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.05,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428s(1)(b), 428ad, 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0710",
+   "id": "1.4.2.2.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428ad(b), 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0720",
+   "id": "1.4.2.2.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0730",
+   "id": "1.4.3",
+   "item": "other loans and advances to financial customers",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.1,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428u(b), 428ad(f), 428ah",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0740",
+   "id": "1.4.4",
+   "item": "assets encumbered for a residual maturity of one year or more in cover pool",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.85,
+    0.85,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428ag(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0750",
+   "id": "1.4.5",
+   "item": "loans to non-financial customers other than central banks where those loans are assigned a risk weight of 35% or less",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0770",
+    "0780",
+    "0790"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0760",
+   "id": "1.4.5.0.1",
+   "item": "of which, residential mortgages",
+   "kind": "MEMO",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0770",
+   "id": "1.4.5.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than six months",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    0.65,
+    null
+   ],
+   "reference": "Art. 428ad(g), 428af",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0780",
+   "id": "1.4.5.2",
+   "item": "encumbered for a residual maturity of at least six months but less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    0.65,
+    null
+   ],
+   "reference": "Art. 428ad(b), 428af",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0790",
+   "id": "1.4.5.3",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0800",
+   "id": "1.4.6",
+   "item": "other loans to non-financial customers other than central banks",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0820",
+    "0830"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0810",
+   "id": "1.4.6.0.1",
+   "item": "of which, residential mortgages",
+   "kind": "MEMO",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0820",
+   "id": "1.4.6.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428ad(g), 428ag(d)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0830",
+   "id": "1.4.6.2",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0840",
+   "id": "1.4.7",
+   "item": "trade finance on-balance sheet products",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.1,
+    0.5,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428u(c), 428ad, 428ag",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0850",
+   "id": "1.5",
+   "item": "RSF from interdependent assets",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0860",
+    "0870",
+    "0880",
+    "0890",
+    "0900"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0860",
+   "id": "1.5.1",
+   "item": "centralised regulated savings",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428r(1)(f)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0870",
+   "id": "1.5.2",
+   "item": "promotional loans and credit and liquidity facilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428r(1)(f)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0880",
+   "id": "1.5.3",
+   "item": "eligible covered bonds",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428r(1)(f)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0890",
+   "id": "1.5.4",
+   "item": "derivatives client clearing activities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428r(1)(f)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0900",
+   "id": "1.5.5",
+   "item": "others",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428r(1)(f)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0910",
+   "id": "1.6",
+   "item": "RSF from assets within a group or an IPS if subject to preferential treatment",
+   "kind": "APPL",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0920",
+   "id": "1.7",
+   "item": "RSF from derivatives",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0930",
+    "0940",
+    "0950"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0930",
+   "id": "1.7.1",
+   "item": "required stable funding for derivative liabilities",
+   "kind": "LEAF",
+   "amount_buckets": "1",
+   "factor_buckets": "1",
+   "regulatory": [
+    0.05,
+    null,
+    null,
+    null
+   ],
+   "reference": "Art. 428s(2)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0940",
+   "id": "1.7.2",
+   "item": "NSFR derivative assets",
+   "kind": "LEAF",
+   "amount_buckets": "1",
+   "factor_buckets": "1",
+   "regulatory": [
+    1,
+    null,
+    null,
+    null
+   ],
+   "reference": "Art. 428ah(2)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0950",
+   "id": "1.7.3",
+   "item": "initial margin posted",
+   "kind": "LEAF",
+   "amount_buckets": "123H",
+   "factor_buckets": "123H",
+   "regulatory": [
+    0.85,
+    0.85,
+    0.85,
+    0.85
+   ],
+   "reference": "Art. 428ag(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0960",
+   "id": "1.8",
+   "item": "RSF from contributions to CCP default fund",
+   "kind": "LEAF",
+   "amount_buckets": "123H",
+   "factor_buckets": "123H",
+   "regulatory": [
+    0.85,
+    0.85,
+    0.85,
+    0.85
+   ],
+   "reference": "Art. 428ag(c)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "0970",
+   "id": "1.9",
+   "item": "RSF from other assets",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0980",
+    "1010",
+    "1020",
+    "1030"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0980",
+   "id": "1.9.1",
+   "item": "physically traded commodities",
+   "kind": "AGG",
+   "amount_buckets": "3",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0990",
+    "1000"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "0990",
+   "id": "1.9.1.1",
+   "item": "unencumbered or encumbered for a residual maturity of less than one year",
+   "kind": "LEAF",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    0.85,
+    null
+   ],
+   "reference": "Art. 428ag(e)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1000",
+   "id": "1.9.1.2",
+   "item": "encumbered for a residual maturity of one year or more",
+   "kind": "LEAF",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(a)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1010",
+   "id": "1.9.2",
+   "item": "trade date receivables",
+   "kind": "LEAF",
+   "amount_buckets": "1",
+   "factor_buckets": "1",
+   "regulatory": [
+    0,
+    null,
+    null,
+    null
+   ],
+   "reference": "Art. 428r(1)(e)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1020",
+   "id": "1.9.3",
+   "item": "non-performing assets",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(b)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1030",
+   "id": "1.9.4",
+   "item": "other assets",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428ad(h), 428ah(1)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1040",
+   "id": "1.10",
+   "item": "RSF from OBS items",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "1050",
+    "1060",
+    "1070",
+    "1080",
+    "1090"
+   ]
+  },
+  {
+   "template": "C 80.00",
+   "row": "1050",
+   "id": "1.10.1",
+   "item": "committed facilities within a group or an IPS if subject to preferential treatment",
+   "kind": "APPL",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1060",
+   "id": "1.10.2",
+   "item": "committed facilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.05,
+    0.05,
+    0.05,
+    null
+   ],
+   "reference": "Art. 428s(3)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1070",
+   "id": "1.10.3",
+   "item": "trade finance off-balance sheet items",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.05,
+    0.075,
+    0.1,
+    null
+   ],
+   "reference": "Art. 428s(4), 428t, 428u(d)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1080",
+   "id": "1.10.4",
+   "item": "non-performing off-balance sheet items",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    1,
+    1,
+    1,
+    null
+   ],
+   "reference": "Art. 428ah(1)(c)",
+   "children": []
+  },
+  {
+   "template": "C 80.00",
+   "row": "1090",
+   "id": "1.10.5",
+   "item": "other off-balance sheet exposures for which the competent authority has determined RSF factors",
+   "kind": "APPL",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0010",
+   "id": "2",
+   "item": "AVAILABLE STABLE FUNDING",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0020",
+    "0070",
+    "0130",
+    "0220",
+    "0230",
+    "0310",
+    "0320",
+    "0330",
+    "0390"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0020",
+   "id": "2.1",
+   "item": "ASF from capital items and instruments",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0030",
+    "0040",
+    "0050",
+    "0060"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0030",
+   "id": "2.1.1",
+   "item": "Common Equity Tier 1",
+   "kind": "LEAF",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    1,
+    null
+   ],
+   "reference": "Art. 428o(a)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0040",
+   "id": "2.1.2",
+   "item": "Additional Tier 1",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "3",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(d), 428l(d), 428o(b); EBA Q&A 2021_6017",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0050",
+   "id": "2.1.3",
+   "item": "Tier 2",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "3",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(d), 428l(d), 428o(c); EBA Q&A 2021_6017",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0060",
+   "id": "2.1.4",
+   "item": "Other capital instruments",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "3",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(d), 428l(d), 428o(d); EBA Q&A 2021_6017",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0070",
+   "id": "2.2",
+   "item": "ASF from retail deposits",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0090",
+    "0110"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0080",
+   "id": "2.2.0.1",
+   "item": "of which, retail bonds",
+   "kind": "MEMO",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0090",
+   "id": "2.2.1",
+   "item": "Stable retail deposits",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.95,
+    0.95,
+    1,
+    null
+   ],
+   "reference": "Art. 428n, 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0100",
+   "id": "2.2.0.2",
+   "item": "of which with a material early withdrawable penalty",
+   "kind": "MEMO",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0110",
+   "id": "2.2.2",
+   "item": "Other retail deposits",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.9,
+    0.9,
+    1,
+    null
+   ],
+   "reference": "Art. 428m, 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0120",
+   "id": "2.2.0.3",
+   "item": "of which with a material early withdrawable penalty",
+   "kind": "MEMO",
+   "amount_buckets": "3",
+   "factor_buckets": "3",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0130",
+   "id": "2.3",
+   "item": "ASF from other non-financial customers (except central banks)",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0160",
+    "0170",
+    "0180",
+    "0190",
+    "0200",
+    "0210"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0140",
+   "id": "2.3.0.1",
+   "item": "of which, securities financing transactions",
+   "kind": "MEMO",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0150",
+   "id": "2.3.0.2",
+   "item": "of which, operational deposits",
+   "kind": "MEMO",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0160",
+   "id": "2.3.1",
+   "item": "Liabilities provided by the central government of a Member State or a third country",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0170",
+   "id": "2.3.2",
+   "item": "Liabilities provided by regional governments or local authorities of a Member State or a third country",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0180",
+   "id": "2.3.3",
+   "item": "Liabilities provided by public sector entities of a Member State or a third country",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0190",
+   "id": "2.3.4",
+   "item": "Liabilities provided by multilateral development banks and international organisations",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0200",
+   "id": "2.3.5",
+   "item": "Liabilities provided by non-financial corporate customers",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0210",
+   "id": "2.3.6",
+   "item": "Liabilities provided by credit unions, personal investment companies and deposit brokers",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0220",
+   "id": "2.4",
+   "item": "ASF from liabilities and committed facilities within a group or an IPS if subject to preferential treatment",
+   "kind": "APPL",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0230",
+   "id": "2.5",
+   "item": "ASF from financial customers and central banks",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0250",
+    "0260",
+    "0270"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0240",
+   "id": "2.5.0.1",
+   "item": "of which, sight deposits provided by network member to central institution",
+   "kind": "MEMO",
+   "amount_buckets": "1",
+   "factor_buckets": "1",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0250",
+   "id": "2.5.1",
+   "item": "Liabilities provided by the ECB or the central bank of a Member State",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(b), 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0260",
+   "id": "2.5.2",
+   "item": "Liabilities provided by the central bank of a third country",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(b), 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0270",
+   "id": "2.5.3",
+   "item": "Liabilities provided by financial customers",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0280",
+    "0290",
+    "0300"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0280",
+   "id": "2.5.3.1",
+   "item": "Operational deposits",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "123",
+   "regulatory": [
+    0.5,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428l(a), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0290",
+   "id": "2.5.3.2",
+   "item": "Excess operational deposits",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(b), 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0300",
+   "id": "2.5.3.3",
+   "item": "Other liabilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(b), 428l(b), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0310",
+   "id": "2.6",
+   "item": "ASF from liabilities provided where the counterparty cannot be determined",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(c), 428l(c), 428o(e)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0320",
+   "id": "2.7",
+   "item": "ASF from net derivatives liabilities",
+   "kind": "LEAF",
+   "amount_buckets": "1",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    null,
+    null,
+    null
+   ],
+   "reference": "Art. 428k(3)(a)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0330",
+   "id": "2.8",
+   "item": "ASF from interdependent liabilities",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0340",
+    "0350",
+    "0360",
+    "0370",
+    "0380"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0340",
+   "id": "2.8.1",
+   "item": "Centralised regulated savings",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428k(1)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0350",
+   "id": "2.8.2",
+   "item": "Promotional loans and relevant credit and liquidity facilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428k(1)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0360",
+   "id": "2.8.3",
+   "item": "Eligible covered bonds",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428k(1)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0370",
+   "id": "2.8.4",
+   "item": "Derivatives client clearing activities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428k(1)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0380",
+   "id": "2.8.5",
+   "item": "Others",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428f, 428k(1)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0390",
+   "id": "2.9",
+   "item": "ASF from other liabilities",
+   "kind": "AGG",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    null,
+    null,
+    null,
+    null
+   ],
+   "reference": "",
+   "children": [
+    "0400",
+    "0410",
+    "0420",
+    "0430"
+   ]
+  },
+  {
+   "template": "C 81.00",
+   "row": "0400",
+   "id": "2.9.1",
+   "item": "Trade date payables",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "",
+   "regulatory": [
+    0,
+    0,
+    0,
+    null
+   ],
+   "reference": "Art. 428k(2)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0410",
+   "id": "2.9.2",
+   "item": "Deferred tax liabilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(e), 428l(e), 428o(f)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0420",
+   "id": "2.9.3",
+   "item": "Minority interests",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(e), 428l(e), 428o(f)",
+   "children": []
+  },
+  {
+   "template": "C 81.00",
+   "row": "0430",
+   "id": "2.9.4",
+   "item": "Other liabilities",
+   "kind": "LEAF",
+   "amount_buckets": "123",
+   "factor_buckets": "23",
+   "regulatory": [
+    0,
+    0.5,
+    1,
+    null
+   ],
+   "reference": "Art. 428k(3)(h), 428l(c), 428o(e)",
+   "children": []
+  }
+ ],
+ "categories": [
+  {
+   "category": "CB_HQLA",
+   "description": "Cash, central bank reserves and HQLA exposures to central banks",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.1.1.1",
+    "1.1.1.2",
+    "1.1.1.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "CB_OTHER",
+   "description": "Other non-HQLA exposures to central banks",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.1.2",
+    "1.1.2",
+    "1.1.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L1_0",
+   "description": "Level 1 assets, 0% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.1.1",
+    "1.2.1.2",
+    "1.2.1.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L1_CIU5",
+   "description": "Level 1 CIU units, 5% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.2.1",
+    "1.2.2.2",
+    "1.2.2.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L1_CB7",
+   "description": "Level 1 extremely high quality covered bonds, 7% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.3.1",
+    "1.2.3.2",
+    "1.2.3.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L1_CIU12",
+   "description": "Level 1 CIU units, 12% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.4.1",
+    "1.2.4.2",
+    "1.2.4.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2A_15",
+   "description": "Level 2A assets, 15% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.5.1",
+    "1.2.5.2",
+    "1.2.5.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2A_CIU20",
+   "description": "Level 2A CIU units, 20% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.6.1",
+    "1.2.6.2",
+    "1.2.6.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_SEC25",
+   "description": "Level 2B securitisations, 25% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.7.1",
+    "1.2.7.2",
+    "1.2.7.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_30",
+   "description": "Level 2B assets, 30% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.8.1",
+    "1.2.8.2",
+    "1.2.8.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_CIU35",
+   "description": "Level 2B CIU units, 35% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.9.1",
+    "1.2.9.2",
+    "1.2.9.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_CIU40",
+   "description": "Level 2B CIU units, 40% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.10.1",
+    "1.2.10.2",
+    "1.2.10.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_50",
+   "description": "Level 2B assets, 50% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.11.1",
+    "1.2.11.1",
+    "1.2.11.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_L2B_CIU55",
+   "description": "Level 2B CIU units, 55% LCR haircut",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.12.1",
+    "1.2.12.1",
+    "1.2.12.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "HQLA_COVER_POOL",
+   "description": "HQLA encumbered for one year or more in a cover pool",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.2.13",
+    "1.2.13",
+    "1.2.13"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "SEC_NONHQLA",
+   "description": "Non-HQLA securities and exchange traded equities",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.3.1.1",
+    "1.3.1.1",
+    "1.3.1.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "EQ_NONTRADED",
+   "description": "Non-HQLA non-exchange traded equities",
+   "bucket_rule": "FIXED3",
+   "undated": "",
+   "row_ids": [
+    "1.3.2",
+    "1.3.2",
+    "1.3.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "SEC_COVER_POOL",
+   "description": "Non-HQLA securities encumbered for one year or more in a cover pool",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.3.3",
+    "1.3.3",
+    "1.3.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "DEP_OPERATIONAL",
+   "description": "Operational deposits held at other financial institutions",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.4.1",
+    "1.4.1",
+    "1.4.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "SFT_FC_L1",
+   "description": "SFTs with financial customers collateralised by Level 1 (0% haircut) assets",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.2.1.1",
+    "1.4.2.1.2",
+    "1.4.2.1.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "SFT_FC_OTHER",
+   "description": "SFTs with financial customers collateralised by other assets",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.2.2.1",
+    "1.4.2.2.2",
+    "1.4.2.2.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "LOAN_FC_OTHER",
+   "description": "Other loans and advances to financial customers",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.4.3",
+    "1.4.3",
+    "1.4.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "LOAN_COVER_POOL",
+   "description": "Assets encumbered for one year or more in a cover pool",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.4.4",
+    "1.4.4",
+    "1.4.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "LOAN_NFC_RW35",
+   "description": "Loans to non-financial customers, risk weight 35% or less",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.5.1",
+    "1.4.5.2",
+    "1.4.5.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "MORTGAGE_RW35",
+   "description": "Residential mortgages, risk weight 35% or less",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.5.1",
+    "1.4.5.2",
+    "1.4.5.3"
+   ],
+   "memo_id": "1.4.5.0.1",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "LOAN_NFC_OTHER",
+   "description": "Other loans to non-financial customers",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.6.1",
+    "1.4.6.1",
+    "1.4.6.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "MORTGAGE_OTHER",
+   "description": "Residential mortgages, risk weight above 35%",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.6.1",
+    "1.4.6.1",
+    "1.4.6.2"
+   ],
+   "memo_id": "1.4.6.0.1",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "TRADE_FIN_ONBS",
+   "description": "Trade finance on-balance-sheet products",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "1.4.7",
+    "1.4.7",
+    "1.4.7"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "INTERDEP_A_SAVINGS",
+   "description": "Interdependent assets: centralised regulated savings",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.5.1",
+    "1.5.1",
+    "1.5.1"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 80.00"
+  },
+  {
+   "category": "INTERDEP_A_PROMO",
+   "description": "Interdependent assets: promotional loans and facilities",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.5.2",
+    "1.5.2",
+    "1.5.2"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 80.00"
+  },
+  {
+   "category": "INTERDEP_A_COVERED",
+   "description": "Interdependent assets: eligible covered bonds",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.5.3",
+    "1.5.3",
+    "1.5.3"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 80.00"
+  },
+  {
+   "category": "INTERDEP_A_CLEARING",
+   "description": "Interdependent assets: derivatives client clearing",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.5.4",
+    "1.5.4",
+    "1.5.4"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 80.00"
+  },
+  {
+   "category": "INTERDEP_A_OTHER",
+   "description": "Interdependent assets: others",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.5.5",
+    "1.5.5",
+    "1.5.5"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 80.00"
+  },
+  {
+   "category": "GROUP_IPS_ASSET",
+   "description": "Assets within a group or an IPS with preferential treatment",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.6",
+    "1.6",
+    "1.6"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428h",
+   "template": "C 80.00"
+  },
+  {
+   "category": "DRV_IM_POSTED",
+   "description": "Initial margin posted, non-HQLA",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.7.3",
+    "1.7.3",
+    "1.7.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "DRV_IM_POSTED_HQLA",
+   "description": "Initial margin posted, HQLA",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.7.3",
+    "1.7.3",
+    "1.7.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "CCP_DEFAULT_FUND",
+   "description": "Contributions to a CCP default fund, non-HQLA",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.8",
+    "1.8",
+    "1.8"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "CCP_DEFAULT_FUND_HQLA",
+   "description": "Contributions to a CCP default fund, HQLA",
+   "bucket_rule": "HQLA",
+   "undated": "",
+   "row_ids": [
+    "1.8",
+    "1.8",
+    "1.8"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "COMMODITY",
+   "description": "Physically traded commodities",
+   "bucket_rule": "FIXED3",
+   "undated": "",
+   "row_ids": [
+    "1.9.1.1",
+    "1.9.1.1",
+    "1.9.1.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "TRADE_DATE_RECV",
+   "description": "Trade date receivables",
+   "bucket_rule": "FIXED1",
+   "undated": "",
+   "row_ids": [
+    "1.9.2",
+    "1.9.2",
+    "1.9.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "NPE",
+   "description": "Non-performing assets",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.9.3",
+    "1.9.3",
+    "1.9.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OTHER_ASSET",
+   "description": "Other assets",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "1.9.4",
+    "1.9.4",
+    "1.9.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OBS_GROUP_IPS",
+   "description": "Committed facilities within a group or an IPS with preferential treatment",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.10.1",
+    "1.10.1",
+    "1.10.1"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428h",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OBS_COMMITTED",
+   "description": "Committed credit and liquidity facilities",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.10.2",
+    "1.10.2",
+    "1.10.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OBS_TRADE_FIN",
+   "description": "Trade finance off-balance-sheet items",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.10.3",
+    "1.10.3",
+    "1.10.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OBS_NPE",
+   "description": "Non-performing off-balance-sheet items",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.10.4",
+    "1.10.4",
+    "1.10.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "OBS_OTHER_CA",
+   "description": "Other off-balance-sheet exposures with factors set by the competent authority",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "1.10.5",
+    "1.10.5",
+    "1.10.5"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 80.00"
+  },
+  {
+   "category": "DRV_FV_ASSET",
+   "description": "Derivatives with positive fair value, netted per netting set",
+   "bucket_rule": "DERIVATIVE",
+   "undated": "",
+   "row_ids": [
+    "",
+    "",
+    ""
+   ],
+   "memo_id": "",
+   "reference": "Art. 428d, 428s(2), 428ah(2), 428k(3)(a)",
+   "template": ""
+  },
+  {
+   "category": "DRV_FV_LIAB",
+   "description": "Derivatives with negative fair value (absolute), netted per netting set",
+   "bucket_rule": "DERIVATIVE",
+   "undated": "",
+   "row_ids": [
+    "",
+    "",
+    ""
+   ],
+   "memo_id": "",
+   "reference": "Art. 428d, 428s(2), 428ah(2), 428k(3)(a)",
+   "template": ""
+  },
+  {
+   "category": "DRV_VM_RECEIVED",
+   "description": "Eligible variation margin received on derivatives",
+   "bucket_rule": "DERIVATIVE",
+   "undated": "",
+   "row_ids": [
+    "",
+    "",
+    ""
+   ],
+   "memo_id": "",
+   "reference": "Art. 428d, 428s(2), 428ah(2), 428k(3)(a)",
+   "template": ""
+  },
+  {
+   "category": "DRV_VM_POSTED",
+   "description": "Variation margin posted on derivatives",
+   "bucket_rule": "DERIVATIVE",
+   "undated": "",
+   "row_ids": [
+    "",
+    "",
+    ""
+   ],
+   "memo_id": "",
+   "reference": "Art. 428d, 428s(2), 428ah(2), 428k(3)(a)",
+   "template": ""
+  },
+  {
+   "category": "CAP_CET1",
+   "description": "Common Equity Tier 1 items",
+   "bucket_rule": "FIXED3",
+   "undated": "",
+   "row_ids": [
+    "2.1.1",
+    "2.1.1",
+    "2.1.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "CAP_AT1",
+   "description": "Additional Tier 1 instruments",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.1.2",
+    "2.1.2",
+    "2.1.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "CAP_T2",
+   "description": "Tier 2 instruments",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.1.3",
+    "2.1.3",
+    "2.1.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "CAP_OTHER",
+   "description": "Other capital instruments",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.1.4",
+    "2.1.4",
+    "2.1.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "RET_STABLE",
+   "description": "Stable retail deposits",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.2.1",
+    "2.2.1",
+    "2.2.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "RET_STABLE_PENALTY",
+   "description": "Stable retail deposits with a material early withdrawal penalty",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.2.1",
+    "2.2.1",
+    "2.2.1"
+   ],
+   "memo_id": "2.2.0.2",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "RET_OTHER",
+   "description": "Other retail deposits",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.2.2",
+    "2.2.2",
+    "2.2.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "RET_OTHER_PENALTY",
+   "description": "Other retail deposits with a material early withdrawal penalty",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.2.2",
+    "2.2.2",
+    "2.2.2"
+   ],
+   "memo_id": "2.2.0.3",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "RET_BOND",
+   "description": "Retail bonds",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.2.2",
+    "2.2.2",
+    "2.2.2"
+   ],
+   "memo_id": "2.2.0.1",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_SOV",
+   "description": "Liabilities to central governments",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.1",
+    "2.3.1",
+    "2.3.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_RGLA",
+   "description": "Liabilities to regional governments and local authorities",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.2",
+    "2.3.2",
+    "2.3.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_PSE",
+   "description": "Liabilities to public sector entities",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.3",
+    "2.3.3",
+    "2.3.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_MDB",
+   "description": "Liabilities to multilateral development banks and international organisations",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.4",
+    "2.3.4",
+    "2.3.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_CORP",
+   "description": "Liabilities to non-financial corporates",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.5",
+    "2.3.5",
+    "2.3.5"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_CU",
+   "description": "Liabilities to credit unions, personal investment companies and deposit brokers",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.6",
+    "2.3.6",
+    "2.3.6"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_CORP_SFT",
+   "description": "SFT liabilities to non-financial corporates",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.3.5",
+    "2.3.5",
+    "2.3.5"
+   ],
+   "memo_id": "2.3.0.1",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "NFC_CORP_OPDEP",
+   "description": "Operational deposits of non-financial corporates",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.3.5",
+    "2.3.5",
+    "2.3.5"
+   ],
+   "memo_id": "2.3.0.2",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "GROUP_IPS_LIAB",
+   "description": "Liabilities and committed facilities within a group or an IPS with preferential treatment",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.4",
+    "2.4",
+    "2.4"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428h",
+   "template": "C 81.00"
+  },
+  {
+   "category": "CB_ECB",
+   "description": "Liabilities to the ECB or a Member State central bank",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.5.1",
+    "2.5.1",
+    "2.5.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "CB_THIRD",
+   "description": "Liabilities to a third-country central bank",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.5.2",
+    "2.5.2",
+    "2.5.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "FC_OPDEP",
+   "description": "Operational deposits of financial customers",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.5.3.1",
+    "2.5.3.1",
+    "2.5.3.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "FC_EXCESS_OPDEP",
+   "description": "Excess operational deposits of financial customers",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.5.3.2",
+    "2.5.3.2",
+    "2.5.3.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "FC_OTHER",
+   "description": "Other liabilities to financial customers",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.5.3.3",
+    "2.5.3.3",
+    "2.5.3.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "FC_NETWORK_SIGHT",
+   "description": "Sight deposits of a network member at the central institution",
+   "bucket_rule": "FIXED1",
+   "undated": "",
+   "row_ids": [
+    "2.5.3.3",
+    "2.5.3.3",
+    "2.5.3.3"
+   ],
+   "memo_id": "2.5.0.1",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "UNDETERMINED",
+   "description": "Liabilities whose counterparty cannot be determined",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.6",
+    "2.6",
+    "2.6"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "INTERDEP_L_SAVINGS",
+   "description": "Interdependent liabilities: centralised regulated savings",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.8.1",
+    "2.8.1",
+    "2.8.1"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 81.00"
+  },
+  {
+   "category": "INTERDEP_L_PROMO",
+   "description": "Interdependent liabilities: promotional loans and facilities",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.8.2",
+    "2.8.2",
+    "2.8.2"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 81.00"
+  },
+  {
+   "category": "INTERDEP_L_COVERED",
+   "description": "Interdependent liabilities: eligible covered bonds",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.8.3",
+    "2.8.3",
+    "2.8.3"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 81.00"
+  },
+  {
+   "category": "INTERDEP_L_CLEARING",
+   "description": "Interdependent liabilities: derivatives client clearing",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.8.4",
+    "2.8.4",
+    "2.8.4"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 81.00"
+  },
+  {
+   "category": "INTERDEP_L_OTHER",
+   "description": "Interdependent liabilities: others",
+   "bucket_rule": "MATURITY",
+   "undated": "3",
+   "row_ids": [
+    "2.8.5",
+    "2.8.5",
+    "2.8.5"
+   ],
+   "memo_id": "",
+   "reference": "Art. 428f",
+   "template": "C 81.00"
+  },
+  {
+   "category": "TRADE_DATE_PAY",
+   "description": "Trade date payables",
+   "bucket_rule": "MATURITY",
+   "undated": "1",
+   "row_ids": [
+    "2.9.1",
+    "2.9.1",
+    "2.9.1"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "DTL",
+   "description": "Deferred tax liabilities (nearest possible maturity)",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.9.2",
+    "2.9.2",
+    "2.9.2"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "MINORITY",
+   "description": "Minority interests (nearest possible maturity)",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.9.3",
+    "2.9.3",
+    "2.9.3"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  },
+  {
+   "category": "OTHER_LIAB",
+   "description": "Other liabilities",
+   "bucket_rule": "MATURITY",
+   "undated": "",
+   "row_ids": [
+    "2.9.4",
+    "2.9.4",
+    "2.9.4"
+   ],
+   "memo_id": "",
+   "reference": "",
+   "template": "C 81.00"
+  }
+ ],
+ "summary": [
+  {
+   "row": "0010",
+   "id": "1",
+   "item": "REQUIRED STABLE FUNDING",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0020",
+   "id": "1.1",
+   "item": "RSF from central bank assets",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.1"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0030",
+   "id": "1.2",
+   "item": "RSF from liquid assets",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.2"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0040",
+   "id": "1.3",
+   "item": "RSF from securities other than liquid assets",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.3"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0050",
+   "id": "1.4",
+   "item": "RSF from loans",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.4"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0060",
+   "id": "1.5",
+   "item": "RSF from interdependent assets",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.5"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0070",
+   "id": "1.6",
+   "item": "RSF from assets within a group or an IPS if subject to preferential treatment",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.6"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0080",
+   "id": "1.7",
+   "item": "RSF from derivatives",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.7"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0090",
+   "id": "1.8",
+   "item": "RSF from contributions to CCP default fund",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.8"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0100",
+   "id": "1.9",
+   "item": "RSF from other assets",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.9"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0110",
+   "id": "1.10",
+   "item": "RSF from OBS items",
+   "measure": "RSF",
+   "plus": [
+    "C 80.00|1.10"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0120",
+   "id": "2",
+   "item": "AVAILABLE STABLE FUNDING",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0130",
+   "id": "2.1",
+   "item": "ASF from capital items and instruments",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.1"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0140",
+   "id": "2.2",
+   "item": "ASF from retail deposits",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.2"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0150",
+   "id": "2.3",
+   "item": "ASF from other non-financial customers (except central banks)",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.3"
+   ],
+   "minus": [
+    "C 81.00|2.3.0.2"
+   ]
+  },
+  {
+   "row": "0160",
+   "id": "2.4",
+   "item": "ASF from operational deposits",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.3.0.2",
+    "C 81.00|2.5.3.1"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0170",
+   "id": "2.5",
+   "item": "ASF from liabilities and committed facilities within a group or an IPS if subject to preferential treatment",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.4"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0180",
+   "id": "2.6",
+   "item": "ASF from financial customers and central banks",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.5"
+   ],
+   "minus": [
+    "C 81.00|2.5.3.1"
+   ]
+  },
+  {
+   "row": "0190",
+   "id": "2.7",
+   "item": "ASF from liabilities provided where the counterparty cannot be determined",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.6"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0200",
+   "id": "2.8",
+   "item": "ASF from interdependent liabilities",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.8"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0210",
+   "id": "2.9",
+   "item": "ASF from other liabilities",
+   "measure": "ASF",
+   "plus": [
+    "C 81.00|2.9",
+    "C 81.00|2.7"
+   ],
+   "minus": []
+  },
+  {
+   "row": "0220",
+   "id": "3",
+   "item": "NSFR",
+   "measure": "NSFR",
+   "plus": [],
+   "minus": []
+  }
+ ]
+}

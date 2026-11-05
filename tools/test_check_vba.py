@@ -361,6 +361,22 @@ class CommandLineTests(unittest.TestCase):
         code, _ = self.run_main({CORE: source(CORE)}, waivers=None)
         self.assertEqual(code, 2)
 
+    def test_only_the_prototype_directory_is_not_checked(self) -> None:
+        self.assertFalse(check_vba.admitted("prototype/src/core/NSFR_Core_Engine.bas"))
+        for path in ("src/core/NSFR_Core_Engine.bas", "prototypes/Loose.bas", "tests/prototype/Loose.bas",
+                     "src/prototype/Loose.bas"):
+            with self.subTest(path=path):
+                self.assertTrue(check_vba.admitted(path))
+        code, output = self.run_main({"prototype/src/core/Loose.bas": b"GoTo Done\n",
+                                      CORE: source(CORE, "x = 1")})
+        self.assertEqual(code, 0, output)
+        self.assertIn("1 VBA file(s), 0 finding(s); 1 not admitted in prototype/, not checked", output)
+
+    def test_vba_beside_the_prototype_directory_is_still_checked(self) -> None:
+        code, output = self.run_main({"prototypes/Loose.bas": source("prototypes/Loose.bas")})
+        self.assertEqual(code, 1)
+        self.assertIn("[vba-location]", output)
+
     def test_the_repository_passes(self) -> None:
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
