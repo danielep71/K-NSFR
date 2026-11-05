@@ -19,6 +19,7 @@ Milestones belong to issues only; leave the PR milestone empty.
 ## 🔎 Candidate and validation
 
 - Exact current PR head (full SHA):
+- Tested merge SHA (GitHub's synthetic merge in the Repository integrity run):
 - Repository integrity run and result:
 - Local validation commands and results:
 - Excel/Windows host validation: NOT RUN — reason and follow-up issue, or exact build/bitness, candidate SHA and evidence.

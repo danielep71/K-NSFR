@@ -21,7 +21,7 @@ Snapshot date: **2026-10-29 (Europe/Rome)**. Tracking: #80.
 ## 🧭 Reading the record
 
 - **Verified**: read from the GitHub API on the snapshot date.
-- **Owner statement**: stated by the owner and recorded in governance; not read back.
+- **My statement**: stated by me and recorded in governance; not read back.
 - **Unverified**: no read-back on the snapshot date. This never means disabled.
 
 No setting was changed to prepare this record. Configuration read-back is not
@@ -37,7 +37,7 @@ read 2026-10-29. Every row is **verified**.
 | Setting | Observed value | Interpretation |
 | --- | --- | --- |
 | Visibility / default branch | Public / `main` | Development targets `release/0.1.0`, not `main`. |
-| Issues / Wiki | Enabled / enabled | The wiki is a separate repository, published by the owner. |
+| Issues / Wiki | Enabled / enabled | The wiki is a separate repository, which I publish. |
 | Projects / Discussions | Disabled / disabled | Repository feature flags only. |
 | Merge methods | Merge, squash and rebase enabled | The rulesets below restrict each protected branch further. |
 | Auto-merge | Disabled | Passing checks do not authorize an integration. |
@@ -67,7 +67,7 @@ have active enforcement, an empty bypass list and no excluded refs.
 Both PR rules disable stale-review dismissal, code-owner review and last-push
 approval, and name no required reviewers. Both also report
 `require_extra_approval_for_unattributed_changes` as enabled; its effect here
-was not tested. Zero approvals fits the sole-maintainer model and is not
+was not tested. Zero approvals fits my role as sole maintainer and is not
 independent approval. The rulesets require only Repository integrity. CodeQL
 reports a check on pull requests into `main`, but no rule requires it.
 
@@ -80,8 +80,8 @@ to it (API branch-rules read-back). Traffic collection is described in [traffic 
 
 | Setting | State | Source |
 | --- | --- | --- |
-| Full-SHA action pins required | Required | Owner statement in [governance](GOVERNANCE.md#installed-settings-and-limits); the Actions permissions API is not readable from the maintenance environment, so this is **unverified** on the snapshot date |
-| Default workflow token | Read-only | Owner statement in governance; **unverified** on the snapshot date. Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
+| Full-SHA action pins required | Required | My statement in [governance](GOVERNANCE.md#installed-settings-and-limits); the Actions permissions API was not readable with the access used for this record, so this is **unverified** on the snapshot date |
+| Default workflow token | Read-only | My statement in governance; **unverified** on the snapshot date. Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back on 2026-10-28 and 2026-10-29, with each row's source |
 
 <a id="maintenance"></a>
