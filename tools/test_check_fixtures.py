@@ -23,6 +23,7 @@ NEUTRAL = ROOT / cf.FIXTURES / "neutral-synthetic"
 SCHEMA = cc.load_schema(ROOT)
 SPEC = cf.load(ROOT / cf.SCHEMA)
 FIXTURE = cf.load(NEUTRAL / cf.FIXTURE_FILE)
+VERIFIED = cf.verified_sources((ROOT / cf.REGISTER).read_text(encoding="utf-8"))
 
 
 class Copy:
@@ -55,7 +56,7 @@ class Copy:
         return cf.evaluate(SCHEMA, self.path, FIXTURE["inputs"])
 
     def problems(self) -> list[str]:
-        return cf.check_fixture(SCHEMA, SPEC, self.path, "copy")
+        return cf.check_fixture(SCHEMA, SPEC, VERIFIED, self.path, "copy")
 
 
 def codes(result: dict[str, Any]) -> list[tuple[str, str, str]]:
@@ -193,18 +194,40 @@ class ProvenanceTests(unittest.TestCase):
         self.assertIn("copy: synthetic parameters are allowed in, and required by, a neutral example",
                       problems)
 
-    def test_validation_factors_cite_normative_register_entries(self) -> None:
+    def validation_copy(self, fixture: Copy, source: str = "S-01") -> None:
         def cite(parameters: dict[str, Any]) -> None:
             parameters["review_status"] = "reviewed"
             for entry in parameters["factors"]:
-                entry.update(source_id="S-01", locator="Article 428 (synthetic test)")
-            parameters["factors"][0].update(source_id="R-01")
+                entry.update(source_id=source, locator="Article 428 (synthetic test)")
+        fixture.edit(cf.FIXTURE_FILE, lambda f: (f.update(kind="validation"),
+                                                 f["provenance"].update(sources=[f"{source} Article 428"])))
+        fixture.edit("parameters.json", cite)
+
+    def test_validation_factors_cite_normative_register_entries(self) -> None:
         with Copy() as fixture:
-            fixture.edit(cf.FIXTURE_FILE, lambda f: f.update(kind="validation"))
-            fixture.edit("parameters.json", cite)
+            self.validation_copy(fixture)
+            self.assertEqual(fixture.problems(), [])
+            fixture.edit("parameters.json", lambda p: p["factors"][0].update(source_id="R-01"))
+            fixture.edit(cf.FIXTURE_FILE, lambda f: f["provenance"].update(sources=[]))
+            self.assertEqual(fixture.problems(), ["copy: factor of 428k must cite a register entry",
+                                                  "copy: a validation fixture lists its register sources"])
+
+    def test_citations_must_exist_in_the_register(self) -> None:
+        with Copy() as fixture:
+            self.validation_copy(fixture, "S-99")
             problems = fixture.problems()
-        self.assertEqual(problems, ["copy: factor of 428k must cite a register entry",
-                                    "copy: a validation fixture lists its register sources"])
+        self.assertIn("copy: factor of 428k cites S-99, which is not a verified entry of the source register",
+                      problems)
+        self.assertIn("copy: provenance source `S-99 Article 428` does not start with a verified normative "
+                      "register entry", problems)
+
+    def test_only_verified_register_entries_count(self) -> None:
+        text = ("| S-01 | Act | Version | Scope | Link | OJ reference: Verified (EUR-Lex) |\n"
+                "| S-02 | Act | Version | Scope | Link | To verify on EUR-Lex |\n"
+                "| S-03 | Act | Version | Scope | Link | Verified (EUR-Lex); article to verify |\n"
+                "| R-01 | Act | Version | Scope | Link | Verified (EUR-Lex) |\n")
+        self.assertEqual(cf.verified_sources(text), frozenset({"S-01"}))
+        self.assertTrue({"S-01", "S-02", "S-03", "S-04"} <= VERIFIED)
 
     def test_factors_are_decimals_from_zero_to_one(self) -> None:
         for value in ("1.5", "0.12345", "-0.1", "1.0001"):
@@ -242,6 +265,11 @@ class DerivationTests(unittest.TestCase):
 
 
 class ComparisonTests(unittest.TestCase):
+    def test_a_missing_field_differs_from_an_explicit_null(self) -> None:
+        self.assertEqual(cf.compare({"ratio": None}, {"ratio": None}, [], "x"), [])
+        self.assertEqual(cf.compare({}, {"ratio": None}, [], "x"), ["x: `ratio` expected no field, got null"])
+        self.assertEqual(cf.compare({"ratio": None}, {}, [], "x"), ["x: `ratio` expected null, got no field"])
+
     def test_tolerances_are_approved_exceptions(self) -> None:
         exception = {"field": "status", "mode": "relative", "tolerance": "0.1",
                      "reason": "test", "approved_in": "soon"}

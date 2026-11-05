@@ -69,7 +69,7 @@ parameter set it uses (`parameters.json`).
 | `provenance.data` | Yes | `synthetic`; no other value is admitted |
 | `provenance.author` | Yes | Who wrote the fixture |
 | `provenance.created` | Yes | When, as an ISO date |
-| `provenance.sources` | Yes | Register entries and locators the expected result relies on; empty only for a neutral example |
+| `provenance.sources` | Yes | Register entries and locators the expected result relies on, each starting with a verified `S-` entry ID, such as `S-01 Article 428b`; empty only for a neutral example |
 | `provenance.note` | No | Any further remark |
 | `derivation` | Yes | How the expected result was obtained |
 | `derivation.method` | Yes | `hand`, `independent-tool` or `published`; there is no value for the implementation under test |
@@ -112,7 +112,9 @@ exactly one row of this table.
   exactly; whether a paragraph or point inherits its article's factor is
   decided under PROD-01 and needs a change to these rules;
 - in a validation fixture each factor names a normative register entry
-  (`S-` and two digits) and its locator;
+  (`S-` and two digits) and its locator; the checker rejects an entry that
+  is not in the register, or whose status is not verified or still has
+  something to verify;
 - in a neutral example `review_status` is `synthetic`, and every factor has
   `source_id` `synthetic` and `locator` `none`. Synthetic factors are chosen
   for arithmetic; any coincidence with a regulatory factor carries no
@@ -174,7 +176,8 @@ change, made with the aggregation work (PROD-03).
 ## ⚖️ Comparison
 
 The default is exact: every field of `expected` must equal the engine's
-result, as text in the reported scale. Decimal arithmetic with one defined
+result, as text in the reported scale. A field must be present on both
+sides: a missing field never equals an explicit `null`. Decimal arithmetic with one defined
 rounding makes the result reproducible character for character, so no
 tolerance is needed by default.
 

@@ -39,6 +39,8 @@ FACTOR = re.compile(r"^(0(\.[0-9]{1,4})?|1(\.0{1,4})?)$")
 FUNDING_PLACES = 8
 RATIO_PLACES = 6
 RUN = "run"
+REGISTER = Path("docs/methodology/SOURCE_REGISTER.md")
+MISSING = object()  # a field absent from a result, unlike an explicit null
 TOLERABLE = ("available_stable_funding", "required_stable_funding", "ratio")
 
 
@@ -157,25 +159,52 @@ def execution_problems(execution: Mapping[str, Any], keys: Sequence[str], where:
     return [problem for run in runs for problem in missing_keys(run, keys, f"{where} execution run")]
 
 
-def provenance_problems(fixture: Mapping[str, Any], parameters: Mapping[str, Any], where: str) -> list[str]:
-    """Synthetic parameters belong to neutral examples; others cite register entries."""
+def verified_sources(text: str) -> frozenset[str]:
+    """Normative register entries whose status is verified and has nothing left to verify."""
+    found = set()
+    for line in text.splitlines():
+        match = re.match(r"^\| (S-[0-9]{2}) \|", line)
+        status = line.rstrip().rstrip("|").rsplit("|", 1)[-1].lower()
+        if match and "verified" in status and "to verify" not in status:
+            found.add(match.group(1))
+    return frozenset(found)
+
+
+def factor_problems(entry: Mapping[str, Any], synthetic: bool, verified: frozenset[str], where: str) -> list[str]:
+    key = entry.get("classification")
+    problems = []
+    if not FACTOR.match(str(entry.get("factor"))):
+        problems.append(f"{where}: factor of {key} must be 0 to 1, at most 4 decimals")
+    if synthetic:
+        if (entry.get("source_id"), entry.get("locator")) != ("synthetic", "none"):
+            problems.append(f"{where}: a synthetic factor has source_id `synthetic` and locator `none`")
+    elif not (SOURCE_ID.match(str(entry.get("source_id"))) and entry.get("locator")):
+        problems.append(f"{where}: factor of {key} must cite a register entry")
+    elif entry["source_id"] not in verified:
+        problems.append(f"{where}: factor of {key} cites {entry['source_id']}, "
+                        "which is not a verified entry of the source register")
+    return problems
+
+
+def provenance_problems(fixture: Mapping[str, Any], parameters: Mapping[str, Any],
+                        verified: frozenset[str], where: str) -> list[str]:
+    """Synthetic parameters belong to neutral examples; others cite verified register entries."""
     problems = []
     synthetic = parameters.get("review_status") == "synthetic"
     if synthetic != (fixture["kind"] == "neutral-example"):
         problems.append(f"{where}: synthetic parameters are allowed in, and required by, a neutral example")
     for entry in parameters.get("factors", []):
-        if not FACTOR.match(str(entry.get("factor"))):
-            problems.append(f"{where}: factor of {entry.get('classification')} must be 0 to 1, at most 4 decimals")
-        cited = SOURCE_ID.match(str(entry.get("source_id"))) and entry.get("locator")
-        if not synthetic and not cited:
-            problems.append(f"{where}: factor of {entry.get('classification')} must cite a register entry")
-        if synthetic and (entry.get("source_id"), entry.get("locator")) != ("synthetic", "none"):
-            problems.append(f"{where}: a synthetic factor has source_id `synthetic` and locator `none`")
+        problems += factor_problems(entry, synthetic, verified, where)
     keys = [entry.get("classification") for entry in parameters.get("factors", [])]
     if len(keys) != len(set(keys)):
         problems.append(f"{where}: a classification has more than one factor")
-    if not synthetic and not fixture["provenance"]["sources"]:
+    sources = fixture["provenance"]["sources"]
+    if not synthetic and not sources:
         problems.append(f"{where}: a validation fixture lists its register sources")
+    for source in sources:
+        if str(source).split(" ", 1)[0] not in verified:
+            problems.append(f"{where}: provenance source `{source}` does not start with a verified "
+                            "normative register entry")
     return problems
 
 
@@ -217,13 +246,17 @@ def compare(expected: Mapping[str, Any], actual: Mapping[str, Any],
     tolerated = {entry["field"]: entry for entry in exceptions}
     problems = []
     for field in sorted(set(expected) | set(actual)):
-        want, got = expected.get(field), actual.get(field)
-        if field in tolerated and want is not None and got is not None:
-            if not within(str(want), str(got), tolerated[field]):
+        want, got = expected.get(field, MISSING), actual.get(field, MISSING)
+        if field in tolerated and isinstance(want, str) and isinstance(got, str):
+            if not within(want, got, tolerated[field]):
                 problems.append(f"{where}: `{field}` {got} is outside the tolerance of {want}")
-        elif want != got:
-            problems.append(f"{where}: `{field}` expected {json.dumps(want)}, got {json.dumps(got)}")
+        elif want is MISSING or got is MISSING or want != got:
+            problems.append(f"{where}: `{field}` expected {shown(want)}, got {shown(got)}")
     return problems
+
+
+def shown(value: object) -> str:
+    return "no field" if value is MISSING else json.dumps(value)
 
 
 def within(want: str, got: str, rule: Mapping[str, Any]) -> bool:
@@ -256,7 +289,8 @@ def exception_problems(comparison: Mapping[str, Any], spec: Mapping[str, Any], w
     return problems
 
 
-def check_fixture(schema: Mapping[str, Any], spec: Mapping[str, Any], directory: Path, where: str) -> list[str]:
+def check_fixture(schema: Mapping[str, Any], spec: Mapping[str, Any], verified: frozenset[str],
+                  directory: Path, where: str) -> list[str]:
     fixture = load(directory / FIXTURE_FILE)
     problems = metadata_problems(fixture, spec, where)
     if problems:
@@ -264,7 +298,8 @@ def check_fixture(schema: Mapping[str, Any], spec: Mapping[str, Any], directory:
     if fixture["contract_version"] != schema["contract_version"]:
         problems.append(f"{where}: contract_version differs from the contract")
     problems += exception_problems(fixture["comparison"], spec, where)
-    problems += provenance_problems(fixture, load(directory / fixture["inputs"]["parameters"]), where)
+    parameters = load(directory / fixture["inputs"]["parameters"])
+    problems += provenance_problems(fixture, parameters, verified, where)
     actual = evaluate(schema, directory, fixture["inputs"])
     problems += compare(fixture["expected"], actual, fixture["comparison"].get("exceptions", []), where)
     return problems + derivation_problems(fixture, directory, where)
@@ -295,13 +330,14 @@ def constant_problems(spec: Mapping[str, Any]) -> list[str]:
 def check(root: Path) -> list[str]:
     schema = contracts.load_schema(root)
     spec = load(root / SCHEMA)
+    verified = verified_sources((root / REGISTER).read_text(encoding="utf-8"))
     problems = constant_problems(spec)
     problems += document_problems(spec, (root / DOCUMENT).read_text(encoding="utf-8"))
     directories = sorted(path.parent for path in (root / FIXTURES).glob(f"*/{FIXTURE_FILE}"))
     if not directories:
         problems.append(f"{FIXTURES}: no registered fixture")
     for directory in directories:
-        problems += check_fixture(schema, spec, directory, directory.relative_to(root).as_posix())
+        problems += check_fixture(schema, spec, verified, directory, directory.relative_to(root).as_posix())
     return problems
 
 
