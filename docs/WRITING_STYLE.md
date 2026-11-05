@@ -46,6 +46,30 @@ decisions, 🏗️ architecture, 🧰 tools, ✅ checks, 🗺️ roadmap, ⚖️
 license, 🔒 security, 🧪 synthetic data and 🔗 provenance. The text of each
 heading carries the meaning even if a glyph does not render.
 
+<a id="repository-identity"></a>
+
+## 🖼️ Repository identity
+
+The repository presents itself with these texts and images (#17); keep them in
+line with [scope](SCOPE.md) and never claim performance, compliance or a
+calculation that does not exist.
+
+| Item | Value |
+| --- | --- |
+| About description | Planned Excel/VBA reference implementation of the EU CRR Net Stable Funding Ratio (NSFR). Repository setup stage: no calculation engine yet; synthetic data only. |
+| Topics | `nsfr`, `net-stable-funding-ratio`, `liquidity-risk`, `crr`, `basel-iii`, `banking-regulation`, `excel-vba`, `vba` |
+| Website | None; no Pages site is published |
+| README banner and social preview | [`docs/assets/k-nsfr-social.svg`](assets/k-nsfr-social.svg), and its 1280 × 640 rendering [`k-nsfr-social.png`](assets/k-nsfr-social.png), uploaded in **Settings → General → Social preview** |
+
+The banner is original artwork: two bars over a base line, the title and three
+plain-text facts on navy `0B2239`. Its text colours have a contrast ratio of at
+least 9.6:1 against the background (white 16.1, `E5E7EB` 13.0, `CBD5E1` 10.9,
+`F2C14E` 9.6), and the README gives it alternative text. When the SVG changes,
+render it again at 1280 × 640 with a headless Chromium and the Inter typeface,
+replace the PNG and upload it. Changing the About text, topics or images, or
+enabling a website, needs an issue I approve; none changes the repository's
+visibility.
+
 <a id="maintenance"></a>
 
 ## ✅ Maintenance

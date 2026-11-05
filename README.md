@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/assets/k-nsfr-social.svg" alt="K-NSFR: a planned Net Stable Funding Ratio reference project in Excel/VBA for the EU CRR profile, at the repository setup stage with no calculation engine yet" width="640">
+
 <a id="k-nsfr"></a>
 
 # 🏦 K-NSFR

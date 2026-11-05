@@ -75,6 +75,7 @@ recorded in #19.
 | Source-control checker and fixtures | Authored locally in #4; isolation correction and regression fixture are local maintenance work |
 | Markdown/YAML checker | Authored locally in #6; parsed navigation and explicit-anchor validation added during maintenance |
 | Contracts, contract checker and synthetic examples | Authored locally in #9; the examples are synthetic |
+| README banner and social-preview image | Authored locally in #17 as an SVG; the PNG is its rendering with the Inter typeface ([licensing](LICENSING.md#runtime-tool-licenses)); no font or third-party image is stored |
 | VBA static checker, exceptions file and fixtures | Authored locally in #11 |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
