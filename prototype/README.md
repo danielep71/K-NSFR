@@ -29,6 +29,7 @@ each piece under its own issue.
 | --- | --- |
 | `src/core/`, `src/api/`, `src/host/` | The seven VBA modules of the prototype |
 | `tools/build_template.py` | Generates the macro-free workbook `templates/NSFR_Template.xlsx`, which is ignored and never committed |
+| `templates/README.md` | Keeps the output directory, which the generator does not create |
 | `tools/lo_regression.py` | Headless regression of the VBA in LibreOffice |
 | `tests/derivations/prototype/` | Transcribed regulatory tables, the synthetic demo, demo bank figures, expected values and the independent Python reference |
 | `docs/methodology/PROTOTYPE.md` | The specification |
@@ -51,5 +52,6 @@ commands from here, for example `python tools/build_template.py`.
   installed by CI; their licenses are listed in
   [licensing](../docs/LICENSING.md#prototype-tool-licenses).
 - Only the relative links of the specification were changed, so that they
-  resolve from this directory; every other file is byte for byte as delivered,
-  apart from Git's line-end normalization of the `.bas` files.
+  resolve from this directory, and `templates/README.md` was added so that
+  the output directory exists; every other file is byte for byte as
+  delivered, apart from Git's line-end normalization of the `.bas` files.
