@@ -171,10 +171,9 @@ citation; this register states none.
 
 ## 🛡️ Use of the register
 
-- README text, fixtures, examples and parameter sets cite a regulatory rule
-  only through an entry of this register, by its ID and article.
-- A rule whose entry is still "to verify" is cited as unverified and never
-  used for an expected result.
+- How the README, fixtures, examples and parameter sets cite these entries is
+  an editorial rule, in
+  [AGENTS.md](../../AGENTS.md#what-the-documentation-describes).
 - A change to this register, including a new source version, needs my
   review and a new register version; explanatory sources never override a
   normative one.
