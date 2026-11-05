@@ -34,8 +34,9 @@ the linked evidence exists.
 The README hero uses static, legible shields for **stage**, **declared host**
 and **license**. Other pages use the compact stage badge. Use the same
 vocabulary and colors across the repo: amber `BF8700` for setup, Excel green
-`217346` for a declared VBA target, blue `0078D6` for Windows, and green
-`2ea44f` for the selected MPL-2.0 license. A green validation badge requires
+`217346` for a declared VBA target, blue `0078D6` for Windows, green
+`2ea44f` for the selected MPL-2.0 license, and purple `8250DF` for the
+traffic badge files. A green validation badge requires
 an actual current result, linked to the candidate and test evidence. Do not add
 traffic, downloads, host-pass or regulatory-validation badges without the
 underlying data and a current review.

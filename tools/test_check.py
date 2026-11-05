@@ -5,11 +5,13 @@ from __future__ import annotations
 import contextlib
 import io
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import check
 
@@ -127,10 +129,61 @@ class DefaultGatesTests(unittest.TestCase):
         gates = check.default_gates()
         self.assertEqual(len({g.name for g in gates}), len(gates))
         self.assertEqual({g.tool for g in gates},
-                         {"python", "node", "ruff", "mypy", "actionlint", "pyyaml"})
+                         {"python", "python-libraries", "node", "ruff", "mypy", "actionlint",
+                          "pyyaml"})
         for g in gates:
             self.assertTrue(bool(g.command) != (g.probe is not None), g.name)
         self.assertIn("workflow-invariants", {g.name for g in gates})
+
+    def test_each_gate_names_what_it_needs(self) -> None:
+        tools = {g.name: g.tool for g in check.default_gates()}
+        # These import PyYAML and markdown-it-py; issue-config runs the Node validator,
+        # and so do the issue tests in tool-tests.
+        self.assertEqual(tools["tool-tests"], "python-libraries")
+        tool_tests = next(g for g in check.default_gates() if g.name == "tool-tests")
+        self.assertEqual(tool_tests.tools(), ("python-libraries", "node"))
+        self.assertEqual(tools["content"], "python-libraries")
+        self.assertEqual(tools["issue-config"], "node")
+        self.assertEqual(tools["workflow-invariants"], "pyyaml")
+        mypy = next(g for g in check.default_gates() if g.name == "mypy")
+        self.assertEqual(mypy.tools(), ("mypy", "python-libraries"))
+
+
+class LibraryAvailabilityTests(unittest.TestCase):
+    def local(self) -> dict[str, str]:
+        return {key: value for key, value in os.environ.items() if key != "GITHUB_ACTIONS"}
+
+    def test_any_missing_library_skips_the_gate_locally(self) -> None:
+        def find_spec(name: str) -> object | None:
+            return None if name == "markdown_it" else object()
+
+        with mock.patch("importlib.util.find_spec", side_effect=find_spec), \
+                mock.patch.dict(os.environ, self.local(), clear=True):
+            self.assertFalse(check.available("python-libraries"))
+            self.assertTrue(check.available("pyyaml"))
+
+    def test_gate_runs_on_github_actions(self) -> None:
+        with mock.patch("importlib.util.find_spec", return_value=None), \
+                mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true"}):
+            self.assertTrue(check.available("python-libraries"))
+
+    def test_missing_library_is_not_run_and_the_run_incomplete(self) -> None:
+        gates = [gate("ok", 0),
+                 check.Gate("content", "python-libraries", (sys.executable, "-c", "pass"))]
+        with tempfile.TemporaryDirectory() as directory, \
+                contextlib.redirect_stdout(io.StringIO()), \
+                mock.patch("importlib.util.find_spec", return_value=None), \
+                mock.patch.dict(os.environ, self.local(), clear=True):
+            output = Path(directory)
+            results = check.run_gates(gates, output, output)
+        self.assertEqual([r.status for r in results], ["pass", "not-run"])
+        self.assertEqual(check.overall_status(results, ci=False, dirty=False, allow_missing=True),
+                         "incomplete")
+
+    def test_versions_name_each_library(self) -> None:
+        with mock.patch("importlib.metadata.version", return_value="1.0"):
+            self.assertEqual(check.library_versions("python-libraries"),
+                             "PyYAML 1.0, markdown-it-py 1.0")
 
 
 if __name__ == "__main__":

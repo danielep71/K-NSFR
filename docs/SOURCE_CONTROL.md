@@ -8,8 +8,10 @@
 
 Repository source is canonical. Cross-platform text uses UTF-8 without a BOM,
 LF in committed text, and exactly one final newline with no blank line at the end
-of the file. Remove trailing spaces or tabs except
-for intentional Markdown hard breaks. Preserve the standard license text.
+of the file. Remove trailing spaces or tabs. The check exempts Markdown files,
+so that intentional hard breaks survive, and `LICENSE`, so that the standard
+license text is preserved byte for byte; avoid any other trailing whitespace
+in Markdown.
 VBA and Windows-native source retain their host encoding contract: the editor
 configuration does not force a charset, and no Git working-tree-encoding rule is
 active. [Implementation conventions](IMPLEMENTATION.md) define the initial source
@@ -24,9 +26,9 @@ working-tree-encoding conversion is required. Use Git checkout rather than
 assuming a downloaded source archive has the host line endings. Git conversion
 tests are portable evidence; actual Excel import/export remains #13/#14 work.
 
-The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md). This
-change adds only configuration, a committed-content check and its tests; future
-source, fixtures and templates directories are created with real deliverables.
+The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md). The
+repository holds configuration, its checks and their tests; source, fixtures
+and template directories are created with real deliverables.
 
 <a id="generated-files-and-intentional-binaries"></a>
 
