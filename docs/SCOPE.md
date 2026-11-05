@@ -44,8 +44,9 @@ must fail explicitly; it must never silently fall back to another profile.
 Simplified NSFR treatments, national discretions, other jurisdictions, and
 institution-specific interpretations are outside the initial target. They require
 separate applicability decisions and independently validated fixtures before
-being admitted. #8 owns source verification; this document specifies no legal
-thresholds, weightings, reporting obligations, or effective legal text.
+being admitted. The [source register](methodology/SOURCE_REGISTER.md) (#8) owns
+source verification and the applicability of version 1; this document specifies
+no legal thresholds, weightings, reporting obligations, or effective legal text.
 
 <a id="reference-use-and-production-admission"></a>
 
