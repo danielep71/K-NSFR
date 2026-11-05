@@ -57,9 +57,9 @@ calculation that does not exist.
 | Item | Value |
 | --- | --- |
 | About description | Planned Excel/VBA reference implementation of the EU CRR Net Stable Funding Ratio (NSFR). Repository setup stage: no calculation engine yet; synthetic data only. |
-| Topics | `nsfr`, `net-stable-funding-ratio`, `liquidity-risk`, `crr`, `basel-iii`, `banking-regulation`, `excel-vba`, `vba` |
+| Topics | `basel`, `basel-iii`, `crr`, `crr3`, `excel`, `excel-vba`, `liquidity-risk`, `net-stable-funding-ratio`, `nsfr`, `vba` |
 | Website | None; no Pages site is published |
-| Social preview | An image I make and upload in **Settings → General → Social preview**; it is not stored in the repository |
+| Social preview | An original image I make with a generative image tool and upload in **Settings → General → Social preview**; it is not stored in the repository, and any chart in it is illustrative, never a result of the engine |
 
 Changing the About text, topics or social preview, or enabling a website,
 needs an issue I approve; none changes the repository's visibility.
