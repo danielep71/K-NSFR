@@ -112,6 +112,7 @@ def default_gates() -> list[Gate]:
              (python, "tools/check_issues.py", "--check-config")),
         Gate("source-control", "python", (python, "tools/check_source_control.py")),
         Gate("content", "python-libraries", (python, "tools/check_content.py")),
+        Gate("vba-static", "python", (python, "tools/check_vba.py")),
         Gate("ruff", "ruff", ("ruff", "check", "--no-cache", "tools")),
         Gate("ruff-complexity-probe", "ruff", probe=ruff_complexity_probe),
         Gate("mypy", "mypy", ("mypy", "--no-incremental"), requires=("python-libraries",)),

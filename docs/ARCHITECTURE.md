@@ -121,9 +121,9 @@ governance tooling in place; do not move tests merely to match the future layout
 
 ## ✅ Validation boundaries
 
-Portable CI checks the label catalogue, the issue-form configuration and
-committed source conventions. It does not compile
-VBA, run Excel, or validate regulatory results. Future static checks (#11),
+Portable CI checks the label catalogue, the issue-form configuration,
+committed source conventions and the VBA static rules. It does not compile
+VBA, run Excel, or validate regulatory results. The VBA static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different
 evidence and must report their own status. Independent numerical validation is
 later production work, gated by #8-#10 and the [backlog](BACKLOG.md).
