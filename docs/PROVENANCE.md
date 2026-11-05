@@ -77,6 +77,7 @@ recorded in #19.
 | Contracts, contract checker and synthetic examples | Authored locally in #9; the examples are synthetic |
 | Validation rules, fixture checker and neutral fixture | Authored locally in #10; the fixture's data and factors are synthetic and its derivation was worked out by hand |
 | VBA static checker, exceptions file and fixtures | Authored locally in #11 |
+| Neutral VBA test harness and its self-test | Authored locally in #12; neutral, with no NSFR calculation |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |

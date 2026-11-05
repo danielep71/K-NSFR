@@ -6,7 +6,8 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
-These rules govern future VBA implementation. No VBA module exists yet. The
+These rules govern VBA implementation. The only VBA modules are the
+[neutral test harness](../tests/README.md) and its self-test (#12). The
 `vba-static` gate enforces the mechanical rules
 ([VBA static checks](../tools/README.md#vba-static-checks)); host import,
 compilation and execution belong to #13/#14. Current portable CI validates repository tooling only. The public
@@ -173,8 +174,9 @@ it.
    caller, also when the primary error is re-raised. When only cleanup
    failed, the procedure raises `ERR_CLEANUP_FAILED`, never success.
 
-The following is a design sketch, not compiled or executed evidence. #12/#14
-must exercise success, primary-error-plus-cleanup-failure and cleanup-only failure.
+The following is a design sketch, not compiled or executed evidence. #14
+must exercise success, primary-error-plus-cleanup-failure and cleanup-only
+failure; the harness (#12) reports a cleanup failure apart from the outcome.
 
 ```vb
 'In a standard module named NSFR_Host_Example

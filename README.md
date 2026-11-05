@@ -47,6 +47,7 @@ must be approved before any numerical implementation.
 | --- | --- |
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
 | Calculation | Not implemented; no ASF, RSF or ratio output is available |
+| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; Excel execution **NOT RUN** |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
 | Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT RUN** |
 | Data | Synthetic-only policy; no production or client data |
@@ -86,6 +87,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Input and result contracts](docs/contracts/CONTRACTS.md) | Field dictionary, parameter and result schemas, diagnostics and synthetic examples |
 | [Numerical fixtures and validation rules](docs/validation/VALIDATION.md) | Fixture schema, independent derivation, scales, rounding, comparison and the case plan |
 | [Contributor guide](CONTRIBUTING.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Editorial rules, reproducible checks and implementation review |
+| [Neutral test harness](tests/README.md) | The VBA test harness, its self-test and how to run it in Excel |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
