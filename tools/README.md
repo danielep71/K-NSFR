@@ -42,13 +42,14 @@ reported **NOT RUN** without them.
 
 | Gate | Needs | Evidence |
 | --- | --- | --- |
-| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, issues, workflow invariants, traffic history and the VBA static checks |
+| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, issues, workflow invariants, traffic history and the VBA static checks |
 | `labels-sync-self-test` | Node | Label synchronization self-tests |
 | `labels-manifest` | Node | Label catalogue validation |
 | `labels-drift-self-test` | Node | Label drift self-tests |
 | `issue-config` | Node | Issue forms, label guide and Dependabot labels against the issue rules (`check_issues.py --check-config`) |
 | `source-control` | Python | Committed bytes (encoding, LF, trailing whitespace outside Markdown and `LICENSE`, final newline, blank lines at end of file) and exact binary allowlist; isolated committed Git attributes |
 | `content` | PyYAML, markdown-it-py | Parsed Markdown links/images, reference links, HTML links, explicit section anchors, fences and duplicate YAML keys |
+| `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |

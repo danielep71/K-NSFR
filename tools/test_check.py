@@ -134,6 +134,7 @@ class DefaultGatesTests(unittest.TestCase):
         for g in gates:
             self.assertTrue(bool(g.command) != (g.probe is not None), g.name)
         self.assertIn("workflow-invariants", {g.name for g in gates})
+        self.assertIn("contracts", {g.name for g in gates})
         self.assertIn("vba-static", {g.name for g in gates})
 
     def test_each_gate_names_what_it_needs(self) -> None:

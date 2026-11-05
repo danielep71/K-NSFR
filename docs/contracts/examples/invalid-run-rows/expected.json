@@ -1,0 +1,9 @@
+{
+  "diagnostics": [
+    {
+      "code": "NSFR-E013",
+      "field": "rows",
+      "record_id": "run"
+    }
+  ]
+}

@@ -162,7 +162,7 @@ citation; this register states none.
 | --- | --- |
 | Supervisory decision under Article 428f, and the exact provisions of Chapter 4 Section 1 on the residual maturity and encumbrance of assets | To verify on EUR-Lex before #9 defines the corresponding inputs. |
 | Indirect effects of S-04's other CRR amendments on the NSFR inputs | Reviewed when #9 defines the inputs that Article 428(1)(k) and the RSF provisions refer to. |
-| Inclusion of derivative contracts (Article 428d) and netting (Article 428e) in the first contracts | Decided in #9 when the inputs are defined. |
+| Inclusion of derivative contracts (Article 428d) and netting (Article 428e) | Deferred from contract version 1 by my decision in #9: such inputs are rejected with `NSFR-E012`; admitting them needs its own issue. |
 | Factor values for ASF and RSF | Captured with citations in the parameter set of [PROD-01](../BACKLOG.md#later-calculation-work), never in this register. |
 | Consolidated basis, group and scheme treatments, simplified calculation | Out of v1; each needs its own scope decision and follow-on issue before admission. |
 
