@@ -45,6 +45,8 @@ pyproject.toml
 docs/VBA_HOUSE_STYLE.md
     Adapted to this repository's architecture, status-based API and
     provisional numeric contract; source-specific capability claims removed.
+    Its encoding, naming and error rules were aligned with the other
+    conventions by #118.
 
 From K-SFTs, docs/REPOSITORY_SETTINGS.md at commit
 3a6ed87388cd0f65c4665c84f2c41f59ff688715 (blob

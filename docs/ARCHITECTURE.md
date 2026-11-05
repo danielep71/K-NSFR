@@ -10,12 +10,12 @@
 
 ## 🔎 Evidence and selection
 
-At baseline commit `0708e5b3bdd6564c2c99fd63d1f0500594864583`,
-K-NSFR contains a short README, governance documentation, GitHub issue forms,
-label/workflow configuration, JavaScript label tooling, and Python issue-triage
-tooling and tests. It contains no calculation source, numerical fixtures,
-workbook, or host runner. No AGENTS.md or implementation manifest is present.
-The setup backlog explicitly provides conditional VBA work in #5, #11, and #13.
+At baseline commit `0708e5b3bdd6564c2c99fd63d1f0500594864583`, when this
+selection was made, K-NSFR contained a short README, governance documentation,
+GitHub issue forms, label/workflow configuration, JavaScript label tooling, and
+Python issue-triage tooling and tests. It contained no calculation source,
+numerical fixtures, workbook, host runner, AGENTS.md or implementation
+manifest. The setup backlog provided conditional VBA work in #5, #11, and #13.
 
 Select **Excel/VBA for the reference engine and host**, retaining Python for
 portable repository validation and JavaScript for existing label tooling. Excel
@@ -43,8 +43,9 @@ regulatory implementation or an automatic test oracle.
 
 The host target is a support intention, not a tested compatibility certification.
 [Implementation conventions](IMPLEMENTATION.md) specify source encoding,
-numeric/error behavior and the detailed supported-versus-tested matrix; #6 owns
-runtime consistency for portable tooling.
+numeric/error behavior and the detailed supported-versus-tested matrix; the
+portable tooling's runtime is pinned as the
+[tooling guide](../tools/README.md#tool-versions) describes.
 #13 supplies reproducible packaging and source synchronization, and #14 supplies
 genuine host evidence. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
@@ -69,8 +70,10 @@ from the machine date. Configuration is explicit and unchanged during a run.
 
 The API will accept validated records, an as-of date, a reporting perimeter,
 and an approved profile/parameter identity; it will return results, diagnostics,
-and input/configuration provenance. Exact fields, types, precision, tolerances,
-and error codes are deliverables of #5, #9, and #10, not finalized by this issue.
+and input/configuration provenance. #5 recorded the
+[implementation conventions](IMPLEMENTATION.md); exact fields, types,
+precision, tolerances and error codes are deliverables of #9 and #10, not
+finalized here.
 Invalid inputs must produce explicit diagnostics, never fabricated zero results.
 The host owns cleanup and restoration of any Excel state it changes, including
 on failure; host failures must remain distinguishable from calculation failures.
@@ -80,29 +83,32 @@ on failure; host failures must remain distinguishable from calculation failures.
 ## 🗂️ Layout and stable names
 
 The following is the intended layout. Create a directory only when it contains a
-real deliverable; this issue adds documentation only, with no empty scaffolding.
+real deliverable; the repository holds no empty scaffolding.
 
 | Path | Content and ownership |
 | --- | --- |
 | `src/core/` | Exported pure VBA calculation modules; later production work |
-| `src/api/` | Public validation and result boundary; #5 and #9 define contracts |
+| `src/api/` | Public validation and result boundary; #9 defines the contracts |
 | `src/host/` | Workbook adapters, isolated from core; #13 |
 | `tests/core/`, `tests/api/` | Deterministic neutral harness first (#12), then reviewed numerical cases |
 | `tests/host/` | Import, cleanup, and workbook round-trip tests; #13/#14 |
 | `tests/fixtures/` | Synthetic input/expected-result records and provenance; #10 |
+| `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
 | `docs/` | Scope, architecture, decisions, governance, and future methodology/evidence guides |
 | `tools/` | Existing Python governance tools; future checks and sync utilities |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |
 | `templates/` | Only the exact approved macro-free workbook template when delivered by #13 |
 
-Use `NSFR_Core_*`, `NSFR_API_*`, and `NSFR_Host_*` for VBA module names,
-with filenames matching the component name and host limits respected.
-Test modules use `Test_NSFR_*`; procedure/type names use PascalCase.
+Standard VBA modules use `NSFR_Core_*`, `NSFR_API_*` or `NSFR_Host_*` by
+layer; classes, forms, sheet code names, test and example modules follow the
+[VBA house style](VBA_HOUSE_STYLE.md#naming), which holds the complete naming
+table ([ADR-008](DECISIONS.md#recorded-decisions)). Filenames match the
+component name and respect host limits; procedure/type names use PascalCase.
 Use lowercase snake_case for Python modules and contract field identifiers,
 lowercase kebab-case for profile and fixture IDs, and the existing uppercase
 convention for top-level documentation files. Stable fixture IDs identify cases
-independently of row order. #5 will define the public API naming details before
+independently of row order. #9 finalizes the public API field names before
 code is introduced.
 
 Repository text is the future canonical source; generated macro-enabled
@@ -115,7 +121,8 @@ governance tooling in place; do not move tests merely to match the future layout
 
 ## ✅ Validation boundaries
 
-Portable CI checks label policy, issue triage and committed source conventions. It does not compile
+Portable CI checks the label catalogue, the issue-form configuration and
+committed source conventions. It does not compile
 VBA, run Excel, or validate regulatory results. Future static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different
 evidence and must report their own status. Independent numerical validation is

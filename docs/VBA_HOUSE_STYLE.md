@@ -2,7 +2,9 @@
 
 # ✍️ VBA house style
 
-**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation)
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 These rules govern future VBA implementation. No VBA module exists yet. Mechanical
 VBA enforcement belongs to #11; host import, compilation and execution belong
@@ -14,7 +16,9 @@ boundary and numeric decisions remain in [IMPLEMENTATION.md](IMPLEMENTATION.md).
 ## 🏷️ Naming
 
 The VBE lists every component in one flat project, so a component's name
-carries its role in an upper-case prefix.
+carries its role in a prefix. This table is the naming rule for every VBA
+component ([ADR-008](DECISIONS.md#recorded-decisions)); the other documents
+refer to it.
 
 | Element | Convention | Example |
 | --- | --- | --- |
@@ -44,8 +48,8 @@ and no product, quantity or parameter is decided by them.
   or a `Do` loop stepping through positions, counts with. Every other
   variable and parameter names what it holds, also in a short helper
   (`Formatted`, not `s`).
-- API arguments use the terms of the documented method once
-  the framework is chosen ([D1](ARCHITECTURE.md)).
+- API arguments use the terms of the documented method once the
+  methodology (#8) and the contracts (#9) are approved.
 - VBA names are case-insensitive and the VBE shows one spelling per name
   across the project, so the source files, not the editor, carry the
   convention. The component name (`Attribute VB_Name`) must equal the file
@@ -71,7 +75,7 @@ and no product, quantity or parameter is decided by them.
   ([dependency direction](ARCHITECTURE.md)).
 - A `Declare` statement, if ever needed, uses `PtrSafe` and `LongPtr`,
   because 64-bit Excel is the
-  [supported target](IMPLEMENTATION.md).
+  [intended target](IMPLEMENTATION.md#supported-and-tested-environments).
 
 <a id="procedure-contracts"></a>
 
@@ -106,10 +110,8 @@ signature. Omit sections that are empty.
 - Every numeric input states its valid domain, for example
   `Amount >= 0` or `0 <= Proportion < 1`.
 - Maturity, encumbrance, classification and every other regulatory
-  convention belong to the methodology
-  ([methodology](SCOPE.md),
-  [open decisions](ARCHITECTURE.md)).
-  A procedure cites
+  convention belong to the methodology approved under #8 and
+  [PROD-01](BACKLOG.md#later-calculation-work). A procedure cites
   the convention it implements in `REFERENCE`; it never chooses one silently.
 
 <a id="errors"></a>
@@ -121,11 +123,16 @@ signature. Omit sections that are empty.
 - The API returns a documented status, diagnostics and no authoritative totals
   on failure. Stable codes, field paths and error domains are finalized in #9.
 - Expected invalid inputs are explicit validation outcomes. Never substitute
-  zeros or partially valid results. Unexpected runtime errors propagate to the
-  host boundary, where the original error and any cleanup failures are retained.
+  zeros or partially valid results.
+- Validate, don't trap: core and API detect overflow, division by zero and
+  other invalid arithmetic with range checks before the operation, and return
+  the documented status ([ADR-008](DECISIONS.md#recorded-decisions)).
+- Unexpected runtime errors propagate to the host boundary, where the original
+  error and any cleanup failures are retained. `On Error` appears only there.
 - No worksheet-function surface or `CVErr` mapping is approved at this stage.
-- Core/API prohibit `On Error Resume Next`. Host restore helpers use a narrow
-  handler per setting; each failure is returned and never silently discarded.
+- Core/API never use `On Error`, including `On Error Resume Next`. Host
+  restore helpers use a narrow handler per setting; each failure is returned
+  and never silently discarded.
 
 <a id="public-and-internal-procedures"></a>
 
@@ -173,7 +180,8 @@ must exercise success, primary-error-plus-cleanup-failure and cleanup-only failu
 Private Const ERR_CLEANUP_FAILED As Long = vbObjectError + 2049  'Sketch only
 
 
-Public Sub RunOperation(ByRef CleanupDetails As String)
+Public Sub RunOperation( _
+    ByRef CleanupDetails As String)
     Dim SavedCalculation   As XlCalculation    'Calculation mode before the operation
     Dim SavedScreen        As Boolean          'ScreenUpdating before the operation
     Dim StateCaptured      As Boolean          'True once both were read
@@ -277,15 +285,18 @@ generated, names the generator and says it must not be edited by hand.
 ## 💾 Export compatibility
 
 - **Encoding:** the VBE reads and writes source in the Windows ANSI code
-  page, which differs between hosts. Source is therefore **ASCII only**; a
-  non-ASCII character is built at run time with `ChrW`. No byte-order mark.
-  No working-tree encoding is configured in `.gitattributes`.
+  page, which differs between hosts. Source is therefore **ASCII only**
+  ([ADR-008](DECISIONS.md#recorded-decisions)); a non-ASCII character is built
+  at run time with `ChrW`. No byte-order mark. No working-tree encoding is
+  configured in `.gitattributes`.
 - **Line endings:** stored with LF in Git and checked out with CRLF by
   `.gitattributes`, whatever `core.autocrlf` says; the VBE expects CRLF.
   Never change these rules or the export header lines when reformatting.
 - **Document modules:** `ThisWorkbook` and the sheet modules are exported as
   `.cls` files in `src/host/`. They are pasted into the workbook, never
-  imported ([implementation conventions](IMPLEMENTATION.md)).
+  imported, because importing a `.cls` creates a new class module instead of
+  replacing the document module. The source synchronization in #13 follows
+  this rule.
 - **Forms:** a `.frm` and its `.frx` are one component, kept side by side in
   `src/host/`. The `.frx` is binary and never edited as text.
 - **Workbooks and macro-enabled files** are generated outputs. No workbook is
