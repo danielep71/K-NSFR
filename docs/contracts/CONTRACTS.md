@@ -52,7 +52,7 @@ position. An empty cell is a missing value.
 | `profile_version` | enum `1` | Yes | The profile version (ADR-009) |
 | `register_version` | enum `1` | Yes | The source register version the classifications cite |
 | `parameter_set_id` | identifier | Yes | The parameter set holding the factors |
-| `parameter_set_version` | positive integer | Yes | Its version |
+| `parameter_set_version` | positive integer, 1 to 9 ASCII digits, no leading zero | Yes | Its version |
 | `as_of_date` | date | Yes | The reporting date; every residual maturity is measured from it |
 | `reporting_entity_id` | identifier | Yes | The institution reported on |
 | `basis` | enum `individual` | Yes | `consolidated` is rejected in version 1 |

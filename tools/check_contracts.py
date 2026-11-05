@@ -32,7 +32,8 @@ DOCUMENT = CONTRACTS / "CONTRACTS.md"
 EXAMPLES = CONTRACTS / "examples"
 IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 CURRENCY = re.compile(r"^[A-Z]{3}$")
-TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+TIMESTAMP = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")
+POSITIVE_INTEGER = re.compile(r"^[1-9][0-9]{0,8}$")
 SCALE = Decimal("0.0001")
 LIMIT = Decimal(10) ** 15  # an amount has at most 15 integer digits
 PRECISION = 60  # exact for any sum of contract amounts
@@ -75,7 +76,7 @@ def read_table(path: Path) -> tuple[list[str], list[Row]]:
 
 def parse_date(value: str) -> date | None:
     try:
-        return date.fromisoformat(value) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value) else None
+        return date.fromisoformat(value) if re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) else None
     except ValueError:
         return None
 
@@ -131,7 +132,7 @@ def value_code(spec: Mapping[str, Any], value: str, row: Row, schema: Mapping[st
         return classification_code(value, row.get("side", ""), schema)
     checks = {
         "identifier": lambda: bool(IDENTIFIER.match(value)),
-        "integer": lambda: value.isdigit() and int(value) > 0,
+        "integer": lambda: bool(POSITIVE_INTEGER.match(value)),
         "date": lambda: parse_date(value) is not None,
         "timestamp": lambda: timestamp_ok(value),
         "currency": lambda: bool(CURRENCY.match(value)),

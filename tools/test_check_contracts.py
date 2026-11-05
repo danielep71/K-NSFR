@@ -129,8 +129,12 @@ class TableTests(unittest.TestCase):
     def test_run_values_are_validated(self) -> None:
         self.assertEqual(codes(POSITION, run={**RUN, "extracted_at": "2026-07-01 08:00"}),
                          [("NSFR-E002", "extracted_at")])
-        self.assertEqual(codes(POSITION, run={**RUN, "parameter_set_version": "0"}),
-                         [("NSFR-E002", "parameter_set_version")])
+        for version in ("0", "01", "\u00b2", "1" * 10, "1" * 5000):
+            with self.subTest(version=version[:12]):
+                self.assertEqual(codes(POSITION, run={**RUN, "parameter_set_version": version}),
+                                 [("NSFR-E002", "parameter_set_version")])
+        self.assertEqual(codes(POSITION, run={**RUN, "as_of_date": "\u0662\u0660\u0662\u0666-06-30"}),
+                         [("NSFR-E002", "as_of_date")])
 
 
 class ReconciliationTests(unittest.TestCase):
