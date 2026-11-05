@@ -152,6 +152,10 @@ class TypeAndEnumTests(unittest.TestCase):
             "End Sub",
         ), [])
 
+    def test_a_named_argument_is_not_a_call(self) -> None:
+        self.assertEqual(rules(CORE, "Report Evaluate:=3, CallByName:=\"x\""), [])
+        self.assertEqual(rules(CORE, "Report Value:=Evaluate(\"1+1\")"), ["dynamic-call"])
+
     def test_a_procedure_declared_in_another_module_is_not_a_builtin(self) -> None:
         procedures = frozenset({"evaluate"})
         found = check_vba.check_source(CORE, source(CORE, "Total = Evaluate(3)"),

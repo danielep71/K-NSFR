@@ -178,7 +178,8 @@ def is_builtin_call(tokens: list[str], index: int, procedures: frozenset[str],
     if owner is not None:
         return owner in QUALIFIERS | extra
     previous = tokens[index - 1].lower() if index > 0 else ""
-    declared = (tokens[index + 1:index + 2] and tokens[index + 1].lower() == "as") \
+    following = tokens[index + 1].lower() if index + 1 < len(tokens) else ""
+    declared = following in ("as", ":=") \
         or previous in DECLARING_WORDS \
         or (previous == "set" and index > 1 and tokens[index - 2].lower() == "property")
     return not declared and tokens[index].lower() not in procedures
