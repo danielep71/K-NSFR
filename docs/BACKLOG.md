@@ -19,7 +19,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 | Licensing and synthetic-data policy | [#3](https://github.com/danielep71/K-NSFR/issues/3) | Approved ownership/distribution and data boundaries |
 | Text and generated-file conventions | [#4](https://github.com/danielep71/K-NSFR/issues/4) | Canonical source handling |
 | Implementation and host conventions | [#5](https://github.com/danielep71/K-NSFR/issues/5) | API/numeric/error conventions and target matrix |
-| Regulatory source register | [#8](https://github.com/danielep71/K-NSFR/issues/8) | Versioned sources, applicability, and unresolved interpretations |
+| Regulatory source register | [#8](https://github.com/danielep71/K-NSFR/issues/8), [register](methodology/SOURCE_REGISTER.md) | Versioned sources, applicability, and unresolved interpretations |
 | Data and reconciliation contracts | [#9](https://github.com/danielep71/K-NSFR/issues/9) | Input, parameter, output, and diagnostic schemas |
 | Independent validation design | [#10](https://github.com/danielep71/K-NSFR/issues/10) | Fixture provenance, oracle, and acceptance rules |
 | Static checks and neutral harness | [#11](https://github.com/danielep71/K-NSFR/issues/11), [#12](https://github.com/danielep71/K-NSFR/issues/12) | Meaningful failure/pass checks with no NSFR claims |

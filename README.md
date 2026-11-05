@@ -82,6 +82,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
+| [Regulatory source register](docs/methodology/SOURCE_REGISTER.md) | NSFR sources, their verification, concept mapping and applicability of the planned profile |
 | [Contributor guide](CONTRIBUTING.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Editorial rules, reproducible checks and implementation review |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
