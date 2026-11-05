@@ -49,7 +49,16 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(rules([issue(1, "P2", "P3")]), [(1, "priority")])
         self.assertEqual(rules([issue(1, milestone=None)]), [(1, "milestone")])
         self.assertEqual(rules([issue(1, milestone_state="closed")]), [(1, "milestone")])
-        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Other")]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone="v0.3.0 - Other")]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone="v0.10.0 - Lookalike")]), [(1, "milestone")])
+
+    def test_the_next_planned_milestone_is_accepted(self) -> None:
+        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Prototype Setup")]), [])
+        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Prototype Setup", milestone_state="closed")]),
+                         [(1, "milestone")])
+        found = check_issues.audit([issue(1, milestone="v0.3.0 - Later")], {1: "open"}, REPOSITORY,
+                                   assignee="triage-person")
+        self.assertIn("one of v0.1.0, v0.2.0", found[0].message)
 
     def test_dates_are_required_and_calendar_valid(self) -> None:
         for date in ("2026-02-30", "2026-11-4", "tomorrow", "2025-13-01"):

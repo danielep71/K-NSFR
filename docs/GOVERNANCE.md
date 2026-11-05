@@ -20,8 +20,11 @@ Europe/Rome, and belongs to an open milestone for the active release selected
 during triage. The target end date must be earlier than the milestone's due
 date, so every milestone carries a due date; triage reads the calendar date of
 the milestone's `due_on` and reports a milestone without one rather than
-guessing it. The active milestone is `v0.1.0 - Repo setup`; update the triage
-configuration when a new release branch becomes active. Never assign a closed
+guessing it. The active milestone is `v0.1.0 - Repo setup`. Issues for the next
+release may already be planned in its milestone, `v0.2.0 - Prototype Setup`,
+before its release branch exists; triage accepts exactly these two
+(`ACTIVE_MILESTONES` in `tools/check_issues.py`). Update the list when a release
+branch becomes active or a further release is planned. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
 <a id="priorities"></a>
