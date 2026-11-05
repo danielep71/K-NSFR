@@ -23,15 +23,15 @@ implemented, and no executable profile exists.
 Register version: **1**, compiled on **2026-11-05**. Every entry states how it
 was verified:
 
+- **Verified (EUR-Lex)**: checked by me in the official text on EUR-Lex on
+  2026-11-05.
 - **Verified (EBA)**: read on 2026-11-05 in the EBA Interactive Single
   Rulebook, which reproduces the CRR structure and links each article to its
   EUR-Lex consolidated source.
 - **Verified (BIS)** / **Verified (Bundesbank)**: read on 2026-11-05 on that
   authority's official site.
-- **To verify on EUR-Lex**: not read from the official text, because EUR-Lex
-  and the European Parliament site refuse automated clients. The value comes
-  from secondary sources and must be checked on EUR-Lex before anything
-  relies on it.
+- **To verify on EUR-Lex**: not yet checked in the official text. Nothing
+  relies on such a value until it is checked.
 
 A source is **normative** when it sets binding rules for the profile,
 **reporting** when it binds only the supervisory reporting format, and
@@ -62,10 +62,10 @@ My decisions of 2026-11-05 ([ADR-009](../DECISIONS.md#recorded-decisions)):
 
 | ID | Instrument and issuer | Version and dates | Applicable parts | Official URL | Verification |
 | --- | --- | --- | --- | --- | --- |
-| S-01 | Regulation (EU) No 575/2013 of the European Parliament and of the Council of 26 June 2013 on prudential requirements for credit institutions and investment firms (CRR) | Consolidated version `02013R0575-20260626`. Original: OJ L 176, 27.6.2013, p. 1 | Part Six Title I (Article 413), Title III (Articles 427–428), Title IV (Articles 428a–428az); Part Ten Title II (Article 510) | [ELI](http://data.europa.eu/eli/reg/2013/575/oj) · [consolidated version](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02013R0575-20260626) | Version identifier and article structure: Verified (EBA). OJ reference and article text: to verify on EUR-Lex |
-| S-02 | Regulation (EU) 2019/876 of the European Parliament and of the Council of 20 May 2019 amending Regulation (EU) No 575/2013 as regards, among others, the net stable funding ratio (CRR2) | OJ L 150, 7.6.2019, p. 1; general application from 28 June 2021 (Article 3(2)) | Inserted Part Six Title IV; its text is read through the S-01 consolidated version | [ELI](http://data.europa.eu/eli/reg/2019/876/oj) | Title: verified on legislation.gov.uk. OJ reference and application date: to verify on EUR-Lex |
-| S-03 | Regulation (EU) 2025/1215 of 17 June 2025 amending Regulation (EU) No 575/2013 as regards the stable funding treatment of securities financing transactions and unsecured transactions | Date of adoption 17 June 2025; OJ reference not read | Article 510 transitional treatment, which it makes permanent for short-term transactions with financial customers | [ELI](http://data.europa.eu/eli/reg/2025/1215/oj) | To verify on EUR-Lex: number, date, OJ reference and amended provisions come from the Commission proposal COM(2025) 146 and secondary sources |
-| S-04 | Regulation (EU) 2024/1623 of the European Parliament and of the Council of 31 May 2024 amending Regulation (EU) No 575/2013 (CRR3) | Published 19.6.2024 | No amendment to Part Six Title IV, Article 413 or Article 510 identified | [ELI](http://data.europa.eu/eli/reg/2024/1623/oj) | To verify on EUR-Lex that it leaves the NSFR provisions unchanged |
+| S-01 | Regulation (EU) No 575/2013 of the European Parliament and of the Council of 26 June 2013 on prudential requirements for credit institutions and investment firms (CRR) | Consolidated version `02013R0575-20260626`. Original: OJ L 176, 27.6.2013, p. 1 | Part Six Title I (Article 413), Title III (Articles 427–428), Title IV (Articles 428a–428az); Part Ten Title II (Article 510) | [ELI](http://data.europa.eu/eli/reg/2013/575/oj) · [consolidated version](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:02013R0575-20260626) | OJ reference: Verified (EUR-Lex). Version identifier and article structure: Verified (EBA) |
+| S-02 | Regulation (EU) 2019/876 of the European Parliament and of the Council of 20 May 2019 amending Regulation (EU) No 575/2013 as regards, among others, the net stable funding ratio (CRR2) | OJ L 150, 7.6.2019, p. 1. Entry into force 27 June 2019; application from 28 June 2021 under Article 3(2), subject to the exceptions of that Article | Inserted Part Six Title IV, which applies from 28 June 2021; its text is read through the S-01 consolidated version | [ELI](http://data.europa.eu/eli/reg/2019/876/oj) | Verified (EUR-Lex) |
+| S-03 | Regulation (EU) 2025/1215 of 17 June 2025 amending Regulation (EU) No 575/2013 as regards the stable funding treatment of short-term transactions with financial customers | OJ L, 2025/1215, 25.6.2025. Entry into force 26 June 2025; application from 29 June 2025 | Article 510: makes permanent the required stable funding treatment of the relevant short-term transactions with financial customers, securities financing and unsecured transactions included; deletes Article 510(7) and (8), so the increases they scheduled do not apply; updates the EBA monitoring in Article 510(6). The rest of Article 510 is not made permanent by it | [ELI](http://data.europa.eu/eli/reg/2025/1215/oj) | Verified (EUR-Lex) |
+| S-04 | Regulation (EU) 2024/1623 of the European Parliament and of the Council of 31 May 2024 amending Regulation (EU) No 575/2013 (CRR3) | OJ L, 2024/1623, 19.6.2024 | Article 1 point 208 amends Article 428(1)(k) (Title III, items requiring stable funding): the reference to undrawn credit facilities becomes a reference to buckets 4, 3 or 2 of Annex I. No direct amendment to Title IV (Articles 428a and following) or to Article 510; indirect effects of its other amendments to the CRR are not excluded | [ELI](http://data.europa.eu/eli/reg/2024/1623/oj) | Verified (EUR-Lex) |
 
 <a id="reporting-sources"></a>
 
@@ -76,8 +76,9 @@ them only to name and order outputs; they never override S-01.
 
 | ID | Instrument and issuer | Version and dates | Applicable parts | Official URL | Verification |
 | --- | --- | --- | --- | --- | --- |
-| R-01 | Commission Implementing Regulation (EU) 2021/451 (implementing technical standards on supervisory reporting) | As in force until its repeal by R-02 | NSFR templates C 80.00 (required stable funding), C 81.00 (available stable funding), C 82.00 and C 83.00 (simplified calculation) and C 84.00 (summary) | [ELI](http://data.europa.eu/eli/reg_impl/2021/451/oj) | Template codes: Verified (Bundesbank, [NSFR reporting page](https://www.bundesbank.de/en/tasks/banking-supervision/individual-aspects/liquidity/supervisory-reporting-of-institutions-with-regard-to-the-net-stable-funding-ratio)). Annex numbers: to verify on EUR-Lex |
-| R-02 | Commission Implementing Regulation (EU) 2024/3117 of 29 November 2024 on supervisory reporting, repealing Implementing Regulation (EU) 2021/451 | Published 27.12.2024 | NSFR templates: annex and codes not read | [ELI](http://data.europa.eu/eli/reg_impl/2024/3117/oj) | To verify on EUR-Lex: the publication date, the NSFR annex, its template codes and the repeal date of R-01, which a later amendment may postpone |
+| R-01 | Commission Implementing Regulation (EU) 2021/451 (implementing technical standards on supervisory reporting) | Ceased to apply generally from 1 January 2025, with specific transitional exceptions for market risk; repealed with effect from 31 December 2026 (see R-02 and R-03) | NSFR templates C 80.00 (required stable funding), C 81.00 (available stable funding), C 82.00 and C 83.00 (simplified calculation) and C 84.00 (summary) | [ELI](http://data.europa.eu/eli/reg_impl/2021/451/oj) | Template codes: Verified (Bundesbank, [NSFR reporting page](https://www.bundesbank.de/en/tasks/banking-supervision/individual-aspects/liquidity/supervisory-reporting-of-institutions-with-regard-to-the-net-stable-funding-ratio)). Application and repeal dates: Verified (EUR-Lex) |
+| R-02 | Commission Implementing Regulation (EU) 2024/3117 of 29 November 2024 on supervisory reporting, repealing Implementing Regulation (EU) 2021/451 | As amended by R-03. Its Article 25 originally repealed R-01 from 31 December 2025 | Article 17 and Annex I, section 7 *Reporting on stable funding*: C 80 and C 81 for the standard methodology, C 82 and C 83 for the simplified methodology for eligible institutions, C 84 for all institutions concerned. Article 22 has the EBA publish the templates and instructions; the annex numbering of R-01 does not carry over | [ELI](http://data.europa.eu/eli/reg_impl/2024/3117/oj) | Verified (EUR-Lex) |
+| R-03 | Commission Implementing Regulation (EU) 2025/2475 amending Implementing Regulation (EU) 2024/3117 | As adopted | Article 1 point 3 replaces Article 25(1) and (2) of R-02, postponing the repeal of R-01 to 31 December 2026 | [ELI](http://data.europa.eu/eli/reg_impl/2025/2475/oj) | Verified (EUR-Lex) |
 
 <a id="explanatory-sources"></a>
 
@@ -129,10 +130,10 @@ decision above.
 | Institutional protection schemes, cooperative networks, group treatment | S-01 Articles 428g, 428h | Out of v1 (entity scope) | — | — |
 | Available stable funding and residual maturity of liabilities | S-01 Articles 428i, 428j | Liability classification and residual-maturity inputs (#9) | ASF factors, cited per Articles 428k–428o | ASF classification and maturity boundary cases (#10) |
 | Required stable funding, residual maturity and encumbrance of assets | S-01 Chapter 4 Section 1 (Articles 428p–428q); the exact provisions to confirm on EUR-Lex | Asset classification, residual-maturity and encumbrance inputs (#9) | RSF factors, cited per Articles 428r–428ah | RSF classification, maturity and encumbrance boundary cases (#10) |
-| Transitional and permanent treatment of short-term transactions with financial customers | S-01 Article 510, S-03 | Transaction-type and counterparty inputs (#9) | Transitional treatment, cited once S-03 is verified | Transitional cases (#10) |
+| Required stable funding of short-term transactions with financial customers | S-01 Article 510, as amended by S-03 | Transaction-type, counterparty and residual-maturity inputs (#9) | Article 510 treatment, cited | Article 510 cases (#10) |
 | Simplified calculation for small and non-complex institutions | S-01 Articles 428ai–428az | Out of v1 | — | — |
 | Application on a consolidated basis | S-01 Article 428a | Out of v1 (entity scope) | — | — |
-| Reporting layout | S-01 Articles 427–428, R-01, R-02 | Output naming and ordering only | None | Output layout review (#9) |
+| Reporting layout and items requiring stable funding | S-01 Articles 427–428, Article 428(1)(k) as amended by S-04; R-02 Article 17 and Annex I section 7 | Output naming and ordering only | None | Output layout review (#9) |
 
 <a id="applicability-decisions"></a>
 
@@ -159,10 +160,8 @@ citation; this register states none.
 
 | Item | Status and owner |
 | --- | --- |
-| EUR-Lex verification of every field marked "to verify" | I verify on EUR-Lex before this register is integrated; the verification column is updated with the date. |
-| Whether S-04 (CRR3) amends any NSFR provision | To verify on EUR-Lex with S-01 and S-04. |
-| Exact content and date of S-03 and its effect on Article 510 | To verify on EUR-Lex; until then no transitional parameter is admitted. |
-| NSFR annex and template codes of R-02, and the repeal date of R-01 | To verify on EUR-Lex; affects only output naming. |
+| Supervisory decision under Article 428f, and the exact provisions of Chapter 4 Section 1 on the residual maturity and encumbrance of assets | To verify on EUR-Lex before #9 defines the corresponding inputs. |
+| Indirect effects of S-04's other CRR amendments on the NSFR inputs | Reviewed when #9 defines the inputs that Article 428(1)(k) and the RSF provisions refer to. |
 | Inclusion of derivative contracts (Article 428d) and netting (Article 428e) in the first contracts | Decided in #9 when the inputs are defined. |
 | Factor values for ASF and RSF | Captured with citations in the parameter set of [PROD-01](../BACKLOG.md#later-calculation-work), never in this register. |
 | Consolidated basis, group and scheme treatments, simplified calculation | Out of v1; each needs its own scope decision and follow-on issue before admission. |
