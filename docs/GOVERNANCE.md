@@ -47,7 +47,7 @@ An issue or pull request carries every type that describes its work.
 
 | Label | Use |
 | --- | --- |
-| `bug` | A confirmed defect in behavior, correctness, error handling or a documented contract. The Bug report form sets it. |
+| `bug` | A defect in behavior, correctness, error handling or a documented contract. The Bug report form sets it on every report; triage removes it if the report is not a defect. |
 | `enhancement` | A new capability or a meaningful improvement to supported behavior. The Enhancement form sets it. |
 | `documentation` | Documentation for users or for repository maintenance. The Documentation form sets it. |
 | `behavior-change` | Work that changes externally observable behavior, such as calculated results or the layout of inputs and outputs. |
@@ -85,8 +85,10 @@ label.
 Every issue includes a Dependencies and blocking status section. Write None
 if ready, name prerequisite issues with #number, or use a line beginning
 External condition: for an external blocker. Apply blocked only while a
-named prerequisite is unresolved. Review dependent issues when a prerequisite
-closes. Pull-request references do not count as blocking prerequisites.
+named prerequisite or an External condition: line is unresolved; when the
+external condition is resolved, replace that line with a short dated note
+and remove blocked. Review dependent issues when a prerequisite closes.
+Pull-request references do not count as blocking prerequisites.
 
 The workflow *Keep milestones issue-only*
 ([.github/workflows/pr-milestones.yml](../.github/workflows/pr-milestones.yml))
@@ -102,9 +104,11 @@ manual dispatch. I triage findings; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
 remains my decision. `python tools/check.py` (gate `issue-config`)
 fails when a catalogue label is not explained exactly once in the tables above,
-when a form or `.github/dependabot.yml` sets a label outside the catalogue, or
-when either assigns someone other than the assignee configured in the Bug
-report form.
+when `blocked` is not the only dependency status label, when a form or
+`.github/dependabot.yml` sets a label outside the catalogue, when either
+assigns someone other than the assignee configured in the Bug report form,
+when a form does not set exactly its default priority or lacks the
+dependencies or target end date field, or when blank issues are enabled.
 
 <a id="label-workflows"></a>
 
@@ -156,10 +160,10 @@ updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on
 Dependabot reads this configuration from `main`. The Actions entry's
 activation is evidenced in #6. The Python entry reached `main` with #107 on
 2026-11-03, when Dependabot read the configuration and built the `/tools`
-dependency graph; no Python update PR has been observed yet. The schema 2
-label reconciliation ran on `main` the same day and left the live labels
-matching the catalogue; the updated issue-triage implementation runs from
-`main` since then.
+dependency graph; its first Python update, #109, was integrated into `main` by
+#113 on 2026-11-04. The schema 2 label reconciliation ran on `main` on
+2026-11-03 and left the live labels matching the catalogue; the updated
+issue-triage implementation runs from `main` since then.
 This configuration does not set branch protections or other repository settings.
 
 <a id="traffic-history"></a>
@@ -199,7 +203,9 @@ progress. Link the task PR to its issue and name the exact candidate head SHA
 in its evidence. Milestones belong to issues; leave PR milestones empty. Record
 checks, tests and any manual validation against that candidate commit. Refresh
 review and evidence whenever the head changes. A green check on an earlier head
-is not evidence for a later one.
+is not evidence for a later one. When the base branch moves, bring the PR up
+to date by merging the base in; never rebase or force-push a branch under
+review.
 
 For a task PR, review the diff, resolve review threads and wait for the required
 Repository integrity check on the current head. I make the integration
@@ -287,7 +293,7 @@ Applies to `main` and every `release/**` branch:
 
 | Rule | Policy |
 | --- | --- |
-| Pull request required | Yes; 0 approving reviews (sole owner). |
+| Pull request required | Yes; 0 approving reviews, because I am the sole maintainer. |
 | Required status check | `Repository integrity`, the job of `.github/workflows/repository-integrity.yml`. |
 | Branch up to date before merge | Required. |
 | Conversations resolved before merge | Required. |
@@ -306,11 +312,13 @@ protection against deletion and non-fast-forward updates. The `main` ruleset
 allows merge commits; the release ruleset allows squash and merge commits.
 Additional rulesets protect `release/**` from deletion, `v*` tags from
 updates/deletion, and `traffic-history` from deletion or history rewrite.
-GitHub Actions requires full SHA pins and gives the default workflow token
-read access; Dependabot targets `release/0.1.0` from the configuration
-installed on `main`. Activation was verified in #6. Branch-rule enforcement scenarios are tracked by #15. These are
-observed configuration and workflow baselines. The repository became public on
-2026-10-28; the security features enabled for it are recorded, with their
+I set GitHub Actions to require full SHA pins and to give the default
+workflow token read access; these two settings are my statement, not read
+back (see the [settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#actions-and-security)).
+Dependabot targets `release/0.1.0` from the configuration installed on
+`main`; activation was verified in #6. The rulesets above were read back
+through the API on 2026-10-29; branch-rule enforcement scenarios are tracked
+by #15. The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
 (#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
@@ -321,8 +329,10 @@ read-back, with ruleset IDs.
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
 It checks committed Markdown links/fences, YAML syntax and duplicate keys,
-workflow syntax/expressions with a checksum-verified actionlint binary, strict Python typing, lint and tests, and committed blob whitespace (trailing
-whitespace, final newline and blank lines at end of file). Python 3.13 and Node 22
+workflow syntax/expressions with a checksum-verified actionlint binary,
+strict Python typing, lint and tests, and committed blob whitespace (trailing
+whitespace outside Markdown and `LICENSE`, final newline and blank lines at end
+of file). Python 3.13 and Node 22
 are selected explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.

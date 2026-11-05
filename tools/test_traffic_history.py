@@ -330,7 +330,7 @@ class BadgeTests(unittest.TestCase):
                        clones=window("2026-10-14", [(100, 3)] * 14))
             ws.merge("2026-10-14T06:00:00")
             self.assertEqual(ws.badge("clones"), {"schemaVersion": 1, "label": "clones",
-                                                  "message": "1.4k", "color": "217346"})
+                                                  "message": "1.4k", "color": "8250DF"})
             # The latest snapshot's 14-day unique count, not a sum of daily uniques.
             self.assertEqual(ws.badge("visitors")["message"], "1")
             self.assertEqual(ws.badge("visitors")["label"], "visitors (14d)")

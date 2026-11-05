@@ -5,7 +5,8 @@ run-name: "Traffic history — ${{ github.event_name }}"
 # collects views, clones, top referrers, popular paths and the repository's
 # stars, forks, watchers and open issues once a day, and merges them into CSV
 # files on the data-only `traffic-history` branch with
-# tools/traffic_history.py, which also writes the README badge files there.
+# tools/traffic_history.py, which also writes badge files there (not shown in
+# the README).
 # When traffic spikes, stars or forks increase, or a new referrer appears, the
 # alert job opens one issue for that day. Analytics only: it is not CI and
 # must never run builds or tests. Operation, credentials and recovery:

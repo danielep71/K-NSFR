@@ -167,6 +167,13 @@ section starts on the snapshot date and sets a target end date a week later,
 or the day before the milestone's due date if that is earlier, so it passes
 [Issue triage](GOVERNANCE.md#issues).
 
+The job picks the assignee and the milestone by its own rules:
+`github.repository_owner`, which is my account, and the open milestone with
+the earliest due date. Triage instead expects the assignee configured in the
+Bug report form and the milestone of the active release. Both give the same
+result while the active release's milestone has the earliest due date, so give
+any later milestone a later due date.
+
 The job uses the workflow token with `issues: write` and `contents: read`. It
 has no environment, so it never receives `TRAFFIC_TOKEN`, and it runs only
 after a successful collection.
@@ -208,7 +215,17 @@ invalid, and leaves the history unchanged. Read the failing step:
 
 A failed run can always be repeated: the merge is idempotent, and each
 collection covers the last 14 days. If the branch must be repaired, change it
-with a new commit made with `python tools/traffic_history.py merge` or by
-hand, keeping every header. `python tools/traffic_history.py init --data data`
-recreates missing files with their headers and never overwrites an existing
-one.
+with a new commit, keeping every header. The script lives on `main` and the
+data on `traffic-history`, so work from a clone of `main` with the data branch
+in a second worktree:
+
+```sh
+git worktree add ../history traffic-history
+python tools/traffic_history.py init --data ../history/data
+python tools/traffic_history.py merge --raw <responses> --data ../history/data --collected-at <UTC time>
+```
+
+`init` recreates missing CSV files with their headers and never overwrites an
+existing one; the badge files are rewritten by the next `merge`. `merge` takes
+a directory of saved API responses, as the workflow's fetch step writes them.
+Commit the change in `../history` and push it to `traffic-history`.

@@ -9,7 +9,8 @@ date that no collection reported has no row: it is unavailable, not zero.
 The merge reads only local files and needs no token (docs/TRAFFIC.md). Every
 response and every existing file is validated before anything is written, so
 an invalid or incomplete collection leaves the history unchanged. After each
-merge it rewrites the README badge files under badges/ from the stored data.
+merge it rewrites the badge files under badges/ from the stored data; the
+README does not display them.
 
 The alert command compares the two latest snapshots and, when traffic spikes,
 stars or forks increase, or a new referrer appears, writes the title and body
@@ -59,7 +60,7 @@ RESPONSES = ("views.json", "clones.json", "referrers.json", "paths.json", "repos
 REPOSITORY_COUNTS = {"stars": "stargazers_count", "forks": "forks_count",
                      "watchers": "subscribers_count", "open_issues": "open_issues_count"}
 BADGES = "badges"
-BADGE_COLOR = "217346"
+BADGE_COLOR = "8250DF"
 MIDNIGHT = re.compile(r"^(\d{4}-\d{2}-\d{2})T00:00:00Z$")
 ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 # Collection times are always written in this form, so they compare as strings.
@@ -362,7 +363,7 @@ def total(rows: Sequence[Mapping[str, str]], key: str) -> int:
 
 def badges(daily: Sequence[Mapping[str, str]],
            snapshots: Sequence[Mapping[str, str]]) -> dict[str, str]:
-    """shields.io endpoint files for the README, from the stored data only.
+    """shields.io endpoint files, from the stored data only.
 
     clones: all clones stored since tracking began. visitors (14d): unique
     visitors over the API's window, from the latest snapshot; daily uniques

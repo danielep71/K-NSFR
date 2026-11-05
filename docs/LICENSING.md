@@ -10,7 +10,7 @@
 
 ## 📜 Selected license
 
-K-NSFR has been public since 2026-10-28. The owner selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
+K-NSFR has been public since 2026-10-28. I selected the Mozilla Public License, version 2.0 (MPL-2.0), for K-NSFR. The
 standard text is in [LICENSE](../LICENSE). Copyright and other rights remain
 with their respective rights holders; this choice grants only rights a
 contributor is entitled to license.
@@ -40,9 +40,9 @@ Publication gate: review every tracked file and accessible history, issue/PR
 content, Actions logs and artifacts for secrets and client, employer, proprietary
 or personal material. Confirm rights and notices for the imported governance
 source, and remove or resolve any questionable content before changing visibility.
-The repository was made public on 2026-10-28, before this review; on the
-owner's decision the review was then run as a post-publication review and is
-recorded in #19, with its open items in #68, #69 and #70.
+The repository was made public on 2026-10-28, before this review; on my
+decision the review was then run as a post-publication review and is
+recorded in #19. Its follow-up items #68, #69 and #70 are closed.
 After publication, review public issue reporting and repository controls for
 that visibility. Record the candidate commit and review evidence in issue #19.
 
@@ -55,3 +55,22 @@ and authored surfaces. Future dependencies require a source URL, version or
 commit, license text/notice, permitted use and redistribution review before
 admission. A dependency manifest or vendor notice must accompany adopted code
 where its terms require one.
+
+<a id="runtime-tool-licenses"></a>
+
+## 🧾 Runtime tool licenses
+
+The tools listed in [PROVENANCE.md](PROVENANCE.md#runtime-tools) are
+downloaded at run time and are not vendored; their installed distributions
+retain their own license files, and the root MPL-2.0 license does not
+relicense them.
+
+| Tool | License |
+| --- | --- |
+| GitHub checkout, Python/Node setup and artifact upload actions | MIT |
+| actionlint | MIT |
+| Ruff | MIT |
+| mypy and its runtime dependencies | Retained in the installed distributions |
+| PyYAML | MIT |
+| types-PyYAML | Apache-2.0 |
+| markdown-it-py and mdurl | MIT |

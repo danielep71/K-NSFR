@@ -2,10 +2,12 @@ name: Issue triage
 run-name: "Issue triage — ${{ github.event_name }} by ${{ github.actor }}"
 
 # Audits every open issue against the rules issue forms cannot enforce:
-# assignee, exactly one priority, P1 only on bugs, a milestone, catalogue
-# labels, and `blocked` exactly while a named prerequisite is unresolved.
+# assignee, exactly one priority, P1 only on bugs, an open milestone of the
+# active release, a target end date before that milestone's due date,
+# catalogue labels, and `blocked` exactly while a named prerequisite or an
+# External condition: line is present (tools/check_issues.py).
 # Read-only: it never changes an issue. A failed run is the triage signal;
-# the maintainer resolves each finding by hand (docs/GOVERNANCE.md, Issues).
+# I resolve each finding by hand (docs/GOVERNANCE.md, Issues).
 # Issue events run the workflow from the default branch only.
 
 on:

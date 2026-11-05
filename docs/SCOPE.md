@@ -59,7 +59,7 @@ synthetic calculations with explicit limitations.
 Production use remains out of scope until a separately approved workstream
 establishes regulatory applicability, independent numerical validation, data
 quality and reconciliation controls, access and operational controls, change
-management, supported-host evidence, and accountable owner sign-off. Passing
+management, supported-host evidence, and my accountable sign-off. Passing
 portable CI or an Excel smoke test alone does not satisfy this gate.
 
 <a id="v010-inclusions-and-exclusions"></a>
