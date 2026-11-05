@@ -2,7 +2,9 @@
 
 # 🧰 Repository tooling
 
-**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation)
+**K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](../docs/GOVERNANCE.md)
+
+[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 <a id="running-the-checks"></a>
 
@@ -35,16 +37,27 @@ and missing tools. No gate is skipped after an earlier gate fails.
 
 ## ✅ Gates and reports
 
-| Gate | Evidence |
-| --- | --- |
-| Tool tests | Positive and negative fixtures for source, links, YAML, issues and runner behavior |
-| Source control | Committed bytes (encoding, LF, trailing whitespace, final newline, blank lines at end of file) and exact binary allowlist; isolated committed Git attributes |
-| Content | Parsed Markdown links/images, reference links, HTML links, explicit section anchors, fences and duplicate YAML keys |
-| Labels and forms | Manifest validation, sync/drift self-tests and issue-form configuration |
-| Ruff | Import/error rules and complexity ceiling 15; a probe proves 15 passes and 16 fails |
-| mypy | Strict typing for every Python tool and test; annotated/unannotated probe |
-| actionlint | Workflow syntax and expressions |
-| Workflow invariants | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile and milestone conditions, events and permissions; one inline milestone script; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+The gates run in this order; each needs the tool or libraries shown, and is
+reported **NOT RUN** without them.
+
+| Gate | Needs | Evidence |
+| --- | --- | --- |
+| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, issues, workflow invariants and traffic history |
+| `labels-sync-self-test` | Node | Label synchronization self-tests |
+| `labels-manifest` | Node | Label catalogue validation |
+| `labels-drift-self-test` | Node | Label drift self-tests |
+| `issue-config` | Node | Issue forms, label guide and Dependabot labels against the issue rules (`check_issues.py --check-config`) |
+| `source-control` | Python | Committed bytes (encoding, LF, trailing whitespace outside Markdown and `LICENSE`, final newline, blank lines at end of file) and exact binary allowlist; isolated committed Git attributes |
+| `content` | PyYAML, markdown-it-py | Parsed Markdown links/images, reference links, HTML links, explicit section anchors, fences and duplicate YAML keys |
+| `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
+| `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
+| `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
+| `mypy-strict-probe` | mypy | An unannotated function is rejected |
+| `actionlint` | actionlint | Workflow syntax and expressions |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile condition; the milestone workflow's events, condition, permissions and single inline script; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+
+On GitHub Actions a gate whose Python libraries are missing runs anyway and
+fails, so the required check never skips one.
 
 Internal links to Markdown sections must point to explicit `<a id="..."></a>`
 anchors. This policy avoids reliance on renderer-specific heading slugs and
@@ -130,8 +143,9 @@ A repository is always given as `owner/name`; `--input` requires
 it needs Node. It also checks that every issue form sets its default priority,
 known labels, the assignee and the `dependencies` and `target_end_date` fields;
 that the label tables of [governance](../docs/GOVERNANCE.md#issues) explain
-each catalogue label exactly once; and that `.github/dependabot.yml` uses only
-catalogue labels and the same assignee.
+each catalogue label exactly once; that `blocked` is the only dependency
+status label; that `ISSUE_TEMPLATE/config.yml` disables blank issues; and that
+`.github/dependabot.yml` uses only catalogue labels and the same assignee.
 
 Exit code 0 means no findings, 1 means findings, 2 means the audit could not
 run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
@@ -143,10 +157,10 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 
 | Tool | Version | Pinned in |
 | --- | --- | --- |
-| Python | 3.13 | `actions/setup-python` in the workflows; `pyproject.toml` targets |
+| Python | 3.13 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets |
 | Node.js | 22 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.1, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
-| PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (content and workflow-invariants gates) |
+| PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
 Update a version only as [dependency updates](#dependency-updates) describes,

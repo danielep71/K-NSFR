@@ -102,9 +102,11 @@ manual dispatch. I triage findings; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
 remains my decision. `python tools/check.py` (gate `issue-config`)
 fails when a catalogue label is not explained exactly once in the tables above,
-when a form or `.github/dependabot.yml` sets a label outside the catalogue, or
-when either assigns someone other than the assignee configured in the Bug
-report form.
+when `blocked` is not the only dependency status label, when a form or
+`.github/dependabot.yml` sets a label outside the catalogue, when either
+assigns someone other than the assignee configured in the Bug report form,
+when a form does not set exactly its default priority or lacks the
+dependencies or target end date field, or when blank issues are enabled.
 
 <a id="label-workflows"></a>
 
@@ -321,8 +323,10 @@ read-back, with ruleset IDs.
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
 It checks committed Markdown links/fences, YAML syntax and duplicate keys,
-workflow syntax/expressions with a checksum-verified actionlint binary, strict Python typing, lint and tests, and committed blob whitespace (trailing
-whitespace, final newline and blank lines at end of file). Python 3.13 and Node 22
+workflow syntax/expressions with a checksum-verified actionlint binary,
+strict Python typing, lint and tests, and committed blob whitespace (trailing
+whitespace outside Markdown and `LICENSE`, final newline and blank lines at end
+of file). Python 3.13 and Node 22
 are selected explicitly in the workflow. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.
