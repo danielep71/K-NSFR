@@ -69,6 +69,16 @@
       "code": "NSFR-E012",
       "field": "transaction_type",
       "record_id": "e-010"
+    },
+    {
+      "code": "NSFR-E013",
+      "field": "cells",
+      "record_id": "e-015"
+    },
+    {
+      "code": "NSFR-E016",
+      "field": "amount",
+      "record_id": "e-014"
     }
   ]
 }

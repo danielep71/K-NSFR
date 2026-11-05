@@ -64,6 +64,16 @@ class AmountTests(unittest.TestCase):
         self.assertEqual(codes(position(amount="0")), [])
         self.assertEqual(codes(position(amount="1.0000")), [])
 
+    def test_amounts_are_limited_to_fifteen_integer_digits(self) -> None:
+        self.assertEqual(codes(position(amount="999999999999999.9999")), [])
+        self.assertEqual(codes(position(amount="1000000000000000")), [("NSFR-E016", "amount")])
+
+    def test_sums_at_the_limit_do_not_overflow(self) -> None:
+        rows = [position(record_id=f"r-{n}", amount="999999999999999.9999") for n in range(1000)]
+        totals = cc.reconciliation(rows)
+        self.assertEqual(totals["sides"]["asf"]["amount"], "999999999999999999.9000")
+        self.assertEqual(len(cc.fingerprint(SCHEMA, RUN, rows)), 64)
+
 
 class FieldTests(unittest.TestCase):
     def test_enumerations_reject_unknown_and_unsupported_values(self) -> None:
@@ -101,6 +111,17 @@ class TableTests(unittest.TestCase):
         self.assertEqual([(d.code, d.record_id, d.field) for d in found], [("NSFR-E013", "run", "rows")])
         found = cc.validate(SCHEMA, (RUN_FIELDS, [RUN]), (POSITION_FIELDS[:-1], [POSITION]))
         self.assertIn(("NSFR-E013", "positions", "header"), [(d.code, d.record_id, d.field) for d in found])
+
+    def test_rows_with_more_or_fewer_cells_are_reported(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "positions.csv"
+            values = [POSITION[name] for name in POSITION_FIELDS]
+            path.write_text("\n".join([",".join(POSITION_FIELDS), ",".join([*values, "EXTRA"]),
+                                       ",".join(values[:-1]).replace("p-001", "p-002")]) + "\n",
+                            encoding="utf-8")
+            found = cc.validate(SCHEMA, (RUN_FIELDS, [RUN]), cc.read_table(path))
+        self.assertIn(("NSFR-E013", "p-001", "cells"), [(d.code, d.record_id, d.field) for d in found])
+        self.assertIn(("NSFR-E013", "p-002", "cells"), [(d.code, d.record_id, d.field) for d in found])
 
     def test_consolidated_basis_is_not_supported(self) -> None:
         self.assertEqual(codes(POSITION, run={**RUN, "basis": "consolidated"}), [("NSFR-E012", "basis")])

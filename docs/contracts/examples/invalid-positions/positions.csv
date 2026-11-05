@@ -13,3 +13,5 @@ e-011,asf,liability,Invalid date,10,EUR,dated,2026-13-01,428l,false,,other,none,
 e-012,asf,liability,Exponent notation,1e5,EUR,dated,2027-06-30,428l,false,,other,none,ledger:12
 e-013,asf,liability,End date without encumbrance,10,EUR,dated,2027-06-30,428l,false,2027-01-31,other,none,ledger:13
 e-001,asf,liability,Duplicate record_id,10,EUR,dated,2027-06-30,428l,false,,other,none,ledger:14
+e-014,asf,liability,Over the magnitude limit,1000000000000000,EUR,dated,2027-06-30,428l,false,,other,none,ledger:15
+e-015,asf,liability,Extra cell,10,EUR,dated,2027-06-30,428l,false,,other,none,ledger:16,UNEXPECTED

@@ -7,7 +7,8 @@
   },
   "amount": {
     "pattern": "^[0-9]+(\\.[0-9]{1,4})?$",
-    "max_decimals": 4
+    "max_decimals": 4,
+    "max_integer_digits": 15
   },
   "classification": {
     "pattern": "^(428[a-z]{1,2})(\\([0-9]+\\))?(\\([a-z]{1,2}\\))?(\\([ivx]+\\))?$",
@@ -88,7 +89,8 @@
     "NSFR-E010": {"severity": "error", "stage": "contract", "meaning": "The classification is outside the articles of its side"},
     "NSFR-E011": {"severity": "error", "stage": "contract", "meaning": "A conditional value is missing, or present when it must be empty"},
     "NSFR-E012": {"severity": "error", "stage": "contract", "meaning": "The input uses a feature that version 1 does not support"},
-    "NSFR-E013": {"severity": "error", "stage": "contract", "meaning": "The run table does not have exactly one row, or a table has unexpected columns"},
+    "NSFR-E013": {"severity": "error", "stage": "contract", "meaning": "The run table does not have exactly one row, or a table's columns or a row's cells differ from the contract"},
+    "NSFR-E016": {"severity": "error", "stage": "contract", "meaning": "An amount has more than fifteen integer digits"},
     "NSFR-E014": {"severity": "error", "stage": "engine", "meaning": "The parameter set is unknown, or does not match the profile and register"},
     "NSFR-E015": {"severity": "error", "stage": "engine", "meaning": "No factor in the parameter set covers a classification"},
     "NSFR-W001": {"severity": "warning", "stage": "engine", "meaning": "Required stable funding is zero, so the ratio is not reported"}

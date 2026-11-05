@@ -22,7 +22,7 @@ import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, localcontext
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +34,9 @@ IDENTIFIER = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
 CURRENCY = re.compile(r"^[A-Z]{3}$")
 TIMESTAMP = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 SCALE = Decimal("0.0001")
+LIMIT = Decimal(10) ** 15  # an amount has at most 15 integer digits
+PRECISION = 60  # exact for any sum of contract amounts
+WIDTH = "#cells"  # marks a row whose cell count differs from its header
 SIDES = {"own_funds": "asf", "liability": "asf", "asset": "rsf", "off_balance_sheet": "rsf"}
 
 Row = dict[str, str]
@@ -61,7 +64,13 @@ def read_table(path: Path) -> tuple[list[str], list[Row]]:
     if not rows:
         return [], []
     header, body = rows[0], rows[1:]
-    return header, [dict(zip(header, values, strict=False)) for values in body]
+    table = []
+    for values in body:
+        row = dict(zip(header, values, strict=False))
+        if len(values) != len(header):
+            row[WIDTH] = str(len(values))
+        table.append(row)
+    return header, table
 
 
 def parse_date(value: str) -> date | None:
@@ -91,6 +100,8 @@ def amount_code(value: str, pattern: str) -> str | None:
         return "NSFR-E004"
     if number < 0:
         return "NSFR-E005"
+    if number >= LIMIT:
+        return "NSFR-E016"
     exponent = number.as_tuple().exponent
     if isinstance(exponent, int) and exponent < -4:
         return "NSFR-E006"
@@ -182,6 +193,7 @@ def validate(schema: Mapping[str, Any], run_table: tuple[list[str], list[Row]],
     if len(run_rows) != 1:
         found.append(Diagnostic("NSFR-E013", "run", "rows"))
     run = run_rows[0] if run_rows else {}
+    found += [Diagnostic("NSFR-E013", "run", "cells") for row in run_rows if WIDTH in row]
     for spec in tables["run"]["fields"]:
         found += field_diagnostics(spec, run, "run", schema)
     seen: set[str] = set()
@@ -190,6 +202,8 @@ def validate(schema: Mapping[str, Any], run_table: tuple[list[str], list[Row]],
         if record_id in seen:
             found.append(Diagnostic("NSFR-E003", record_id, "record_id"))
         seen.add(record_id)
+        if WIDTH in row:
+            found.append(Diagnostic("NSFR-E013", record_id, "cells"))
         for spec in tables["positions"]["fields"]:
             found += field_diagnostics(spec, row, record_id, schema)
         found += cross_diagnostics(row, record_id, run)
@@ -202,6 +216,12 @@ def money(value: Decimal) -> str:
 
 def reconciliation(positions: Sequence[Row]) -> dict[str, Any]:
     """Counts and amount totals by side and by classification; no factor applied."""
+    with localcontext() as context:
+        context.prec = PRECISION
+        return exact_reconciliation(positions)
+
+
+def exact_reconciliation(positions: Sequence[Row]) -> dict[str, Any]:
     sides: dict[str, list[Any]] = {"asf": [0, Decimal(0)], "rsf": [0, Decimal(0)]}
     groups: dict[tuple[str, str], list[Any]] = {}
     for row in positions:
@@ -235,7 +255,10 @@ def canonical(schema: Mapping[str, Any], run: Row, positions: Sequence[Row]) -> 
 
 
 def fingerprint(schema: Mapping[str, Any], run: Row, positions: Sequence[Row]) -> str:
-    return hashlib.sha256(canonical(schema, run, positions).encode("utf-8")).hexdigest()
+    with localcontext() as context:
+        context.prec = PRECISION
+        text = canonical(schema, run, positions)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def evaluate_example(schema: Mapping[str, Any], directory: Path) -> dict[str, Any]:

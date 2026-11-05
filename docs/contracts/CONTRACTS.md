@@ -92,7 +92,7 @@ position. An empty cell is a missing value.
 | date | ISO 8601 calendar date `YYYY-MM-DD` |
 | timestamp | ISO 8601 UTC `YYYY-MM-DDThh:mm:ssZ` |
 | currency | three upper-case letters (ISO 4217); the code list itself is not checked |
-| amount | digits, optionally a point and one to four decimals; no sign, exponent, grouping or spaces. Positive and negative positions are told apart by `side` and `item_type`, never by sign |
+| amount | digits, optionally a point and one to four decimals; at most 15 integer digits; no sign, exponent, grouping or spaces. Positive and negative positions are told apart by `side` and `item_type`, never by sign |
 | classification | `428` plus the article letters, with optional paragraph, point and sub-point, for example `428l`, `428l(2)` or `428l(2)(a)(i)`. The article must be one of the register's ASF factor articles (428k to 428o) for `asf`, or RSF factor articles (428r to 428ah) for `rsf` |
 | text | any non-empty text |
 
@@ -147,8 +147,10 @@ validation rules in #10.
 Every result of a valid input reports, before any factor: the record count;
 the count and amount total of each side; and the count and amount total of
 each pair of side and classification. Totals are exact decimal sums, shown
-with four decimals. They let a reviewer tie the input to the source system
-independently of the calculation.
+with four decimals, computed with enough precision that no input within the
+amount limits can overflow them. They let a reviewer tie the input to the
+source system independently of the calculation. The engine's numeric type
+must carry the same limits; its range and rounding tests belong to #10.
 
 <a id="diagnostics"></a>
 
@@ -173,7 +175,8 @@ error rejects the whole run: no partial result is produced.
 | `NSFR-E010` | Contract | The classification is outside the articles of its side |
 | `NSFR-E011` | Contract | A conditional value is missing, or present when it must be empty |
 | `NSFR-E012` | Contract | The input uses a feature that version 1 does not support |
-| `NSFR-E013` | Contract | The run table does not have exactly one row, or a table's columns differ from the contract |
+| `NSFR-E013` | Contract | The run table does not have exactly one row, or a table's columns or a row's cells differ from the contract |
+| `NSFR-E016` | Contract | An amount has more than fifteen integer digits |
 | `NSFR-E014` | Engine | The parameter set is unknown, or does not match the profile and register |
 | `NSFR-E015` | Engine | No factor in the parameter set covers a classification |
 | `NSFR-W001` | Engine | Required stable funding is zero, so the ratio is not reported |
@@ -207,7 +210,7 @@ All data is synthetic ([data policy](../DATA_POLICY.md)).
 | Example | Shows |
 | --- | --- |
 | `valid-basic` | A valid input on both sides, with dated, undated, encumbered and Article 510 positions, and its reconciliation totals |
-| `invalid-positions` | One row per contract error: missing, malformed, non-finite, negative and over-precise amounts, another currency, past dates, side mismatches, a missing conditional date, a derivative and a duplicate `record_id` |
+| `invalid-positions` | One row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, another currency, past dates, side mismatches, a missing conditional date, a derivative, an extra cell and a duplicate `record_id` |
 | `invalid-run-basis` | The consolidated basis, rejected in version 1 |
 | `invalid-run-rows` | A run table with two rows |
 
