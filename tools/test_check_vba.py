@@ -196,6 +196,8 @@ class CompileEnvironmentTests(unittest.TestCase):
         self.assertEqual(rules(HOST, "#If VBA7 And Win64 Then", "#ElseIf Not VBA7 Then", "#End If"), [])
         self.assertEqual(rules(HOST, "#If VBA7 = True Then", "#ElseIf Win64 = False Then",
                                "#End If"), [])
+        self.assertEqual(rules(HOST, "#If Win64 = &H0 Then", "#ElseIf VBA7 <> &O1& Then",
+                               "#ElseIf Win64 = 0 Then", "#End If"), [])
         self.assertEqual(rules(HOST, "#If Mac Then", "#End If"), ["conditional-compilation"])
 
     def test_conditional_compilation_is_host_only(self) -> None:

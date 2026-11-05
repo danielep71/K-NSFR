@@ -44,6 +44,8 @@ HEADER_OPEN = re.compile(r"^\s*BEGIN(?:PROPERTY)?\b", re.I)
 HEADER_CLOSE = re.compile(r"^\s*END(?:PROPERTY)?\s*$", re.I)
 VB_NAME = re.compile(r'^\s*Attribute\s+VB_Name\s*=\s*"([^"]*)"', re.I)
 DIRECTIVE = re.compile(r"^\s*#\s*(\w+)\b(.*)$")
+# Literals in a #If condition: strings, &H/&O numbers, decimal numbers with type suffixes.
+LITERAL = re.compile(r'"(?:[^"]|"")*"|&[HhOo][0-9A-Fa-f]+[%&^]?|\b[0-9]+(?:\.[0-9]+)?[%&!#@^]?')
 TOKEN_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 PROCEDURE = re.compile(
     r"^\s*(?:(?:Public|Private|Friend|Static|Global)\s+)*"
@@ -295,7 +297,7 @@ def check_directive(module: Module, line: int, text: str) -> None:
             module.add(line, "conditional-compilation",
                        "Conditional compilation is allowed only in src/host/", text)
             return
-        names = {word.lower() for word in re.findall(r"[A-Za-z_]\w*", condition)}
+        names = {word.lower() for word in re.findall(r"[A-Za-z_]\w*", LITERAL.sub(" ", condition))}
         if names - CONDITION_WORDS - COMPILE_CONSTANTS:
             module.add(line, "conditional-compilation",
                        "Conditional compilation may test only VBA7 and Win64", text)
