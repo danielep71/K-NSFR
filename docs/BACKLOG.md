@@ -30,7 +30,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 
 ## 🚀 Later calculation work
 
-Accountable backlog owner: @danielep71. Before starting each item, create a scoped
+I am accountable for this backlog. Before starting each item, create a scoped
 issue with priority, milestone, target end date, dependencies, acceptance
 criteria, and evidence requirements. No production dates are assigned here.
 
@@ -40,8 +40,8 @@ criteria, and evidence requirements. No production dates are assigned here.
 | PROD-02 | Implement input validation and ASF/RSF classification | PROD-01, #5, #10, #11 | Independent valid/invalid and maturity/encumbrance boundary fixtures; no silent defaults |
 | PROD-03 | Implement aggregation, ratio outputs, and reconciliations | PROD-02 | Independently derived totals; explicit zero-denominator, sign, rounding, and currency/perimeter behavior |
 | PROD-04 | Validate the reference engine end to end | PROD-03, #12-#14 | Independent oracle, regression coverage, deterministic results, and exact-candidate host evidence |
-| PROD-05 | Assess production admission and operational controls | PROD-04, #3, #22 | Named owner review of applicability, data controls, deployment, security, change management, monitoring, and documented limitations |
-| PROD-06 | Assess additional jurisdictions or simplified profiles | PROD-01; separate owner scope decision | Separate profile/version and independent fixtures; no implicit reuse of EU parameters |
+| PROD-05 | Assess production admission and operational controls | PROD-04, #3, #22 | My review of applicability, data controls, deployment, security, change management, monitoring, and documented limitations |
+| PROD-06 | Assess additional jurisdictions or simplified profiles | PROD-01; my separate scope decision | Separate profile/version and independent fixtures; no implicit reuse of EU parameters |
 
 PROD-04 may support a reference release; it does not by itself authorize PROD-05
 or production use. These records introduce no formulas, regulatory weightings,

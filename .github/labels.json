@@ -15,12 +15,12 @@
     {
       "name": "bug",
       "color": "D73A4A",
-      "description": "Confirmed defect in behavior, correctness, error handling, or a documented contract"
+      "description": "Defect in behavior, correctness, error handling, or a documented contract"
     },
     {
       "name": "ci",
       "color": "24292F",
-      "description": "Automated quality checks, workflow maintenance, or release certification"
+      "description": "Automated quality checks, workflow maintenance, or Dependabot pull requests"
     },
     {
       "name": "documentation",
@@ -90,7 +90,7 @@
     {
       "name": "security",
       "color": "8B0000",
-      "description": "Security boundary, vulnerability handling, supply chain, or hardening"
+      "description": "Security boundary, supply chain, or hardening; never an undisclosed vulnerability"
     },
     {
       "name": "tests",
