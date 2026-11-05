@@ -137,8 +137,9 @@ A result has `status` `ok` or `rejected`, echoes the run identity
 
 A `rejected` result carries no total and no ratio. When required stable
 funding is zero, the ratio is not reported and `NSFR-W001` explains why. The
-rounding mode and the reported scale of the ratio are fixed with the
-validation rules in #10.
+[validation rules](../validation/VALIDATION.md#arithmetic-scale-and-rounding)
+fix the reported scales: both totals with eight decimals, and the ratio as a
+decimal with six decimals, rounded half-even once from the exact quotient.
 
 <a id="reconciliation"></a>
 
@@ -150,7 +151,8 @@ each pair of side and classification. Totals are exact decimal sums, shown
 with four decimals, computed with enough precision that no input within the
 amount limits can overflow them. They let a reviewer tie the input to the
 source system independently of the calculation. The engine's numeric type
-must carry the same limits; its range and rounding tests belong to #10.
+must carry the same limits; the [validation rules](../validation/VALIDATION.md#numeric-range)
+record its range.
 
 <a id="diagnostics"></a>
 

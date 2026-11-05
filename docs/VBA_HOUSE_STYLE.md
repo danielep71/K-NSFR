@@ -271,8 +271,8 @@ generated, names the generator and says it must not be edited by hand.
 
   ```vb
   Public Function ValidateRecord( _
-      ByVal Amount As Currency, _
-      ByVal Proportion As Currency) _
+      ByVal RecordId As String, _
+      ByVal AsOfDate As Date) _
       As Boolean
   ```
 
