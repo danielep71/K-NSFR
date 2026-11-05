@@ -166,8 +166,10 @@ Public Sub CheckTolerance( _
 '               <= Tolerance) or "relative" (difference <= the larger of
 '               Tolerance x Expected and Floor; Tolerance below 1; Floor
 '               required). Floor is ignored for "absolute".
-'ERROR POLICY   Text that is not such a decimal, an unknown mode or a
-'               missing floor is a FAIL with its reason.
+'ERROR POLICY   Text that is not such a decimal, an unknown mode, a missing
+'               floor, or values whose difference or relative allowance
+'               Decimal cannot hold exactly, is a FAIL with its reason; the
+'               comparison is never made on a rounded value.
 'UPDATED        2026-11-05
     Dim ExpectedValue   As Variant              'Decimal subtype
     Dim ActualValue     As Variant              'Decimal subtype
@@ -182,6 +184,8 @@ Public Sub CheckTolerance( _
             Reason = "not a decimal: " & Quoted(Actual)
         ElseIf Not ParseDecimal(Tolerance, ToleranceValue) Then
             Reason = "not a decimal: " & Quoted(Tolerance)
+        ElseIf Not SubtractsExactly(Expected, Actual) Then
+            Reason = "expected and actual cannot be subtracted exactly in Decimal"
         ElseIf Mode = MODE_ABSOLUTE Then
             Allowed = ToleranceValue
         ElseIf Mode <> MODE_RELATIVE Then
@@ -192,6 +196,8 @@ Public Sub CheckTolerance( _
             Reason = "a relative tolerance needs a floor"
         ElseIf Not ParseDecimal(Floor, FloorValue) Then
             Reason = "not a decimal: " & Quoted(Floor)
+        ElseIf Not MultipliesExactly(Tolerance, Expected) Then
+            Reason = "tolerance x expected cannot be computed exactly in Decimal"
         Else
             Allowed = ToleranceValue * ExpectedValue
             If Allowed < FloorValue Then Allowed = FloorValue
@@ -522,6 +528,81 @@ Private Function LineAt( _
 'RETURNS        Line LineNumber (from 1) of a Split result, or empty past its end.
 
         If LineNumber - 1 <= UBound(Lines) Then LineAt = Lines(LineNumber - 1)
+End Function
+
+
+Private Function SubtractsExactly( _
+    ByVal First As String, _
+    ByVal Second As String) _
+    As Boolean
+'PURPOSE        True when two parsed decimals, aligned on the point, need at
+'               most 28 digits, so that their difference is exact.
+
+        SubtractsExactly = MaxOf(WholeDigits(First), WholeDigits(Second)) + _
+                           MaxOf(FractionDigits(First), FractionDigits(Second)) <= MAX_DIGITS
+End Function
+
+
+Private Function MultipliesExactly( _
+    ByVal First As String, _
+    ByVal Second As String) _
+    As Boolean
+'PURPOSE        True when the product of two parsed decimals has at most 28
+'               significant digits and 28 decimals, so that it is exact.
+
+        MultipliesExactly = SignificantDigits(First) + SignificantDigits(Second) <= MAX_DIGITS _
+                            And FractionDigits(First) + FractionDigits(Second) <= MAX_DIGITS
+End Function
+
+
+Private Function SignificantDigits( _
+    ByVal Source As String) _
+    As Long
+'RETURNS        The digits of a parsed decimal without its point and leading
+'               zeros; 1 for zero.
+    Dim Digits      As String                   'Source without its point
+    Dim i           As Long                     'First significant position
+
+        Digits = Replace(Source, ".", vbNullString)
+        i = 1
+        Do While i < Len(Digits)
+            If Mid$(Digits, i, 1) <> "0" Then Exit Do
+            i = i + 1
+        Loop
+        SignificantDigits = Len(Digits) - i + 1
+End Function
+
+
+Private Function FractionDigits( _
+    ByVal Source As String) _
+    As Long
+'RETURNS        The digits after the point of a parsed decimal, 0 if none.
+    Dim PointAt     As Long                     'Position of the point, 0 if none
+
+        PointAt = InStr(1, Source, ".", vbBinaryCompare)
+        If PointAt > 0 Then FractionDigits = Len(Source) - PointAt
+End Function
+
+
+Private Function WholeDigits( _
+    ByVal Source As String) _
+    As Long
+'RETURNS        The significant digits before the point of a parsed decimal.
+
+        WholeDigits = MaxOf(SignificantDigits(Source) - FractionDigits(Source), 0)
+End Function
+
+
+Private Function MaxOf( _
+    ByVal First As Long, _
+    ByVal Second As Long) _
+    As Long
+
+        If First > Second Then
+            MaxOf = First
+        Else
+            MaxOf = Second
+        End If
 End Function
 
 

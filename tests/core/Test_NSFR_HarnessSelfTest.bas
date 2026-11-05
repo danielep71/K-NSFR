@@ -25,7 +25,7 @@ Option Private Module
 ' MODULE CONSTANTS
 '------------------------------------------------------------------------------
 Private Const FAIL_IDS As String = _
-    "F-001,F-002,F-003,F-004,F-005,F-006,F-007,F-008,F-009,F-010,F-011,F-012"
+    "F-001,F-002,F-003,F-004,F-005,F-006,F-007,F-008,F-009,F-010,F-011,F-012,F-013"
 Private Const SELF_TEST_IDS As String = "H-001,H-002,H-003,H-004,H-005,H-006,H-007"
 
 
@@ -85,18 +85,19 @@ Private Sub BuildFailDemo( _
 'PURPOSE        Fail on purpose in every reported way: wrong values, a value
 '               outside its tolerance, a missing diagnostic, a skipped and a
 '               missing case, a cleanup failure, a repeated and an undeclared
-'               case, a non-numeric value and invalid tolerances.
+'               case, a non-numeric value, invalid tolerances and a relative
+'               allowance that Decimal cannot compute exactly.
 'INPUTS         InReverse: record the steps in reverse order; the summary
 '               must not change.
-    Dim StepNumber  As Long                     'Step number, 1 to 13
+    Dim StepNumber  As Long                     'Step number, 1 to 14
 
         BeginRun Demo, "DEMO-FAIL", FAIL_IDS
         If InReverse Then
-            For StepNumber = 13 To 1 Step -1
+            For StepNumber = 14 To 1 Step -1
                 FailStep Demo, StepNumber
             Next StepNumber
         Else
-            For StepNumber = 1 To 13
+            For StepNumber = 1 To 14
                 FailStep Demo, StepNumber
             Next StepNumber
         End If
@@ -133,6 +134,9 @@ Private Sub FailStep( _
             Case 12
                 CheckDiagnostic Demo, "F-012", "NSFR-E014", "NSFR-E015"
             Case 13
+                CheckTolerance Demo, "F-013", "0.14", "0.140000000000000000000000001", _
+                               MODE_RELATIVE, "0.000000000000000000000000007", "0"
+            Case 14
                 CheckExact Demo, "X-999", "1", "1"
         End Select
 End Sub
@@ -183,10 +187,12 @@ Private Function ExpectedFailSummary() As String
         Expected = Expected & "F-011 FAIL unknown tolerance mode ""percent""" & vbCrLf
         Expected = Expected & "F-012 FAIL expected diagnostic ""NSFR-E014"", got" & _
                    " ""NSFR-E015""" & vbCrLf
+        Expected = Expected & "F-013 FAIL tolerance x expected cannot be computed exactly" & _
+                   " in Decimal" & vbCrLf
         Expected = Expected & "CLEANUP FAILED F-006 restore failed: synthetic" & vbCrLf
         Expected = Expected & "PROBLEM case F-007 recorded twice" & vbCrLf
         Expected = Expected & "PROBLEM case X-999 is not declared" & vbCrLf
-        Expected = Expected & "COUNTS declared=12 executed=10 passed=2 failed=8 skipped=1" & _
+        Expected = Expected & "COUNTS declared=13 executed=11 passed=2 failed=9 skipped=1" & _
                    " missing=1 undeclared=1 cleanup_failed=1 problems=2" & vbCrLf
         ExpectedFailSummary = Expected & "RESULT FAIL" & vbCrLf
 End Function

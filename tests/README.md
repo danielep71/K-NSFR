@@ -51,7 +51,7 @@ for what a subject under test would return.
 | `BeginRun` | Resets the run and declares its case IDs: 1 to 32 upper-case letters, digits and hyphens, comma-separated |
 | `CheckExact` | `PASS` when the two texts are equal character for character; numbers are compared as text at their reported scale |
 | `CheckText` | The same for multi-line text, naming the first line that differs |
-| `CheckTolerance` | `PASS` within an approved tolerance: `absolute`, or `relative` below 1 with a floor near zero; values are decimal text with a point, parsed without the system locale |
+| `CheckTolerance` | `PASS` within an approved tolerance: `absolute`, or `relative` below 1 with a floor near zero; values are decimal text with a point, parsed without the system locale. Values whose difference or relative allowance `Decimal` cannot hold exactly fail, so the comparison is never made on a rounded value |
 | `CheckDiagnostic` | Expected-error outcome: `PASS` when the subject reported exactly the expected diagnostics; reporting none fails |
 | `SkipCase` | `SKIPPED`, with a reason |
 | `RecordCleanup` | A cleanup failure for a case, kept apart from its outcome; empty text means cleanup succeeded |
@@ -92,8 +92,8 @@ expected summary:
 - `DEMO-FAIL`: fails on purpose in every reported way. It has a wrong value,
   a value outside its tolerance, a missing diagnostic and a different one, a
   skipped and a missing case, a cleanup failure, a case recorded twice, an
-  undeclared case, a value that is not a decimal and three invalid
-  tolerances. It is built twice, in opposite orders, to show that the
+  undeclared case, a value that is not a decimal, three invalid
+  tolerances and a relative allowance that `Decimal` cannot compute exactly. It is built twice, in opposite orders, to show that the
   summary does not depend on order;
 - `DEMO-DECLARE`: a repeated, a lower-case and an empty declared ID.
 
