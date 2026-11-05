@@ -138,6 +138,20 @@ class TypeAndEnumTests(unittest.TestCase):
             "End Sub",
         ), [])
 
+    def test_later_uses_of_a_variable_named_like_a_builtin_are_not_calls(self) -> None:
+        self.assertEqual(rules(
+            CORE,
+            "Private Sub Report()",
+            "    Dim Evaluate As Long",
+            "    Evaluate = 3",
+            "    Debug.Print Evaluate",
+            "End Sub",
+            "Private Const CallByName = 1",
+            "Private Sub Use()",
+            "    Total = CallByName + 1",
+            "End Sub",
+        ), [])
+
     def test_a_procedure_declared_in_another_module_is_not_a_builtin(self) -> None:
         procedures = frozenset({"evaluate"})
         found = check_vba.check_source(CORE, source(CORE, "Total = Evaluate(3)"),
@@ -176,6 +190,8 @@ class CompileEnvironmentTests(unittest.TestCase):
 
     def test_host_conditions_may_test_only_vba7_and_win64(self) -> None:
         self.assertEqual(rules(HOST, "#If VBA7 And Win64 Then", "#ElseIf Not VBA7 Then", "#End If"), [])
+        self.assertEqual(rules(HOST, "#If VBA7 = True Then", "#ElseIf Win64 = False Then",
+                               "#End If"), [])
         self.assertEqual(rules(HOST, "#If Mac Then", "#End If"), ["conditional-compilation"])
 
     def test_conditional_compilation_is_host_only(self) -> None:

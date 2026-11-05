@@ -29,7 +29,7 @@ LAYERS = (("src/core/", "core"), ("src/api/", "api"), ("src/host/", "host"),
 # Rules a reviewed exception may waive, and only in src/host/.
 EXCEPTIONABLE = frozenset({"declare", "com-object", "dynamic-call"})
 COMPILE_CONSTANTS = frozenset({"vba7", "win64"})
-CONDITION_WORDS = frozenset({"not", "and", "or", "then"})
+CONDITION_WORDS = frozenset({"not", "and", "or", "xor", "then", "true", "false"})
 CREATABLE_BUILTINS = frozenset({"collection"})
 QUALIFIERS = frozenset({"vba", "interaction"})
 TOKEN = re.compile(r'"(?:[^"]|"")*"?|[A-Za-z_][A-Za-z0-9_]*[$%&!#@]?|\d+(?:\.\d+)?|:=|\S')
@@ -44,6 +44,7 @@ HEADER_OPEN = re.compile(r"^\s*BEGIN(?:PROPERTY)?\b", re.I)
 HEADER_CLOSE = re.compile(r"^\s*END(?:PROPERTY)?\s*$", re.I)
 VB_NAME = re.compile(r'^\s*Attribute\s+VB_Name\s*=\s*"([^"]*)"', re.I)
 DIRECTIVE = re.compile(r"^\s*#\s*(\w+)\b(.*)$")
+TOKEN_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 PROCEDURE = re.compile(
     r"^\s*(?:(?:Public|Private|Friend|Static|Global)\s+)*"
     r"(?:Sub|Function|Property\s+(?:Get|Let|Set)|Declare\s+(?:PtrSafe\s+)?(?:Sub|Function))"
@@ -335,10 +336,29 @@ def declared_procedures(raw: bytes) -> frozenset[str]:
     return frozenset(match.group(1).lower() for match in names if match)
 
 
+def declared_bindings(raw: bytes) -> frozenset[str]:
+    """Lower-case names a module declares as variables, parameters or constants."""
+    names: set[str] = set()
+    in_block = False
+    for _, statement in source_statements(raw):
+        tokens = tokens_of(statement)
+        skip, in_block = block_change(tokens, in_block)
+        if skip:
+            continue  # Type and Enum members are reached through `.`, never bare
+        words = [token.lower() for token in tokens]
+        names.update(words[index - 1] for index, word in enumerate(words)
+                     if word == "as" and index > 0 and TOKEN_NAME.match(tokens[index - 1]))
+        if "const" in words[:3]:
+            names.update(words[index - 1] for index, word in enumerate(words)
+                         if word == "=" and index > 0 and TOKEN_NAME.match(tokens[index - 1]))
+    return frozenset(names)
+
+
 def check_source(path: str, raw: bytes, classes: frozenset[str] = frozenset(),
                  procedures: frozenset[str] = frozenset()) -> list[Finding]:
     """All findings for one exported module, before exceptions are applied."""
-    module = Module(path, layer_of(path), classes, procedures | declared_procedures(raw))
+    bindings = procedures | declared_procedures(raw) | declared_bindings(raw)
+    module = Module(path, layer_of(path), classes, bindings)
     if module.layer == "unknown":
         module.add(1, "vba-location", "VBA source belongs in src/core, src/api, src/host, tests or examples")
     ascii_findings(module, raw)
