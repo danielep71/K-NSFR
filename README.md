@@ -98,7 +98,8 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 
 The required **Repository integrity** check validates committed text, Markdown
 file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
-typing/lint/tests, the label catalogue and the issue-form configuration. Live
+typing/lint/tests, the VBA static rules, the label catalogue and the
+issue-form configuration. Live
 issues are audited separately by the issue triage workflow. The check runs on
 documentation-only and synchronization PRs. Actual Excel import/export and
 host evidence are planned under issues #13 and #14;

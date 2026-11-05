@@ -75,6 +75,7 @@ recorded in #19.
 | Source-control checker and fixtures | Authored locally in #4; isolation correction and regression fixture are local maintenance work |
 | Markdown/YAML checker | Authored locally in #6; parsed navigation and explicit-anchor validation added during maintenance |
 | Contracts, contract checker and synthetic examples | Authored locally in #9; the examples are synthetic |
+| VBA static checker, exceptions file and fixtures | Authored locally in #11 |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |

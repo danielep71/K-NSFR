@@ -118,8 +118,9 @@ to restore state, emit a diagnostic and exit;
 do not use `GoTo` for ordinary branching. Use explicit argument types,
 qualified calls, and no implicit coercion from Excel cells. Avoid active
 workbook, selection or active sheet as an input; pass the workbook and ranges
-explicitly. Static checks in #11 will enforce feasible source rules once
-modules exist, and a neutral harness in #12 will test the interfaces.
+explicitly. The `vba-static` gate enforces the feasible source rules
+([VBA static checks](../tools/README.md#vba-static-checks)), and a neutral
+harness in #12 will test the interfaces.
 
 <a id="repository-tooling"></a>
 

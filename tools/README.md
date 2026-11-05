@@ -42,7 +42,7 @@ reported **NOT RUN** without them.
 
 | Gate | Needs | Evidence |
 | --- | --- | --- |
-| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, issues, workflow invariants and traffic history |
+| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, issues, workflow invariants, traffic history and the VBA static checks |
 | `labels-sync-self-test` | Node | Label synchronization self-tests |
 | `labels-manifest` | Node | Label catalogue validation |
 | `labels-drift-self-test` | Node | Label drift self-tests |
@@ -50,6 +50,7 @@ reported **NOT RUN** without them.
 | `source-control` | Python | Committed bytes (encoding, LF, trailing whitespace outside Markdown and `LICENSE`, final newline, blank lines at end of file) and exact binary allowlist; isolated committed Git attributes |
 | `content` | PyYAML, markdown-it-py | Parsed Markdown links/images, reference links, HTML links, explicit section anchors, fences and duplicate YAML keys |
 | `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
+| `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
@@ -81,10 +82,81 @@ integrated commit. A run on one SHA is not evidence for an unrelated later SHA.
 
 ## 🔎 Validation boundaries
 
-These checks neither compile VBA nor run Excel or an NSFR calculation.
-VBA-specific static gates, neutral harness, packaging and actual host evidence
-remain #11–#14. Live issue triage is read-only and separate from offline CI;
+These checks neither compile VBA nor run Excel or an NSFR calculation. The
+VBA static checks read source text only (see their
+[limitations](#vba-static-limitations)); the neutral harness, packaging and
+actual host evidence remain #12–#14. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
+
+<a id="vba-static-checks"></a>
+
+## 🧾 VBA static checks
+
+`check_vba.py` applies the rules of the
+[implementation conventions](../docs/IMPLEMENTATION.md#vba-source-and-environment),
+the [VBA house style](../docs/VBA_HOUSE_STYLE.md) and ADR-008 to every tracked
+`.bas`, `.cls` and `.frm` file. Each finding names the file, the line where the
+statement starts and a rule:
+
+```text
+src/core/NSFR_Core_Example.bas:12: [goto] GoTo is allowed only as On Error GoTo
+```
+
+| Rule | `src/core/`, `src/api/` | `src/host/` | `tests/`, `examples/` |
+| --- | --- | --- | --- |
+| `ascii`, `option-explicit`, `vb-name` | Required | Required | Required |
+| `option-private-module` (standard modules) | Required in `src/core/` | Not required | Required in `tests/` |
+| `goto` (any GoTo but `On Error GoTo`), `gosub` (GoSub, Return), `on-error-resume-next` | Forbidden | Forbidden | Forbidden |
+| `error-handler` (`On Error GoTo`, `Resume`) | Forbidden | Allowed | Allowed |
+| `declare-ptrsafe` (Declare without PtrSafe) | Forbidden | Forbidden | Forbidden |
+| `declare` (Declare statements) | Forbidden | Reviewed exception | Forbidden |
+| `com-object` (`CreateObject`, `GetObject`, `New` on anything but a project class or `Collection`) | Forbidden | Reviewed exception | Forbidden |
+| `dynamic-call` (`CallByName`, `Application.Run`, `Evaluate`, `ExecuteExcel4Macro`) | Forbidden | Reviewed exception | Forbidden |
+| `conditional-compilation` (`#If`, `#ElseIf`) | Forbidden | Only on `VBA7` and `Win64` | Forbidden |
+| `compile-constant` (`#Const`) | Forbidden | Forbidden | Forbidden |
+
+A VBA file outside these folders is reported as `vba-location`. Every
+conditional-compilation branch is checked, so a rule holds in each compile
+environment, including branches the target never compiles.
+
+<a id="vba-static-exceptions"></a>
+
+### Reviewed exceptions
+
+`vba-exceptions.json` lists the exceptions I approved. Each entry names a file
+under `src/host/`, one of the rules `declare`, `com-object` or `dynamic-call`,
+a text that the statement contains, the reason and the issue that reviewed
+it:
+
+```json
+{"path": "src/host/NSFR_Host_Timer.bas", "rule": "declare",
+ "contains": "GetTickCount", "reason": "...", "issue": 13}
+```
+
+No other path or rule can be excepted. An entry that matches no finding is
+reported as `exception-unused`, so the file never keeps a stale exception.
+
+<a id="vba-static-limitations"></a>
+
+### Limitations
+
+- The checks read text; they neither compile nor resolve types. A late-bound
+  call through a variable (`Obj.Run`, `Sheet.Evaluate`) is not seen as a
+  dynamic call, and `New` on an unqualified class is judged only against the
+  `.cls` and `.frm` files checked in the same run.
+- A name declared with the name of a built-in (a function called `Evaluate`,
+  for example) is taken to be that declaration, so its unqualified uses are
+  not reported: a procedure in every checked file, a variable, parameter or
+  constant in the module that declares it, whatever its scope there. The
+  qualified forms (`Application.Evaluate`, `VBA.CreateObject`) are always
+  reported.
+- A finding is reported on the first line of a statement continued with
+  ` _`; a statement after a colon is reported on its line.
+- Bracket evaluation such as `[A1]` is indistinguishable from an escaped
+  identifier and is not checked.
+- Rules that need the Excel object model or a compiled project, such as
+  `Option Private Module` hiding a procedure or the absence of Excel calls in
+  the core, need the neutral harness (#12) and host evidence (#13, #14).
 
 <a id="continuous-integration"></a>
 
