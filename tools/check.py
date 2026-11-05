@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import importlib.util
 import json
 import os
@@ -19,6 +20,12 @@ from typing import Any
 SCOPE = ("Repository tooling, labels, forms, committed source, documentation and workflows only; "
          "no Excel execution or numerical NSFR validation.")
 
+# Python libraries a gate imports, by tool name: (import name, distribution name).
+LIBRARIES: dict[str, tuple[tuple[str, str], ...]] = {
+    "pyyaml": (("yaml", "PyYAML"),),
+    "python-libraries": (("yaml", "PyYAML"), ("markdown_it", "markdown-it-py")),
+}
+
 
 @dataclass(frozen=True)
 class Gate:
@@ -28,6 +35,10 @@ class Gate:
     tool: str
     command: tuple[str, ...] = ()
     probe: Callable[[Path, Path], tuple[int, str]] | None = None
+    requires: tuple[str, ...] = ()  # further tools or libraries the gate needs
+
+    def tools(self) -> tuple[str, ...]:
+        return (self.tool, *self.requires)
 
 
 @dataclass(frozen=True)
@@ -87,8 +98,9 @@ def mypy_strict_probe(root: Path, scratch: Path) -> tuple[int, str]:
 def default_gates() -> list[Gate]:
     python = sys.executable
     return [
-        Gate("tool-tests", "python",
-             (python, "-m", "unittest", "discover", "-s", "tools", "-p", "test_*.py")),
+        Gate("tool-tests", "python-libraries",
+             (python, "-m", "unittest", "discover", "-s", "tools", "-p", "test_*.py"),
+             requires=("node",)),
         Gate("labels-sync-self-test", "node",
              ("node", ".github/scripts/labels-sync.mjs", "--self-test")),
         Gate("labels-manifest", "node",
@@ -96,13 +108,13 @@ def default_gates() -> list[Gate]:
               "--mode", "validate")),
         Gate("labels-drift-self-test", "node",
              ("node", ".github/scripts/labels-drift.mjs", "--self-test")),
-        Gate("issue-config", "python",
+        Gate("issue-config", "node",
              (python, "tools/check_issues.py", "--check-config")),
         Gate("source-control", "python", (python, "tools/check_source_control.py")),
-        Gate("content", "python", (python, "tools/check_content.py")),
+        Gate("content", "python-libraries", (python, "tools/check_content.py")),
         Gate("ruff", "ruff", ("ruff", "check", "--no-cache", "tools")),
         Gate("ruff-complexity-probe", "ruff", probe=ruff_complexity_probe),
-        Gate("mypy", "mypy", ("mypy", "--no-incremental")),
+        Gate("mypy", "mypy", ("mypy", "--no-incremental"), requires=("python-libraries",)),
         Gate("mypy-strict-probe", "mypy", probe=mypy_strict_probe),
         Gate("actionlint", "actionlint", ("actionlint", "-no-color")),
         Gate("workflow-invariants", "pyyaml", (python, "tools/check_workflows.py")),
@@ -110,26 +122,36 @@ def default_gates() -> list[Gate]:
 
 
 def available(tool: str) -> bool:
-    if tool == "pyyaml":
-        # On GitHub Actions the gate runs anyway, so a missing PyYAML fails it.
-        return importlib.util.find_spec("yaml") is not None or bool(os.environ.get("GITHUB_ACTIONS"))
+    if tool in LIBRARIES:
+        # On GitHub Actions the gate runs anyway, so a missing library fails it.
+        return bool(os.environ.get("GITHUB_ACTIONS")) or all(
+            importlib.util.find_spec(module) is not None for module, _ in LIBRARIES[tool])
     return tool == "python" or shutil.which(tool) is not None
+
+
+def library_versions(tool: str) -> str:
+    found = []
+    for _, distribution in LIBRARIES[tool]:
+        try:
+            found.append(f"{distribution} {importlib.metadata.version(distribution)}")
+        except importlib.metadata.PackageNotFoundError:
+            found.append(f"{distribution} not installed")
+    return ", ".join(found)
 
 
 def tool_versions(gates: Sequence[Gate], root: Path) -> dict[str, str]:
     flags = {"python": "--version", "node": "--version", "ruff": "--version",
              "mypy": "--version", "actionlint": "-version"}
     versions: dict[str, str] = {}
-    for tool in sorted({gate.tool for gate in gates}):
+    for tool in sorted({tool for gate in gates for tool in gate.tools()}):
+        if tool in LIBRARIES:
+            versions[tool] = library_versions(tool)
+            continue
         if not available(tool):
             versions[tool] = "not installed"
             continue
-        if tool == "pyyaml":
-            code, log = run([sys.executable, "-c", "import yaml; print('PyYAML', yaml.__version__)"],
-                            root)
-        else:
-            executable = sys.executable if tool == "python" else tool
-            code, log = run([executable, flags.get(tool, "--version")], root)
+        executable = sys.executable if tool == "python" else tool
+        code, log = run([executable, flags.get(tool, "--version")], root)
         lines = log.strip().splitlines()
         versions[tool] = lines[0] if code == 0 and lines else f"unknown (exit {code})"
     return versions
@@ -139,15 +161,16 @@ def run_gates(gates: Sequence[Gate], root: Path, output: Path) -> list[Result]:
     results = []
     with tempfile.TemporaryDirectory(prefix="probe-", dir=output) as scratch:
         for gate in gates:
-            if not available(gate.tool):
-                code, log = -1, f"{gate.tool} is not installed or not on PATH"
+            missing = [tool for tool in gate.tools() if not available(tool)]
+            if missing:
+                code, log = -1, f"{missing[0]} is not installed or not on PATH"
             elif gate.probe is not None:
                 code, log = gate.probe(root, Path(scratch))
             else:
                 code, log = run(gate.command, root)
             (output / f"{gate.name}.log").write_text(log, encoding="utf-8", newline="\n")
             status = "not-run" if code == -1 else ("pass" if code == 0 else "fail")
-            detail = f"{gate.tool} not available" if code == -1 else f"exit {code}"
+            detail = f"{missing[0]} not available" if missing else f"exit {code}"
             results.append(Result(gate.name, status, detail))
             print(f"{gate.name}: {label(status)}", flush=True)
             if status == "fail":

@@ -84,9 +84,11 @@ From K-SFTs main at commit dfed6bc079cb83f751a0778684e2d436378398b7, imported
 by #104 (traffic history).
 
 .github/workflows/traffic-history.yml
-    Copied.
+    Copied; its header comment no longer calls the badge files README
+    badges (#117).
 tools/traffic_history.py, tools/test_traffic_history.py
-    Adapted: the alert issue carries a Planning section with a target end
+    Adapted: the badge files use this repository's traffic badge color and
+    are not described as README badges (#117). The alert issue carries a Planning section with a target end
     date before the milestone's due date, as this repository's issue triage
     requires, with tests that the alert issue passes tools/check_issues.py.
     The latest-observation watermarks (views_observed_at, clones_observed_at,

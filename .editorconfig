@@ -156,7 +156,9 @@ trim_trailing_whitespace = true
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
-trim_trailing_whitespace = true
+# Keep the standard license text byte for byte: one of its lines ends in a
+# space, which tools/check_source_control.py exempts.
+trim_trailing_whitespace = false
 
 
 #------------------------------------------------------------------------------
