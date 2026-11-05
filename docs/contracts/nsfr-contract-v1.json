@@ -1,0 +1,96 @@
+{
+  "contract_version": "1.0.0",
+  "profile": {
+    "id": "eu-crr-standard",
+    "version": 1,
+    "register_version": 1
+  },
+  "amount": {
+    "pattern": "^[0-9]+(\\.[0-9]{1,4})?$",
+    "max_decimals": 4
+  },
+  "classification": {
+    "pattern": "^(428[a-z]{1,2})(\\([0-9]+\\))?(\\([a-z]{1,2}\\))?(\\([ivx]+\\))?$",
+    "articles": {
+      "asf": ["428k", "428l", "428m", "428n", "428o"],
+      "rsf": ["428r", "428s", "428t", "428u", "428v", "428w", "428x", "428y", "428z",
+              "428aa", "428ab", "428ac", "428ad", "428ae", "428af", "428ag", "428ah"]
+    }
+  },
+  "tables": {
+    "run": {
+      "file": "run.csv",
+      "rows": "one",
+      "fields": [
+        {"name": "contract_version", "type": "enum", "values": ["1.0.0"], "required": true},
+        {"name": "profile_id", "type": "enum", "values": ["eu-crr-standard"], "required": true},
+        {"name": "profile_version", "type": "enum", "values": ["1"], "required": true},
+        {"name": "register_version", "type": "enum", "values": ["1"], "required": true},
+        {"name": "parameter_set_id", "type": "identifier", "required": true},
+        {"name": "parameter_set_version", "type": "integer", "required": true},
+        {"name": "as_of_date", "type": "date", "required": true},
+        {"name": "reporting_entity_id", "type": "identifier", "required": true},
+        {"name": "basis", "type": "enum", "values": ["individual"], "unsupported": ["consolidated"], "required": true},
+        {"name": "reporting_currency", "type": "currency", "required": true},
+        {"name": "amount_unit", "type": "enum", "values": ["units"], "required": true},
+        {"name": "source_system", "type": "text", "required": true},
+        {"name": "extracted_at", "type": "timestamp", "required": true}
+      ]
+    },
+    "positions": {
+      "file": "positions.csv",
+      "rows": "many",
+      "key": "record_id",
+      "fields": [
+        {"name": "record_id", "type": "identifier", "required": true},
+        {"name": "side", "type": "enum", "values": ["asf", "rsf"], "required": true},
+        {"name": "item_type", "type": "enum", "values": ["own_funds", "liability", "asset", "off_balance_sheet"],
+         "unsupported": ["derivative"], "required": true},
+        {"name": "description", "type": "text", "required": true},
+        {"name": "amount", "type": "amount", "required": true},
+        {"name": "currency", "type": "currency", "required": true},
+        {"name": "maturity_kind", "type": "enum", "values": ["dated", "no_stated_maturity"], "required": true},
+        {"name": "maturity_date", "type": "date", "required": "when maturity_kind is dated"},
+        {"name": "classification", "type": "classification", "required": true},
+        {"name": "encumbered", "type": "enum", "values": ["true", "false"], "required": true},
+        {"name": "encumbrance_end_date", "type": "date", "required": "when encumbered is true"},
+        {"name": "counterparty_type", "type": "enum", "values": ["financial_customer", "other", "not_applicable"],
+         "required": true},
+        {"name": "transaction_type", "type": "enum",
+         "values": ["secured_lending", "capital_market_driven", "unsecured", "none"],
+         "unsupported": ["derivative", "netted"], "required": true},
+        {"name": "source_record", "type": "text", "required": true}
+      ]
+    }
+  },
+  "result": {
+    "status": ["ok", "rejected"],
+    "fields": ["status", "contract_version", "profile_id", "profile_version", "register_version",
+               "parameter_set_id", "parameter_set_version", "as_of_date", "reporting_entity_id",
+               "input_fingerprint", "configuration_fingerprint", "available_stable_funding",
+               "required_stable_funding", "ratio", "reconciliation", "diagnostics"]
+  },
+  "parameter_set": {
+    "fields": ["parameter_set_id", "parameter_set_version", "profile_id", "register_version",
+               "effective_from", "review_status", "factors"],
+    "factor_fields": ["classification", "factor", "source_id", "locator"]
+  },
+  "diagnostics": {
+    "NSFR-E001": {"severity": "error", "stage": "contract", "meaning": "A required value is missing"},
+    "NSFR-E002": {"severity": "error", "stage": "contract", "meaning": "A value does not match its type, pattern or enumeration"},
+    "NSFR-E003": {"severity": "error", "stage": "contract", "meaning": "A record_id appears more than once"},
+    "NSFR-E004": {"severity": "error", "stage": "contract", "meaning": "An amount is not a finite decimal number"},
+    "NSFR-E005": {"severity": "error", "stage": "contract", "meaning": "An amount is negative"},
+    "NSFR-E006": {"severity": "error", "stage": "contract", "meaning": "An amount has more than four decimal places"},
+    "NSFR-E007": {"severity": "error", "stage": "contract", "meaning": "A currency differs from the reporting currency"},
+    "NSFR-E008": {"severity": "error", "stage": "contract", "meaning": "A maturity or encumbrance end date is before the as-of date"},
+    "NSFR-E009": {"severity": "error", "stage": "contract", "meaning": "item_type does not belong to the side"},
+    "NSFR-E010": {"severity": "error", "stage": "contract", "meaning": "The classification is outside the articles of its side"},
+    "NSFR-E011": {"severity": "error", "stage": "contract", "meaning": "A conditional value is missing, or present when it must be empty"},
+    "NSFR-E012": {"severity": "error", "stage": "contract", "meaning": "The input uses a feature that version 1 does not support"},
+    "NSFR-E013": {"severity": "error", "stage": "contract", "meaning": "The run table does not have exactly one row, or a table has unexpected columns"},
+    "NSFR-E014": {"severity": "error", "stage": "engine", "meaning": "The parameter set is unknown, or does not match the profile and register"},
+    "NSFR-E015": {"severity": "error", "stage": "engine", "meaning": "No factor in the parameter set covers a classification"},
+    "NSFR-W001": {"severity": "warning", "stage": "engine", "meaning": "Required stable funding is zero, so the ratio is not reported"}
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "diagnostics": [
+    {
+      "code": "NSFR-E001",
+      "field": "amount",
+      "record_id": "e-001"
+    },
+    {
+      "code": "NSFR-E002",
+      "field": "maturity_date",
+      "record_id": "e-011"
+    },
+    {
+      "code": "NSFR-E002",
+      "field": "amount",
+      "record_id": "e-012"
+    },
+    {
+      "code": "NSFR-E003",
+      "field": "record_id",
+      "record_id": "e-001"
+    },
+    {
+      "code": "NSFR-E004",
+      "field": "amount",
+      "record_id": "e-004"
+    },
+    {
+      "code": "NSFR-E005",
+      "field": "amount",
+      "record_id": "e-003"
+    },
+    {
+      "code": "NSFR-E006",
+      "field": "amount",
+      "record_id": "e-002"
+    },
+    {
+      "code": "NSFR-E007",
+      "field": "currency",
+      "record_id": "e-005"
+    },
+    {
+      "code": "NSFR-E008",
+      "field": "maturity_date",
+      "record_id": "e-006"
+    },
+    {
+      "code": "NSFR-E009",
+      "field": "item_type",
+      "record_id": "e-007"
+    },
+    {
+      "code": "NSFR-E010",
+      "field": "classification",
+      "record_id": "e-008"
+    },
+    {
+      "code": "NSFR-E011",
+      "field": "maturity_date",
+      "record_id": "e-009"
+    },
+    {
+      "code": "NSFR-E011",
+      "field": "encumbrance_end_date",
+      "record_id": "e-013"
+    },
+    {
+      "code": "NSFR-E012",
+      "field": "transaction_type",
+      "record_id": "e-010"
+    }
+  ]
+}

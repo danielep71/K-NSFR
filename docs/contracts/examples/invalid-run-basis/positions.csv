@@ -1,0 +1,2 @@
+record_id,side,item_type,description,amount,currency,maturity_kind,maturity_date,classification,encumbered,encumbrance_end_date,counterparty_type,transaction_type,source_record
+p-001,asf,own_funds,Synthetic own funds item,1000,EUR,no_stated_maturity,,428o,false,,not_applicable,none,ledger:1

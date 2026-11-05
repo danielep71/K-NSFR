@@ -95,6 +95,7 @@ real deliverable; the repository holds no empty scaffolding.
 | `tests/fixtures/` | Synthetic input/expected-result records and provenance; #10 |
 | `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
 | `docs/` | Scope, architecture, decisions, governance, and future methodology/evidence guides |
+| `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
 | `tools/` | Existing Python governance tools; future checks and sync utilities |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |

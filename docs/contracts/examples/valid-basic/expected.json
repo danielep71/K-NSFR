@@ -1,0 +1,49 @@
+{
+  "diagnostics": [],
+  "input_fingerprint": "241d0e48db1550810dc1b5f8911f55f6d33faa659d18110e9cc6e3cff1bb2e07",
+  "reconciliation": {
+    "classifications": [
+      {
+        "amount": "250000.5000",
+        "classification": "428l",
+        "count": 1,
+        "side": "asf"
+      },
+      {
+        "amount": "1000000.0000",
+        "classification": "428o",
+        "count": 1,
+        "side": "asf"
+      },
+      {
+        "amount": "400000.0000",
+        "classification": "428ah",
+        "count": 1,
+        "side": "rsf"
+      },
+      {
+        "amount": "50000.0000",
+        "classification": "428r",
+        "count": 1,
+        "side": "rsf"
+      },
+      {
+        "amount": "75000.1234",
+        "classification": "428s",
+        "count": 1,
+        "side": "rsf"
+      }
+    ],
+    "record_count": 5,
+    "sides": {
+      "asf": {
+        "amount": "1250000.5000",
+        "count": 2
+      },
+      "rsf": {
+        "amount": "525000.1234",
+        "count": 3
+      }
+    }
+  }
+}

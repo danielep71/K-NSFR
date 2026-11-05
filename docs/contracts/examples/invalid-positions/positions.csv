@@ -1,0 +1,15 @@
+record_id,side,item_type,description,amount,currency,maturity_kind,maturity_date,classification,encumbered,encumbrance_end_date,counterparty_type,transaction_type,source_record
+e-001,asf,liability,Missing amount,,EUR,dated,2027-06-30,428l,false,,other,none,ledger:1
+e-002,asf,liability,Too many decimals,1.23456,EUR,dated,2027-06-30,428l,false,,other,none,ledger:2
+e-003,asf,liability,Negative amount,-5,EUR,dated,2027-06-30,428l,false,,other,none,ledger:3
+e-004,asf,liability,Not a number,NaN,EUR,dated,2027-06-30,428l,false,,other,none,ledger:4
+e-005,asf,liability,Other currency,10,USD,dated,2027-06-30,428l,false,,other,none,ledger:5
+e-006,asf,liability,Matured before the as-of date,10,EUR,dated,2026-01-31,428l,false,,other,none,ledger:6
+e-007,asf,asset,Item type of the other side,10,EUR,dated,2027-06-30,428l,false,,other,none,ledger:7
+e-008,asf,liability,Classification of the other side,10,EUR,dated,2027-06-30,428r,false,,other,none,ledger:8
+e-009,asf,liability,Dated without a maturity date,10,EUR,dated,,428l,false,,other,none,ledger:9
+e-010,rsf,asset,Derivative,10,EUR,dated,2027-06-30,428r,false,,other,derivative,ledger:10
+e-011,asf,liability,Invalid date,10,EUR,dated,2026-13-01,428l,false,,other,none,ledger:11
+e-012,asf,liability,Exponent notation,1e5,EUR,dated,2027-06-30,428l,false,,other,none,ledger:12
+e-013,asf,liability,End date without encumbrance,10,EUR,dated,2027-06-30,428l,false,2027-01-31,other,none,ledger:13
+e-001,asf,liability,Duplicate record_id,10,EUR,dated,2027-06-30,428l,false,,other,none,ledger:14
