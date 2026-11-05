@@ -34,8 +34,9 @@ DEPENDABOT = Path(".github/dependabot.yml")
 LABEL_TABLES = {"| Priority | Use |", "| Label | Use |"}
 TABLE_LABEL = re.compile(r"^\|\s*`([^`]+)`\s*\|")
 API = "https://api.github.com"
-# The active release milestone; update it when a new release branch becomes active.
-ACTIVE_MILESTONE = "v0.1.0"
+# The milestones an open issue may belong to: the active release and the next planned one.
+# Update the list when a release branch becomes active or a further release is planned.
+ACTIVE_MILESTONES = ("v0.1.0", "v0.2.0")
 
 
 @dataclass(frozen=True)
@@ -121,9 +122,9 @@ def metadata_findings(issue: Issue, assignee: str) -> list[Finding]:
     active = False
     if not issue.milestone:
         findings.append(Finding(issue.number, "milestone", "has no milestone"))
-    elif issue.milestone_state != "open" or issue.milestone.split(" ", 1)[0] != ACTIVE_MILESTONE:
+    elif issue.milestone_state != "open" or issue.milestone.split(" ", 1)[0] not in ACTIVE_MILESTONES:
         findings.append(Finding(issue.number, "milestone",
-                                f"milestone must be open and target {ACTIVE_MILESTONE}"))
+                                f"milestone must be open and target one of {', '.join(ACTIVE_MILESTONES)}"))
     else:
         active = True
     date = target_end_date(issue.body)
