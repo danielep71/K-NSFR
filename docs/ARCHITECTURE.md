@@ -98,6 +98,7 @@ real deliverable; the repository holds no empty scaffolding.
 | `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
 | `docs/validation/` | Numerical fixture rules and their machine-readable schema; #10 |
 | `tools/` | Existing Python governance tools; future checks and sync utilities |
+| `prototype/` | My benchmark prototype, stored as delivered and not admitted ([ADR-011](DECISIONS.md#recorded-decisions)); v0.2.0 moves it into this layout piece by piece |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |
 | `templates/` | Only the exact approved macro-free workbook template when delivered by #13 |

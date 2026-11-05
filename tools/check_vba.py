@@ -24,6 +24,9 @@ from typing import Any
 
 EXTENSIONS = (".bas", ".cls", ".frm")
 EXCEPTIONS_FILE = "tools/vba-exceptions.json"
+# The benchmark prototype is stored as delivered and is not admitted (ADR-011);
+# its VBA is not checked until v0.2.0 moves it into the layout below.
+NOT_ADMITTED = "prototype/"
 LAYERS = (("src/core/", "core"), ("src/api/", "api"), ("src/host/", "host"),
           ("tests/", "test"), ("examples/", "example"))
 # Rules a reviewed exception may waive, and only in src/host/.
@@ -441,6 +444,11 @@ def apply_exceptions(findings: list[Finding], exceptions: list[Waiver]) -> list[
     return kept
 
 
+def admitted(path: str) -> bool:
+    """False only for a path inside the non-admitted prototype directory."""
+    return not path.startswith(NOT_ADMITTED)
+
+
 def tracked_sources(root: Path) -> list[str]:
     output = subprocess.run(["git", "ls-files", "-z", "--", *(f"*{ext}" for ext in EXTENSIONS)],
                             cwd=root, capture_output=True, check=True).stdout
@@ -470,7 +478,9 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     root = args.root.resolve()
-    paths = [PurePosixPath(path).as_posix() for path in args.paths] or tracked_sources(root)
+    candidates = [PurePosixPath(path).as_posix() for path in args.paths] or tracked_sources(root)
+    paths = [path for path in candidates if admitted(path)]
+    skipped = len(candidates) - len(paths)
     exceptions_path = root / EXCEPTIONS_FILE
     if not exceptions_path.is_file():
         print(f"check_vba: {EXCEPTIONS_FILE} is missing", file=sys.stderr)
@@ -478,7 +488,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     findings = check_files(root, paths, exceptions_path.read_text(encoding="utf-8"))
     for finding in findings:
         print(finding.render())
-    print(f"check_vba: {len(paths)} VBA file(s), {len(findings)} finding(s)")
+    note = f"; {skipped} not admitted in {NOT_ADMITTED}, not checked" if skipped else ""
+    print(f"check_vba: {len(paths)} VBA file(s), {len(findings)} finding(s){note}")
     return 1 if findings else 0
 
 

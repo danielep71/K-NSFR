@@ -117,7 +117,9 @@ src/core/NSFR_Core_Example.bas:12: [goto] GoTo is allowed only as On Error GoTo
 | `conditional-compilation` (`#If`, `#ElseIf`) | Forbidden | Only on `VBA7` and `Win64` | Forbidden |
 | `compile-constant` (`#Const`) | Forbidden | Forbidden | Forbidden |
 
-A VBA file outside these folders is reported as `vba-location`. Every
+A VBA file outside these folders is reported as `vba-location`. The one
+exception is `prototype/`: it is not admitted ([ADR-011](../docs/DECISIONS.md#recorded-decisions)),
+so its VBA is not checked and the summary line counts it as not checked. Every
 conditional-compilation branch is checked, so a rule holds in each compile
 environment, including branches the target never compiles.
 
