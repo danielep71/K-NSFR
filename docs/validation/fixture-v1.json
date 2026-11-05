@@ -1,0 +1,45 @@
+{
+  "fixture_schema_version": 1,
+  "contract_version": "1.0.0",
+  "file": "fixture.json",
+  "required": ["fixture_schema_version", "fixture_id", "title", "kind", "contract_version",
+               "inputs", "provenance", "derivation", "expected", "comparison", "review", "execution"],
+  "sections": {
+    "inputs": ["run", "positions", "parameters"],
+    "provenance": ["data", "author", "created", "sources"],
+    "derivation": ["method", "independent_of_implementation", "description"],
+    "expected": ["status", "diagnostics"],
+    "comparison": ["default", "exceptions"],
+    "review": ["status", "reviewer", "date"],
+    "execution": ["status", "runs"]
+  },
+  "enums": {
+    "fixture": {"kind": ["neutral-example", "validation"]},
+    "provenance": {"data": ["synthetic"]},
+    "derivation": {"method": ["hand", "independent-tool", "published"]},
+    "review": {"status": ["draft", "reviewed", "approved"]},
+    "execution": {"status": ["not-executed", "executed"]}
+  },
+  "expected": {
+    "status": ["ok", "rejected"],
+    "fields": ["status", "input_fingerprint", "available_stable_funding", "required_stable_funding",
+               "ratio", "diagnostics"],
+    "funding_places": 8,
+    "ratio_places": 6,
+    "rounding": "half-even"
+  },
+  "exception": ["field", "mode", "tolerance", "reason", "approved_in"],
+  "execution_run": ["engine_commit", "host", "date", "result", "evidence"],
+  "parameters": {
+    "fields": ["parameter_set_id", "parameter_set_version", "profile_id", "register_version",
+               "effective_from", "review_status", "factors"],
+    "factor_fields": ["classification", "factor", "source_id", "locator"],
+    "factor_pattern": "^(0(\\.[0-9]{1,4})?|1(\\.0{1,4})?)$",
+    "synthetic": {"review_status": "synthetic", "source_id": "synthetic", "locator": "none"}
+  },
+  "engine_diagnostics": {
+    "NSFR-E014": {"record_id": "run", "field": "the mismatching run field"},
+    "NSFR-E015": {"record_id": "the position", "field": "classification"},
+    "NSFR-W001": {"record_id": "run", "field": "required_stable_funding"}
+  }
+}

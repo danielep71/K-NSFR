@@ -1,0 +1,55 @@
+{
+  "fixture_schema_version": 1,
+  "fixture_id": "FX-0001",
+  "title": "Neutral example: a valid input with synthetic factors",
+  "kind": "neutral-example",
+  "contract_version": "1.0.0",
+  "inputs": {
+    "run": "run.csv",
+    "positions": "positions.csv",
+    "parameters": "parameters.json"
+  },
+  "provenance": {
+    "data": "synthetic",
+    "author": "danielep71",
+    "created": "2026-11-05",
+    "sources": [],
+    "note": "Synthetic positions and synthetic factors chosen for arithmetic; they are not taken from the CRR and state no regulatory treatment."
+  },
+  "derivation": {
+    "method": "hand",
+    "independent_of_implementation": true,
+    "description": "Each weighted amount is amount x factor, worked out by hand; the totals are their exact sums by side; the ratio is ASF / RSF = 1125000.25 / 166250.09255 = 6.76691502990685..., rounded half-even to six decimals.",
+    "weighted": [
+      {"record_id": "a-001", "amount": "1000000.00", "factor": "1", "weighted": "1000000"},
+      {"record_id": "a-002", "amount": "250000.5", "factor": "0.5", "weighted": "125000.25"},
+      {"record_id": "a-003", "amount": "120000", "factor": "0", "weighted": "0"},
+      {"record_id": "r-001", "amount": "400000", "factor": "0.25", "weighted": "100000"},
+      {"record_id": "r-002", "amount": "75000.1234", "factor": "0.75", "weighted": "56250.09255"},
+      {"record_id": "r-003", "amount": "50000", "factor": "0.2", "weighted": "10000"}
+    ],
+    "available_stable_funding": "1125000.25000000",
+    "required_stable_funding": "166250.09255000"
+  },
+  "expected": {
+    "status": "ok",
+    "input_fingerprint": "a5e5150ad6e52f9597572bd5ce484767819b67dc9e1a485c458babd1f84e65c4",
+    "available_stable_funding": "1125000.25000000",
+    "required_stable_funding": "166250.09255000",
+    "ratio": "6.766915",
+    "diagnostics": []
+  },
+  "comparison": {
+    "default": "exact",
+    "exceptions": []
+  },
+  "review": {
+    "status": "draft",
+    "reviewer": null,
+    "date": null
+  },
+  "execution": {
+    "status": "not-executed",
+    "runs": []
+  }
+}

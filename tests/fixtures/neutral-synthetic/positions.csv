@@ -1,0 +1,7 @@
+record_id,side,item_type,description,amount,currency,maturity_kind,maturity_date,classification,encumbered,encumbrance_end_date,counterparty_type,transaction_type,source_record
+r-003,rsf,off_balance_sheet,Synthetic off-balance-sheet item,50000,EUR,no_stated_maturity,,428r,false,,not_applicable,none,ledger:6
+a-001,asf,own_funds,Synthetic own funds item,1000000.00,EUR,no_stated_maturity,,428o,false,,not_applicable,none,ledger:1
+a-002,asf,liability,Synthetic term deposit,250000.5,EUR,dated,2027-06-30,428l,false,,other,none,ledger:2
+a-003,asf,liability,Synthetic short-term funding,120000,EUR,dated,2026-09-30,428k,false,,financial_customer,unsecured,ledger:3
+r-001,rsf,asset,Synthetic encumbered asset,400000,EUR,dated,2028-12-31,428ah,true,2027-03-31,other,none,ledger:4
+r-002,rsf,asset,Synthetic short-term loan,75000.1234,EUR,dated,2026-09-30,428s,false,,financial_customer,secured_lending,ledger:5

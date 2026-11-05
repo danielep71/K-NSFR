@@ -113,6 +113,7 @@ def default_gates() -> list[Gate]:
         Gate("source-control", "python", (python, "tools/check_source_control.py")),
         Gate("content", "python-libraries", (python, "tools/check_content.py")),
         Gate("contracts", "python", (python, "tools/check_contracts.py")),
+        Gate("fixtures", "python", (python, "tools/check_fixtures.py")),
         Gate("vba-static", "python", (python, "tools/check_vba.py")),
         Gate("ruff", "ruff", ("ruff", "check", "--no-cache", "tools")),
         Gate("ruff-complexity-probe", "ruff", probe=ruff_complexity_probe),
