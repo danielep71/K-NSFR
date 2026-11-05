@@ -36,6 +36,10 @@ TOKEN = re.compile(r'"(?:[^"]|"")*"?|[A-Za-z_][A-Za-z0-9_]*[$%&!#@]?|\d+(?:\.\d+
 CONTINUATION = re.compile(r"(?:^|\s)_$")
 LABEL = re.compile(r"^\s*(?:[A-Za-z_][A-Za-z0-9_]*|\d+)\s*$")
 LINE_NUMBER = re.compile(r"^\s*\d+\s+")
+REM = re.compile(r"^\s*(?:\d+\s+)?Rem\b", re.I)
+# Keywords that form a statement on their own, so `Keyword:` is never a label.
+STATEMENT_WORDS = frozenset({"rem", "return", "resume", "stop", "end", "else", "do", "loop",
+                             "next", "wend", "exit"})
 HEADER_OPEN = re.compile(r"^\s*BEGIN(?:PROPERTY)?\b", re.I)
 HEADER_CLOSE = re.compile(r"^\s*END(?:PROPERTY)?\s*$", re.I)
 VB_NAME = re.compile(r'^\s*Attribute\s+VB_Name\s*=\s*"([^"]*)"', re.I)
@@ -118,8 +122,10 @@ def strip_comment(code: str) -> str:
     return code
 
 
-def statements(code: str) -> list[str]:
-    """Split on colons outside strings and named arguments; drop labels and Rem."""
+def split_statements(code: str) -> list[str]:
+    """Split on colons outside strings and named arguments; a Rem ends the line."""
+    if REM.match(code):
+        return []
     parts: list[str] = []
     current: list[str] = []
     in_string = False
@@ -129,19 +135,21 @@ def statements(code: str) -> list[str]:
         if char == ":" and not in_string and code[position + 1:position + 2] != "=":
             parts.append("".join(current))
             current = []
+            if REM.match(code[position + 1:]):
+                return parts
             continue
         current.append(char)
     parts.append("".join(current))
-    if len(parts) > 1 and LABEL.match(parts[0]):
+    return parts
+
+
+def statements(code: str) -> list[str]:
+    """The statements of a logical line, without a leading label or line numbers."""
+    parts = split_statements(code)
+    first = parts[0].strip().lower() if parts else ""
+    if len(parts) > 1 and LABEL.match(first) and first not in STATEMENT_WORDS:
         parts = parts[1:]
-    result = []
-    for part in parts:
-        part = LINE_NUMBER.sub("", part)
-        if re.match(r"^\s*Rem\b", part, re.I):
-            break
-        if part.strip():
-            result.append(part)
-    return result
+    return [part for part in (LINE_NUMBER.sub("", part) for part in parts) if part.strip()]
 
 
 def tokens_of(statement: str) -> list[str]:

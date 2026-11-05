@@ -64,6 +64,8 @@ class CommentAndContinuationTests(unittest.TestCase):
 
     def test_rem_after_a_colon_ends_the_line(self) -> None:
         self.assertEqual(rules(CORE, "x = 1: Rem GoTo Done"), [])
+        self.assertEqual(rules(CORE, "x = 1: Rem a: GoTo Done"), [])
+        self.assertEqual(rules(CORE, "Rem: GoTo Done"), [])
 
     def test_a_continued_comment_stays_a_comment(self) -> None:
         self.assertEqual(rules(CORE, "' This comment continues _", "    GoTo Done"), [])
@@ -84,7 +86,11 @@ class StatementSplittingTests(unittest.TestCase):
         self.assertEqual(rules(CORE, "x = 1: GoTo Done"), ["goto"])
 
     def test_a_label_is_not_a_statement(self) -> None:
-        self.assertEqual(rules(CORE, "Done: x = 2", "Finish:"), [])
+        self.assertEqual(rules(CORE, "Done: x = 2", "Finish:", "10: x = 3"), [])
+
+    def test_a_keyword_before_a_colon_is_a_statement_not_a_label(self) -> None:
+        self.assertEqual(rules(CORE, "Return: x = 1"), ["gosub"])
+        self.assertEqual(rules(CORE, "Resume: x = 1"), ["error-handler"])
 
     def test_named_arguments_do_not_split_statements(self) -> None:
         self.assertEqual(rules(CORE, "Report Value:=1"), [])
