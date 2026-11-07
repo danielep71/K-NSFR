@@ -63,6 +63,10 @@ CODEQL_CONCURRENCY = {
     "cancel-in-progress": INTEGRITY_CONCURRENCY["cancel-in-progress"],
 }
 
+LINKS_FILE = "external-links.yml"
+# The network is not reproducible: the link check never gates a change.
+LINKS_EVENTS = {"schedule", "workflow_dispatch"}
+
 TRIAGE_FILE = "issue-triage.yml"
 # A changed due date, or a closed or deleted milestone, changes the audit.
 TRIAGE_MILESTONE_EVENTS = {"types": ["created", "edited", "closed", "opened", "deleted"]}
@@ -289,6 +293,17 @@ def codeql_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     return findings
 
 
+def links_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    workflow = workflows.get(LINKS_FILE)
+    if workflow is None:
+        return [f"{LINKS_FILE}: not found"]
+    on = triggers(workflow)
+    events = set(on) if isinstance(on, Mapping) else {str(on)}
+    if events != LINKS_EVENTS:
+        return [f"{LINKS_FILE}: must run only on {sorted(LINKS_EVENTS)}, not {sorted(events)}"]
+    return []
+
+
 def triage_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     workflow = workflows.get(TRIAGE_FILE)
     if workflow is None:
@@ -471,6 +486,7 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
     findings += integrity_findings(workflows, governance, settings)
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
     findings += triage_findings(workflows) + codeql_findings(workflows)
+    findings += links_findings(workflows)
     findings += traffic_findings(workflows)
     findings += runtime_findings(workflows, tooling)
     findings += dependabot_findings(dependabot)

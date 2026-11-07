@@ -78,6 +78,30 @@ body:
       required: true
 
   - type: textarea
+    id: evidence
+    attributes:
+      label: "📎 Evidence (optional)"
+      description: Logs, screenshots or a synthetic file that shows the defect. Remove anything that is not synthetic.
+    validations:
+      required: false
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: "🩹 Workaround (optional)"
+      description: Any way you found to avoid the defect, and its limits.
+    validations:
+      required: false
+
+  - type: textarea
+    id: recovery
+    attributes:
+      label: "♻️ Recovery (optional)"
+      description: How you returned to a correct state, for example a recalculation, a reset or a fresh copy of the workbook.
+    validations:
+      required: false
+
+  - type: textarea
     id: environment
     attributes:
       label: "🖥️ Environment"

@@ -325,6 +325,19 @@ class WorkflowInvariantTests(unittest.TestCase):
         del self.repo.workflows["codeql.yml"]
         self.assertFinding("codeql.yml: not found")
 
+    def test_link_check_never_gates_a_change(self) -> None:
+        for event in ("pull_request", "push"):
+            with self.subTest(event=event):
+                self.repo = Repository()
+                self.repo.on("external-links.yml")[event] = {"branches": ["main"]}
+                self.assertFinding("external-links.yml: must run only on")
+        self.repo = Repository()
+        del self.repo.on("external-links.yml")["schedule"]
+        self.assertFinding("external-links.yml: must run only on")
+        self.repo = Repository()
+        del self.repo.workflows["external-links.yml"]
+        self.assertFinding("external-links.yml: not found")
+
     def test_label_reconcile_reads_pull_requests(self) -> None:
         del self.repo.job("labels-sync.yml", "reconcile")["permissions"]["pull-requests"]
         self.assertFinding("labels-sync.yml: reconcile's permissions must be")
