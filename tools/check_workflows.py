@@ -24,6 +24,7 @@ WORKFLOWS = Path(".github/workflows")
 DEPENDABOT = Path(".github/dependabot.yml")
 GOVERNANCE = Path("docs/GOVERNANCE.md")
 SETTINGS = Path("docs/REPOSITORY_SETTINGS.md")
+TOOLING = Path("tools/README.md")
 
 SHA_PINNED = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+@[0-9a-f]{40}$")
 DEFAULT_BRANCH_REF = "github.ref == format('refs/heads/{0}', github.event.repository.default_branch)"
@@ -34,9 +35,41 @@ ALLOWED_WRITES: dict[tuple[str, str], frozenset[str]] = {
     ("traffic-history.yml", "collect"): frozenset({"contents"}),
     ("traffic-history.yml", "alert"): frozenset({"issues"}),
     ("pr-milestones.yml", "reconcile"): frozenset({"pull-requests"}),
+    ("codeql.yml", "analyze"): frozenset({"security-events"}),
 }
 
 LABELS_RECONCILE_IF = "github.event_name != 'pull_request' && " + DEFAULT_BRANCH_REF
+# The prune check reads the issues API, which also lists pull requests.
+LABELS_RECONCILE_PERMISSIONS = {"contents": "read", "issues": "write", "pull-requests": "read"}
+
+# A pull request's superseded run is cancelled; every push or manual run keeps its own.
+INTEGRITY_CONCURRENCY = {
+    "group": "integrity-${{ github.event_name == 'pull_request' && "
+             "format('pr-{0}', github.event.pull_request.number) || "
+             "format('run-{0}', github.run_id) }}",
+    "cancel-in-progress": "${{ github.event_name == 'pull_request' }}",
+}
+
+CODEQL_FILE = "codeql.yml"
+CODEQL_ACTION = re.compile(r"^github/codeql-action/(init|analyze)@([0-9a-f]{40})$")
+# Every language the repository contains that CodeQL supports; VBA has no extractor.
+CODEQL_LANGUAGES = ["actions", "python", "javascript-typescript"]
+CODEQL_INIT = {"languages": "${{ matrix.language }}", "build-mode": "none",
+               "queries": "security-extended"}
+CODEQL_ANALYZE = {"category": "/language:${{ matrix.language }}"}
+CODEQL_PERMISSIONS = {"contents": "read", "security-events": "write"}
+CODEQL_CONCURRENCY = {
+    "group": INTEGRITY_CONCURRENCY["group"].replace("integrity-", "codeql-", 1),
+    "cancel-in-progress": INTEGRITY_CONCURRENCY["cancel-in-progress"],
+}
+
+LINKS_FILE = "external-links.yml"
+# The network is not reproducible: the link check never gates a change.
+LINKS_EVENTS = {"schedule", "workflow_dispatch"}
+
+TRIAGE_FILE = "issue-triage.yml"
+# A changed due date, or a closed or deleted milestone, changes the audit.
+TRIAGE_MILESTONE_EVENTS = {"types": ["created", "edited", "closed", "opened", "deleted"]}
 
 MILESTONES_FILE = "pr-milestones.yml"
 MILESTONES_EVENTS: dict[str, Any] = {
@@ -45,9 +78,19 @@ MILESTONES_EVENTS: dict[str, Any] = {
     "schedule": [{"cron": "17 3 * * *"}],
     "workflow_dispatch": None,
 }
+# One queue per pull request for its own events; full scans share another.
+MILESTONES_CONCURRENCY = {
+    "group": "pr-milestones-${{ github.event_name == 'pull_request_target' && "
+             "format('pr-{0}', github.event.pull_request.number) || 'scan' }}",
+    "cancel-in-progress": False,
+}
 MILESTONES_IF = ("github.event_name == 'pull_request_target' || "
                  "github.event_name == 'schedule' || " + DEFAULT_BRANCH_REF)
 SCRIPT = re.compile(r"<<'PY'\n(.*)\nPY\s*$", re.S)
+
+# setup-* action input -> the Tool versions row of tools/README.md that records it.
+RUNTIME_INPUTS = {"python-version": "Python", "node-version": "Node.js"}
+EXACT_VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 
 TRAFFIC_FILE = "traffic-history.yml"
 TOKEN_ACTION = "actions/create-github-app-token@"
@@ -196,6 +239,8 @@ def integrity_findings(workflows: Mapping[str, Workflow], governance: str,
             actual = on.get(event) if isinstance(on, Mapping) else on
             findings.append(f"{file}: `{event}` filters are {actual!r}; {GOVERNANCE} requires "
                             f"{expected!r} and no other filter")
+    if workflow.get("concurrency") != INTEGRITY_CONCURRENCY:
+        findings.append(f"{file}: concurrency must be {INTEGRITY_CONCURRENCY}")
     return findings
 
 
@@ -204,8 +249,68 @@ def labels_sync_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     if job is None:
         return ["labels-sync.yml: no reconcile job"]
     # The whole condition, so that a negation or an appended `|| true` cannot pass.
+    findings = []
     if squash(job.get("if", "")) != LABELS_RECONCILE_IF:
-        return [f"labels-sync.yml: reconcile's condition must be: {LABELS_RECONCILE_IF}"]
+        findings.append(f"labels-sync.yml: reconcile's condition must be: {LABELS_RECONCILE_IF}")
+    if job.get("permissions") != LABELS_RECONCILE_PERMISSIONS:
+        findings.append(f"labels-sync.yml: reconcile's permissions must be {LABELS_RECONCILE_PERMISSIONS}")
+    return findings
+
+
+def codeql_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    """One analysis per language, with the extended queries, on the protected branches."""
+    workflow = workflows.get(CODEQL_FILE)
+    if workflow is None:
+        return [f"{CODEQL_FILE}: not found"]
+    findings = []
+    on = triggers(workflow)
+    branches = {"branches": ["main", "release/**"]}
+    if (not isinstance(on, Mapping) or on.get("push") != branches
+            or on.get("pull_request") != branches or not on.get("schedule")):
+        findings.append(f"{CODEQL_FILE}: must run on push and pull_request with {branches} "
+                        "and no other filter, and on a schedule")
+    if workflow.get("concurrency") != CODEQL_CONCURRENCY:
+        findings.append(f"{CODEQL_FILE}: concurrency must be {CODEQL_CONCURRENCY}")
+    job = dict(jobs(workflow)).get("analyze")
+    if job is None:
+        return findings + [f"{CODEQL_FILE}: no analyze job"]
+    if job.get("permissions") != CODEQL_PERMISSIONS:
+        findings.append(f"{CODEQL_FILE}: analyze's permissions must be {CODEQL_PERMISSIONS}")
+    matrix = (job.get("strategy") or {}).get("matrix") or {}
+    if matrix != {"language": CODEQL_LANGUAGES}:
+        findings.append(f"{CODEQL_FILE}: the matrix must be exactly language: {CODEQL_LANGUAGES}")
+    actions: dict[str, list[tuple[str, Any]]] = {}
+    for step in steps_of(job):
+        match = CODEQL_ACTION.match(str(step.get("uses", "")))
+        if match:
+            actions.setdefault(match.group(1), []).append((match.group(2), step.get("with")))
+    expected = {"init": CODEQL_INIT, "analyze": CODEQL_ANALYZE}
+    for action, inputs in expected.items():
+        if [given for _, given in actions.get(action, [])] != [inputs]:
+            findings.append(f"{CODEQL_FILE}: exactly one {action} step, with {inputs}")
+    if len({sha for steps in actions.values() for sha, _ in steps}) > 1:
+        findings.append(f"{CODEQL_FILE}: init and analyze must be pinned to the same commit")
+    return findings
+
+
+def links_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    workflow = workflows.get(LINKS_FILE)
+    if workflow is None:
+        return [f"{LINKS_FILE}: not found"]
+    on = triggers(workflow)
+    events = set(on) if isinstance(on, Mapping) else {str(on)}
+    if events != LINKS_EVENTS:
+        return [f"{LINKS_FILE}: must run only on {sorted(LINKS_EVENTS)}, not {sorted(events)}"]
+    return []
+
+
+def triage_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    workflow = workflows.get(TRIAGE_FILE)
+    if workflow is None:
+        return [f"{TRIAGE_FILE}: not found"]
+    on = triggers(workflow)
+    if not isinstance(on, Mapping) or on.get("milestone") != TRIAGE_MILESTONE_EVENTS:
+        return [f"{TRIAGE_FILE}: milestone events must be {TRIAGE_MILESTONE_EVENTS}"]
     return []
 
 
@@ -228,6 +333,8 @@ def milestone_findings(workflows: Mapping[str, Workflow]) -> list[str]:
         findings.append(f"{MILESTONES_FILE}: events changed: {triggers(workflow)!r}")
     if workflow.get("permissions") != {}:
         findings.append(f"{MILESTONES_FILE}: workflow-level permissions must be {{}}")
+    if workflow.get("concurrency") != MILESTONES_CONCURRENCY:
+        findings.append(f"{MILESTONES_FILE}: concurrency must be {MILESTONES_CONCURRENCY}")
     all_jobs = dict(jobs(workflow))
     if list(all_jobs) != ["reconcile"]:
         findings.append(f"{MILESTONES_FILE}: jobs must be exactly [reconcile], not {list(all_jobs)}")
@@ -348,14 +455,40 @@ def dependabot_findings(config: Any) -> list[str]:
     return findings
 
 
+def documented_versions(tooling: str) -> dict[str, str]:
+    """The Tool versions rows of tools/README.md: tool -> version."""
+    return dict(re.findall(r"^\| (Python|Node\.js) \| ([^ |]+) \|", tooling, re.M))
+
+
+def runtime_findings(workflows: Mapping[str, Workflow], tooling: str) -> list[str]:
+    """Every runtime is an exact patch version, the one tools/README.md records."""
+    documented = documented_versions(tooling)
+    findings = []
+    for tool in RUNTIME_INPUTS.values():
+        if not EXACT_VERSION.match(documented.get(tool, "")):
+            findings.append(f"{TOOLING}: the {tool} row must give an exact X.Y.Z version")
+    for name, workflow in sorted(workflows.items()):
+        for job_id, job in jobs(workflow):
+            for step in steps_of(job):
+                for key, tool in RUNTIME_INPUTS.items():
+                    value = dict(step.get("with") or {}).get(key)
+                    if value is not None and str(value) != documented.get(tool):
+                        findings.append(f"{name}: job {job_id}: {key} `{value}` must be the "
+                                        f"exact version {TOOLING} records for {tool}")
+    return findings
+
+
 def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance: str,
-                 settings: str) -> list[str]:
+                 settings: str, tooling: str) -> list[str]:
     findings = []
     for name, workflow in sorted(workflows.items()):
         findings += action_findings(name, workflow) + permission_findings(name, workflow)
     findings += integrity_findings(workflows, governance, settings)
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
+    findings += triage_findings(workflows) + codeql_findings(workflows)
+    findings += links_findings(workflows)
     findings += traffic_findings(workflows)
+    findings += runtime_findings(workflows, tooling)
     findings += dependabot_findings(dependabot)
     return findings
 
@@ -366,13 +499,14 @@ def workflow_files(root: Path) -> list[Path]:
     return sorted([*folder.glob("*.yml"), *folder.glob("*.yaml")])
 
 
-def load(root: Path, yaml: Any) -> tuple[dict[str, Workflow], Any, str, str]:
+def load(root: Path, yaml: Any) -> tuple[dict[str, Workflow], Any, str, str, str]:
     loader = strict_loader(yaml)
     workflows = {path.name: yaml.load(path.read_text(encoding="utf-8"), Loader=loader)
                  for path in workflow_files(root)}
     dependabot = yaml.load((root / DEPENDABOT).read_text(encoding="utf-8"), Loader=loader)
     return (workflows, dependabot, (root / GOVERNANCE).read_text(encoding="utf-8"),
-            (root / SETTINGS).read_text(encoding="utf-8"))
+            (root / SETTINGS).read_text(encoding="utf-8"),
+            (root / TOOLING).read_text(encoding="utf-8"))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -388,11 +522,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("workflow-invariants: SKIPPED locally: PyYAML is not installed")
         return 2
     try:
-        workflows, dependabot, governance, settings = load(args.root, yaml)
+        workflows, dependabot, governance, settings, tooling = load(args.root, yaml)
     except yaml.YAMLError as error:
         print(f"workflow-invariants: FAIL: {error}")
         return 1
-    findings = findings_for(workflows, dependabot, governance, settings)
+    findings = findings_for(workflows, dependabot, governance, settings, tooling)
     for finding in findings:
         print(finding)
     print(f"workflow-invariants: {'FAIL' if findings else 'PASS'} "

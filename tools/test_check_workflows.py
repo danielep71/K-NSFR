@@ -34,11 +34,12 @@ class Repository:
     """A mutable copy of the repository's workflows, Dependabot file and documents."""
 
     def __init__(self) -> None:
-        workflows, dependabot, governance, settings = cw.load(ROOT, YAML)
+        workflows, dependabot, governance, settings, tooling = cw.load(ROOT, YAML)
         self.workflows: dict[str, Any] = copy.deepcopy(workflows)
         self.dependabot: Any = copy.deepcopy(dependabot)
         self.governance = governance
         self.settings = settings
+        self.tooling = tooling
 
     def job(self, workflow: str, job: str) -> Any:
         return self.workflows[workflow]["jobs"][job]
@@ -47,7 +48,8 @@ class Repository:
         return cw.triggers(self.workflows[workflow])
 
     def findings(self) -> list[str]:
-        return cw.findings_for(self.workflows, self.dependabot, self.governance, self.settings)
+        return cw.findings_for(self.workflows, self.dependabot, self.governance, self.settings,
+                               self.tooling)
 
 
 class WorkflowInvariantTests(unittest.TestCase):
@@ -246,6 +248,100 @@ class WorkflowInvariantTests(unittest.TestCase):
                           findings)
             self.assertIn("extra.yaml: job x has no timeout-minutes", findings)
 
+    def test_runtimes_are_exact_and_documented(self) -> None:
+        setup = next(step for step in self.repo.job("repository-integrity.yml", "integrity")["steps"]
+                     if "python-version" in (step.get("with") or {}))
+        setup["with"]["python-version"] = "3.13"
+        self.assertFinding("python-version `3.13` must be the exact version")
+        self.repo = Repository()
+        self.repo.tooling = self.repo.tooling.replace("| Node.js | 22.23.4 |", "| Node.js | 22 |")
+        self.assertFinding("the Node.js row must give an exact X.Y.Z version")
+
+    def test_triage_runs_on_milestone_events(self) -> None:
+        self.repo.on("issue-triage.yml")["milestone"]["types"].remove("edited")
+        self.assertFinding("issue-triage.yml: milestone events must be")
+        del self.repo.on("issue-triage.yml")["milestone"]
+        self.assertFinding("issue-triage.yml: milestone events must be")
+
+    def test_milestones_queue_per_pull_request(self) -> None:
+        self.repo.workflows["pr-milestones.yml"]["concurrency"]["group"] = "pr-milestones"
+        self.assertFinding("pr-milestones.yml: concurrency must be")
+        self.repo = Repository()
+        self.repo.workflows["pr-milestones.yml"]["concurrency"]["cancel-in-progress"] = True
+        self.assertFinding("pr-milestones.yml: concurrency must be")
+
+    def test_integrity_cancels_only_superseded_pull_request_runs(self) -> None:
+        self.repo.workflows["repository-integrity.yml"]["concurrency"] = {
+            "group": "integrity-${{ github.workflow }}-${{ github.ref }}", "cancel-in-progress": True}
+        self.assertFinding("repository-integrity.yml: concurrency must be")
+
+    # CodeQL
+    def test_codeql_analyzes_every_supported_language(self) -> None:
+        self.repo.job("codeql.yml", "analyze")["strategy"]["matrix"]["language"].remove(
+            "javascript-typescript")
+        self.assertFinding("codeql.yml: the matrix must be exactly language:")
+        self.repo = Repository()
+        self.repo.job("codeql.yml", "analyze")["strategy"]["matrix"]["include"] = [
+            {"language": "csharp"}]
+        self.assertFinding("codeql.yml: the matrix must be exactly language:")
+
+    def test_codeql_uses_the_extended_queries(self) -> None:
+        init = self.repo.job("codeql.yml", "analyze")["steps"][1]
+        init["with"]["queries"] = "security-and-quality"
+        self.assertFinding("codeql.yml: exactly one init step")
+        del init["with"]["queries"]
+        self.assertFinding("codeql.yml: exactly one init step")
+
+    def test_codeql_uploads_one_category_per_language(self) -> None:
+        del self.repo.job("codeql.yml", "analyze")["steps"][2]["with"]
+        self.assertFinding("codeql.yml: exactly one analyze step")
+        self.repo = Repository()
+        del self.repo.job("codeql.yml", "analyze")["steps"][2]
+        self.assertFinding("codeql.yml: exactly one analyze step")
+
+    def test_codeql_actions_share_one_commit(self) -> None:
+        self.repo.job("codeql.yml", "analyze")["steps"][2]["uses"] = (
+            "github/codeql-action/analyze@" + "0" * 40)
+        self.assertFinding("codeql.yml: init and analyze must be pinned to the same commit")
+
+    def test_codeql_triggers_and_concurrency(self) -> None:
+        self.repo.on("codeql.yml")["pull_request"]["paths"] = ["tools/**"]
+        self.assertFinding("codeql.yml: must run on push and pull_request")
+        self.repo = Repository()
+        del self.repo.on("codeql.yml")["schedule"]
+        self.assertFinding("codeql.yml: must run on push and pull_request")
+        self.repo = Repository()
+        self.repo.workflows["codeql.yml"]["concurrency"]["cancel-in-progress"] = True
+        self.assertFinding("codeql.yml: concurrency must be")
+
+    def test_codeql_writes_only_security_events(self) -> None:
+        self.repo.job("codeql.yml", "analyze")["permissions"]["actions"] = "read"
+        self.assertFinding("codeql.yml: analyze's permissions must be")
+        self.repo = Repository()
+        self.repo.job("codeql.yml", "analyze")["permissions"]["contents"] = "write"
+        self.assertFinding("job analyze has write permission ['contents'] outside the allowed list")
+
+    def test_codeql_workflow_is_required(self) -> None:
+        del self.repo.workflows["codeql.yml"]
+        self.assertFinding("codeql.yml: not found")
+
+    def test_link_check_never_gates_a_change(self) -> None:
+        for event in ("pull_request", "push"):
+            with self.subTest(event=event):
+                self.repo = Repository()
+                self.repo.on("external-links.yml")[event] = {"branches": ["main"]}
+                self.assertFinding("external-links.yml: must run only on")
+        self.repo = Repository()
+        del self.repo.on("external-links.yml")["schedule"]
+        self.assertFinding("external-links.yml: must run only on")
+        self.repo = Repository()
+        del self.repo.workflows["external-links.yml"]
+        self.assertFinding("external-links.yml: not found")
+
+    def test_label_reconcile_reads_pull_requests(self) -> None:
+        del self.repo.job("labels-sync.yml", "reconcile")["permissions"]["pull-requests"]
+        self.assertFinding("labels-sync.yml: reconcile's permissions must be")
+
     def test_milestones_events(self) -> None:
         self.repo.on("pr-milestones.yml")["pull_request"] = None
         self.assertFinding("pr-milestones.yml: events changed")
@@ -375,7 +471,8 @@ class MilestoneScriptTests(unittest.TestCase):
         assert source is not None
         namespace: dict[str, Any] = {"__name__": "pr_milestones"}
         exec(compile(source, cw.MILESTONES_FILE, "exec"), namespace)
-        self.script: Callable[[Any, str, Any], None] = namespace["reconcile"]
+        self.script: Callable[[Any, str, Any], Any] = namespace["reconcile"]
+        self.summary: Callable[[Any], str] = namespace["summary"]
 
     def reconcile(self, api: FakeGitHub, repository: str, event: Any) -> None:
         with contextlib.redirect_stdout(io.StringIO()):
@@ -403,6 +500,19 @@ class MilestoneScriptTests(unittest.TestCase):
         self.assertTrue(any(n > 200 for n in api.patched), "the third page was not cleared")
         self.assertTrue(all(value is None for value in api.milestones(pulls=True).values()))
         self.assertEqual(api.milestones(pulls=False), issues)
+
+    def test_removed_milestones_are_returned_for_the_summary(self) -> None:
+        api = FakeGitHub({5: {"number": 2, "title": "v0.1.0 - Repo setup"}, 6: None}, {})
+        with contextlib.redirect_stdout(io.StringIO()):
+            removed = self.script(api, REPOSITORY, {"schedule": "17 3 * * *"})
+        self.assertEqual(removed, [(5, "v0.1.0 - Repo setup")])
+
+    def test_summary_lists_each_removal_and_treats_titles_as_data(self) -> None:
+        text = self.summary([(5, "a|b"), (7, "back\\slash\r\nnew row")])
+        self.assertIn("| #5 | a\\|b |", text)
+        self.assertIn("| #7 | back\\\\slash new row |", text)
+        self.assertEqual(text.count("\n| #"), 2)
+        self.assertIn("No pull request had a milestone.", self.summary([]))
 
     def test_issue_number_is_refused(self) -> None:
         api = FakeGitHub({5: {"number": 2}}, {9: {"number": 2}})

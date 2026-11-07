@@ -182,9 +182,12 @@ def run_gates(gates: Sequence[Gate], root: Path, output: Path) -> list[Result]:
 
 
 def overall_status(results: Sequence[Result], *, ci: bool, dirty: bool,
-                   allow_missing: bool) -> str:
-    """PASS needs every gate to pass; a gate that did not run is never a PASS."""
-    if any(result.status == "fail" for result in results) or (ci and dirty):
+                   allow_missing: bool, changed: bool = False) -> str:
+    """PASS needs every gate to pass; a gate that did not run is never a PASS.
+
+    With --ci the tree must be clean before the gates (dirty) and the gates must
+    not change it (changed)."""
+    if any(result.status == "fail" for result in results) or (ci and (dirty or changed)):
         return "fail"
     if any(result.status == "not-run" for result in results):
         return "incomplete" if allow_missing and not ci else "fail"
@@ -203,7 +206,8 @@ def render_markdown(report: dict[str, Any]) -> str:
         f"Status: **{label(report['status'])}**",
         "",
         f"Candidate: `{report['candidate_sha']}`; mode: `{report['mode']}`; "
-        f"dirty: `{report['dirty']}`",
+        f"dirty: `{report['dirty']}`; changed during the gates: "
+        f"`{report['changed_during_gates']}`",
         "",
         report["scope"],
         "",
@@ -237,15 +241,23 @@ def main(argv: Sequence[str] | None = None, gates: Sequence[Gate] | None = None)
     output.mkdir(parents=True, exist_ok=True)
     selected = list(default_gates() if gates is None else gates)
     sha = git(root, "rev-parse", "HEAD").strip()
-    dirty = bool(git(root, "status", "--porcelain", "--untracked-files=normal"))
+    before = git(root, "status", "--porcelain", "--untracked-files=normal")
+    dirty = bool(before)
     results = run_gates(selected, root, output)
-    status = overall_status(results, ci=args.ci, dirty=dirty, allow_missing=args.allow_missing)
+    # Read the tree again: a gate that changes a file must not pass unseen.
+    after = git(root, "status", "--porcelain", "--untracked-files=normal")
+    changed = after != before
+    status = overall_status(results, ci=args.ci, dirty=dirty, allow_missing=args.allow_missing,
+                            changed=changed)
     if args.ci and dirty:
         print("working tree is dirty: --ci requires a clean checkout", flush=True)
+    if args.ci and changed:
+        print("the gates changed the working tree:\n" + after, flush=True)
     report: dict[str, Any] = {
         "schema_version": 1,
         "candidate_sha": sha,
         "dirty": dirty,
+        "changed_during_gates": changed,
         "mode": "ci" if args.ci else "local",
         "status": status,
         "scope": SCOPE,

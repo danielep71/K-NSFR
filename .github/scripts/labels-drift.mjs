@@ -8,6 +8,8 @@ import { join } from "node:path";
 import process from "node:process";
 import { promisify } from "node:util";
 
+import { markdownCode, markdownText } from "./markdown.mjs";
+
 const execFileAsync = promisify(execFile);
 const TOOL_NAME = "Repository label drift";
 const API_VERSION = "2022-11-28";
@@ -217,7 +219,9 @@ function canonicalRows(stdout) {
   if (!countMatch) throw new Error("Canonical plan summary has no planned-change count");
   const rows = [];
   for (const line of stdout.split("\n")) {
-    const match = line.match(/^\| (update|create|delete) \| `([^`]*)` \| ([^|]*) \|$/);
+    // The label cell is compared as rendered: both plans render names with
+    // markdownCode(), whatever backticks or pipes they contain.
+    const match = line.match(/^\| (update|create|delete) \| (.*) \| ([^|]*) \|$/);
     if (match) {
       rows.push({ action: match[1], name: match[2], detail: match[3].trim() });
     }
@@ -228,7 +232,7 @@ function canonicalRows(stdout) {
 function localRows(changes) {
   return changes.map(change => ({
     action: change.action,
-    name: change.name,
+    name: markdownCode(change.name),
     detail: change.action === "update"
       ? change.fields.join(", ")
       : change.action === "delete"
@@ -301,13 +305,9 @@ function buildReport({ repository, manifestPath, manifest, desiredLabels, liveLa
   };
 }
 
-function markdownEscape(value) {
-  return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
-}
-
 function compactLabel(label) {
   if (label === null) return "—";
-  return `\`${markdownEscape(label.name)}\` / \`${label.color}\` / ${markdownEscape(label.description)}`;
+  return `${markdownCode(label.name)} / ${markdownCode(label.color)} / ${markdownText(label.description)}`;
 }
 
 function markdownReport(report) {
@@ -315,8 +315,8 @@ function markdownReport(report) {
     "# Repository label drift",
     "",
     `- Status: **${String(report.status).toUpperCase()}**`,
-    `- Repository: \`${report.repository ?? "fixture"}\``,
-    `- Manifest: \`${report.manifest}\``,
+    `- Repository: ${markdownCode(report.repository ?? "fixture")}`,
+    `- Manifest: ${markdownCode(report.manifest)}`,
     `- Desired / observed: **${report.counts.desired} / ${report.counts.observed}**`,
     `- Differences: **${report.counts.differences}**`,
     `- Create / update / delete: **${report.counts.create} / ${report.counts.update} / ${report.counts.delete}**`,
@@ -332,7 +332,7 @@ function markdownReport(report) {
     );
     for (const difference of report.differences) {
       lines.push(
-        `| ${difference.action} | \`${markdownEscape(difference.name)}\` | `
+        `| ${difference.action} | ${markdownCode(difference.name)} | `
         + `${difference.fields.length > 0 ? difference.fields.join(", ") : "—"} | `
         + `${compactLabel(difference.observed)} | ${compactLabel(difference.desired)} |`
       );
@@ -433,8 +433,25 @@ async function runSelfTest(manifestPath) {
   assert.match(markdownReport(driftFirst), /simulated out-of-band change/);
   assert.match(markdownReport(driftFirst), new RegExp(missing.name));
 
+  // A live label whose name and description carry backticks, pipes and line
+  // breaks still matches the canonical plan and leaves one table row.
+  const odd = [...structuredClone(desiredLabels),
+    { name: "odd`|name", color: "ABCDEF", description: "back\\slash | pipe\nline" }];
+  const oddReport = await checkedReport({
+    repository: "fixture/odd",
+    manifestPath,
+    manifest,
+    desiredLabels,
+    liveLabels: odd
+  });
+  const oddMarkdown = markdownReport(oddReport);
+  assert.equal(oddReport.counts.delete, 1);
+  assert.ok(oddMarkdown.includes("| delete | ``odd`\\|name`` |"), oddMarkdown);
+  assert.ok(oddMarkdown.includes("back\\\\slash \\| pipe line"), oddMarkdown);
+  assert.equal(oddMarkdown.split("\n").filter(line => line.startsWith("| delete")).length, 1);
+
   process.stdout.write(
-    "SELF-TEST PASS: retry delays and deterministic no-drift and create/update/delete drift fixtures are read-only and match the canonical reconciler.\n"
+    "SELF-TEST PASS: retry delays and deterministic no-drift, create/update/delete and escaped-value drift fixtures are read-only and match the canonical reconciler.\n"
   );
 }
 

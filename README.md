@@ -87,7 +87,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [Regulatory source register](docs/methodology/SOURCE_REGISTER.md) | NSFR sources, their verification, concept mapping and applicability of the planned profile |
 | [Input and result contracts](docs/contracts/CONTRACTS.md) | Field dictionary, parameter and result schemas, diagnostics and synthetic examples |
 | [Numerical fixtures and validation rules](docs/validation/VALIDATION.md) | Fixture schema, independent derivation, scales, rounding, comparison and the case plan |
-| [Contributor guide](CONTRIBUTING.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Editorial rules, reproducible checks and implementation review |
+| [Contributor guide](CONTRIBUTING.md) · [Code of conduct](CODE_OF_CONDUCT.md) · [Working rules](AGENTS.md) · [Tooling](tools/README.md) · [VBA house style](docs/VBA_HOUSE_STYLE.md) | Expected behavior, editorial rules, reproducible checks and implementation review |
 | [Neutral test harness](tests/README.md) | The VBA test harness, its self-test and how to run it in Excel |
 | [NSFR benchmark prototype](prototype/README.md) | My prototype, stored as delivered and not admitted (ADR-011) |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |

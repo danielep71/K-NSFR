@@ -99,6 +99,7 @@ class MainTests(unittest.TestCase):
                               capture_output=True, text=True, check=True).stdout.strip()
         self.assertEqual(report["candidate_sha"], head)
         self.assertEqual((report["status"], report["mode"], report["dirty"]), ("pass", "ci", False))
+        self.assertEqual(report["changed_during_gates"], False)
         markdown = (self.root / "test-results" / "repository-integrity.md").read_text("utf-8")
         self.assertIn("Status: **PASS**", markdown)
         self.assertIn(head, markdown)
@@ -118,6 +119,22 @@ class MainTests(unittest.TestCase):
         (self.root / "untracked.txt").write_text("x\n", encoding="utf-8")
         self.assertEqual(self.main("--ci", gates=[gate("ok", 0)]), 1)
         self.assertEqual(self.report()["dirty"], True)
+
+    def test_ci_rejects_a_change_made_by_the_gates(self) -> None:
+        writer = check.Gate("writer", "python", (sys.executable, "-c",
+                                                 "open('.gitignore', 'a').write('x\\n')"))
+        self.assertEqual(self.main("--ci", gates=[writer]), 1)
+        report = self.report()
+        self.assertEqual((report["dirty"], report["changed_during_gates"], report["status"]),
+                         (False, True, "fail"))
+        self.assertIn("changed during the gates: `True`",
+                      (self.root / "test-results" / "repository-integrity.md").read_text("utf-8"))
+
+    def test_a_local_run_reports_but_tolerates_a_change(self) -> None:
+        writer = check.Gate("writer", "python", (sys.executable, "-c",
+                                                 "open('new.txt', 'w').write('x')"))
+        self.assertEqual(self.main(gates=[writer]), 0)
+        self.assertEqual(self.report()["changed_during_gates"], True)
 
     def test_ci_and_allow_missing_are_exclusive(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):

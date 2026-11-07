@@ -48,6 +48,14 @@ body:
       required: true
 
   - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔀 Alternatives considered (optional)"
+      description: Other approaches you weighed, including doing nothing, and why you set them aside.
+    validations:
+      required: false
+
+  - type: textarea
     id: scope
     attributes:
       label: "📐 Scope and non-goals"

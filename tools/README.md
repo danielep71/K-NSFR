@@ -30,8 +30,10 @@ python tools/check.py --ci
 Other platforms can run compatible tools locally, but the wheel lock targets
 CPython 3.13 on Linux x86_64. CI remains the reference environment. A diagnostic
 `python tools/check.py --allow-missing` run may report **INCOMPLETE**, never PASS,
-if a tool is unavailable. It is not merge evidence. `--ci` rejects a dirty tree
-and missing tools. No gate is skipped after an earlier gate fails.
+if a tool is unavailable. It is not merge evidence. `--ci` rejects a dirty tree,
+missing tools and any change the gates make to the working tree: it reads the
+tree again after the gates and reports a change separately from a tree that was
+dirty before them. No gate is skipped after an earlier gate fails.
 
 <a id="gates-and-reports"></a>
 
@@ -57,20 +59,21 @@ reported **NOT RUN** without them.
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile condition; the milestone workflow's events, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency and permissions; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
 
 Internal links to Markdown sections must point to explicit `<a id="..."></a>`
 anchors. This policy avoids reliance on renderer-specific heading slugs and
-keeps links stable when headings or glyphs change. Remote URLs are not fetched;
-remote availability and final visual rendering still require review. Fragments
+keeps links stable when headings or glyphs change. The gates never fetch a
+remote URL: the separate [external link check](#external-links) does, weekly
+and on demand. Final visual rendering still requires review. Fragments
 inside non-Markdown assets are not validated.
 
 The runner writes `test-results/repository-integrity.json`, its Markdown summary
-and one log per gate. Reports identify the candidate SHA, dirty state and tool
-versions. CI uploads them even after failure, retains them for 30 days, and names
+and one log per gate. Reports identify the candidate SHA, the dirty state, whether
+the gates changed the tree (`changed_during_gates`) and the tool versions. CI uploads them even after failure, retains them for 30 days, and names
 the artifact with candidate SHA, run ID and attempt. Download evidence needed
 for longer retention before expiry. Setup failures before the runner starts
 produce no gate report and fail the upload rather than inventing evidence.
@@ -173,19 +176,25 @@ on `main`; the Traffic history schedule also requires the setup in
 the PR base branch on pull-request events. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
 the default token is read-only. Only label reconciliation, the milestone
-workflow and the two traffic jobs can write. CodeQL
-code scanning also runs, as GitHub's default setup with no workflow file here;
-its [risk surface](../SECURITY.md#automation-risk-surface) is described in the
-security policy.
+workflow, the two traffic jobs and the CodeQL upload can write. The
+[risk surface](../SECURITY.md#automation-risk-surface) of the workflows is
+described in the security policy.
 
 | Workflow | Triggers | Runs | Writes |
 | --- | --- | --- | --- |
 | Repository integrity | Every PR into and push to `main` and `release/**`; manual dispatch. No path filter, so it can be a required check. | `python tools/check.py --ci` | Nothing; uploads `test-results/` |
-| Issue triage | Issue events (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
+| Issue triage | Issue events and milestone created, edited, closed, opened or deleted (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
-| Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`) |
+| Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`; `pull-requests: read` for the prune check) |
 | Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
-| Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`) |
+| CodeQL | Every PR into and push to `main` and `release/**`; weekly on Monday at 05:23 UTC; manual dispatch | CodeQL with the `security-extended` queries, one job per language: `actions`, `python`, `javascript-typescript` | Code-scanning results (`security-events: write`) |
+| External links | Weekly on Wednesday at 06:41 UTC; manual dispatch. Never on a PR or push | `tools/check_links.py` against the external URLs of the committed Markdown ([external links](#external-links)) | Nothing; its job summary lists every link that is not verified |
+| Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`); its job summary lists each pull request and the milestone title removed |
+
+Concurrency: a new push to a pull request cancels that pull request's
+superseded Repository integrity and CodeQL runs, but every push and manual run has a
+group of its own and is never cancelled. *Keep milestones issue-only* queues
+each pull request's events separately from the full scans and cancels nothing.
 
 Repository integrity checks out the exact commit under review and verifies that
 `HEAD` is that commit; for a pull request this is GitHub's test merge of the
@@ -193,6 +202,37 @@ head into the base. Its Markdown report is added to the job summary and
 `test-results/` is uploaded as `repository-integrity-<sha>-<run>-<attempt>`,
 retained for 30 days. It downloads only the pinned actions, the locked Python
 wheels and the checksum-verified actionlint archive.
+
+<a id="external-links"></a>
+
+## 🌐 External links
+
+`check_links.py` fetches every `http` and `https` URL that a link, image or
+HTML `href`/`src` of a committed Markdown file points to. A URL is fetched
+once, without its fragment, and its outcome lists every file that links to
+it. The *External links* workflow runs it weekly and on manual dispatch, never
+on a pull request or push: the network is not reproducible, so it never gates
+a change, and Repository integrity stays offline.
+
+| Outcome | Answer | Effect |
+| --- | --- | --- |
+| Verified | 2xx after the redirects | None |
+| Not verifiable | 403, 429, 5xx, a timeout or another network error | A warning annotation and a row in the job summary; the run reports **WARN**, never PASS |
+| Broken | Any other status outside 2xx, including a redirect loop longer than the limit | An error annotation and a row in the job summary; the run fails |
+
+Limits, as constants in the script:
+
+- `GET` with up to 10 redirects and a `K-NSFR-link-check` user agent;
+- a 15-second timeout for the connection and for each read of the answer;
+- 4 URLs at a time;
+- 2 retries after a 429, a 5xx or a network error, after 5 and 10 seconds. A
+  403 is not retried.
+
+Absolute URLs to this repository are skipped: the content gate checks their
+relative equivalents, and an issue or settings page is not a file. The script
+reads the repository from `--repository owner/name`, else `GITHUB_REPOSITORY`,
+else the `origin` remote. `test_check_links.py` covers each outcome, the
+retries and the URL selection with a fake fetcher, without network access.
 
 <a id="issue-triage"></a>
 
@@ -205,7 +245,8 @@ active release, a valid ISO target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a
 reference; a pull request never counts as a prerequisite, so the workflow
-token also needs `pull-requests: read`. Issue events run the workflow from the
+token also needs `pull-requests: read`. Issue events, and milestone events (a
+changed due date, or a closed or deleted milestone), run the workflow from the
 default branch, so a rule change takes effect after integration into `main`.
 
 ```sh
@@ -234,11 +275,18 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 
 | Tool | Version | Pinned in |
 | --- | --- | --- |
-| Python | 3.13 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets |
-| Node.js | 22 | `actions/setup-node` in the workflows |
+| Python | 3.13.18 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets the 3.13 series |
+| Node.js | 22.23.4 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.1, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
 | PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
+
+Python and Node.js are pinned to exact patch versions, recorded here only: the
+`workflow-invariants` gate rejects a workflow whose `python-version` or
+`node-version` differs from this table, or a row that is not an exact `X.Y.Z`.
+Dependabot does not update them. I review them on the first working day of each
+month and whenever a security release of either appears, and change the table
+and every workflow in one pull request.
 
 Update a version only as [dependency updates](#dependency-updates) describes,
 and change every place that pins it in the same pull request.

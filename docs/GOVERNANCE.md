@@ -101,6 +101,8 @@ request, closed and merged ones included. It runs only its own inline code,
 from the base branch for pull request events and from the default branch for
 the schedule, a push or a manual run, and never a pull request's contents. Its
 only permission is `pull-requests: write`, and it refuses to change an issue.
+Each pull request's events queue separately from the full scans, and its job
+summary lists each pull request and the milestone title it removed.
 
 The read-only Issue triage workflow audits open issues on issue events and
 manual dispatch. I triage findings; the workflow never edits
@@ -326,7 +328,8 @@ through the API on 2026-10-29; branch-rule enforcement scenarios are tracked
 by #15. The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
-(#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
+(#75), and replaced the default setup with the `CodeQL` workflow (Actions,
+Python and JavaScript/TypeScript, `security-extended` queries) in #146. The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
 deliberate differences from GitHub's defaults, and the
 [settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md) holds their dated
 read-back, with ruleset IDs.
@@ -337,7 +340,8 @@ It checks committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,
 strict Python typing, lint and tests, the VBA static rules, and committed
 blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
-newline and blank lines at end of file). Python 3.13 and Node 22 are selected
-explicitly in the workflow. These portable checks do not run Excel
+newline and blank lines at end of file). Python and Node.js are selected by
+exact patch version, as the [tool versions](../tools/README.md#tool-versions)
+table records. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.
