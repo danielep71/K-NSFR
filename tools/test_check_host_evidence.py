@@ -216,6 +216,19 @@ class HostEvidenceTests(unittest.TestCase):
         record["recorded_on"] = "2000-01-01"
         self.assertFinding("recorded_on: 2000-01-01 must fall between", record)
 
+    def test_the_recording_script_writes_the_record_the_gate_reads(self) -> None:
+        script = (Path(__file__).resolve().parent / "host" / "Record-HostEvidence.ps1").read_text(
+            encoding="ascii")
+        self.assertIn(f"$Schema = '{he.SCHEMA}'", script)
+        for key in sorted(he.KEYS - {"output", "reason"}):
+            self.assertRegex(script, rf"\n\s+{key}\s+=", key)
+        self.assertIn("$record.output", script)
+        self.assertIn("$record.reason", script)
+        steps = "[ordered]@{ " + "; ".join(f"{s} = 'NOT_RUN'" for s in he.STEPS) + " }"
+        self.assertIn(steps, script)
+        self.assertIn("ConvertTo-Json -InputObject $record", script)
+        self.assertIn("New-Object Text.UTF8Encoding $false", script)  # no BOM
+
     def test_the_repository_records_pass(self) -> None:
         root = Path(__file__).resolve().parents[1]
         self.assertEqual(he.check(root)[1], [])

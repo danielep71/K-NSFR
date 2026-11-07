@@ -71,18 +71,55 @@ Example of a passing record. The SHA and fingerprints are placeholders:
 
 ## ▶️ Recording a run
 
+`tools/host/Record-HostEvidence.ps1` records a run in one command. You need
+the supported host and Git. Python is optional and validates the record at
+the end.
+
 1. Clone the repository fresh, or check that `git status --porcelain` prints
-   nothing, and check out the commit to test. Note `git rev-parse HEAD`.
-2. In PowerShell, from the repository folder, take the fingerprints:
-   `Get-FileHash -Algorithm SHA256 .gitattributes, tests\core\*.bas`. The
+   nothing, and check out a commit of `release/0.1.0` or `main`.
+2. Close Excel, then run from the repository folder:
+
+   ```text
+   powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1
+   ```
+
+3. Propose the record that it writes, `tests/evidence/<SHA>.json`, in a pull
+   request.
+
+The script:
+
+1. checks the clean worktree and takes the candidate SHA;
+2. takes the fingerprints with `Get-FileHash`;
+3. reads the Windows version and build from the registry, and the Excel
+   build and bitness from the Click-to-Run configuration;
+4. drives a new Excel instance through COM: a new blank workbook, the import
+   of every module of `tests/core/`, *Compile VBAProject* and
+   `Test_NSFR_HarnessSelfTest.RunSelfTest`;
+5. closes the workbook without saving, quits Excel and checks that the
+   worktree is still clean;
+6. writes the record, and validates it with `check_host_evidence.py
+   --candidate` when Python is available.
+
+It records a failed step as `FAIL`, with the error message stripped of local
+paths. It records the Excel line as `Microsoft 365 Apps (<products>),
+Version 16.0 (Build <build> Click-to-Run)`: the build identifies the release
+exactly.
+
+Importing modules through COM needs Excel's *Trust access to the VBA project
+object model* (**File → Options → Trust Center → Trust Center Settings →
+Macro Settings**). The script never turns it on by itself. Pass
+`-AllowVbomForRun` to turn it on for this run only: the previous value is
+restored at the end. Pass `-Visible` to watch Excel. If a compile error opens
+a dialog, close it; the step is then recorded as `FAIL`.
+
+Without the script, follow the [manual route](../../tests/README.md#running-in-excel):
+
+1. Take the fingerprints with
+   `Get-FileHash -Algorithm SHA256 .gitattributes, tests\core\*.bas`; the
    values are case-insensitive.
-3. Follow the [manual route](../../tests/README.md#running-in-excel): new
-   blank workbook, import both modules, compile, run
-   `?Test_NSFR_HarnessSelfTest.RunSelfTest()` and close the workbook without
-   saving. Each of these is a step of the record.
-4. Copy the output and the host details into the record, save it as
-   `tests/evidence/<SHA>.json` and propose it in a pull request. Run
-   `python tools/check_host_evidence.py --candidate <SHA>` first if you can.
+2. Import, compile, run and close as the manual route says.
+3. Write the record by hand, and run
+   `python tools/check_host_evidence.py --candidate <SHA>` if you can.
 
 A failed or interrupted run is recorded too, with `FAIL` or `NOT_RUN` and the
 reason. If no supported host is available, #14 stays open with that blocker.

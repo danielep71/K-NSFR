@@ -91,7 +91,9 @@ These checks neither compile VBA nor run Excel or an NSFR calculation. The
 VBA static checks read source text only (see their
 [limitations](#vba-static-limitations)). The [neutral harness](../tests/README.md)
 (#12) is VBA and runs only in Excel; packaging and actual host evidence remain
-#13 and #14. Live issue triage is read-only and separate from offline CI;
+#13 and #14. `host/Record-HostEvidence.ps1` runs the harness self-test in
+Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run);
+it runs on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>
