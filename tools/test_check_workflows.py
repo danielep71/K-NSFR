@@ -325,6 +325,10 @@ class WorkflowInvariantTests(unittest.TestCase):
         del self.repo.workflows["codeql.yml"]
         self.assertFinding("codeql.yml: not found")
 
+    def test_integrity_fetches_the_history_for_host_evidence(self) -> None:
+        del self.repo.job("repository-integrity.yml", "integrity")["steps"][0]["with"]["fetch-depth"]
+        self.assertFinding("must check out with fetch-depth: 0")
+
     def test_link_check_never_gates_a_change(self) -> None:
         for event in ("pull_request", "push"):
             with self.subTest(event=event):

@@ -24,6 +24,7 @@ asserts nothing about one. Tracking: #12.
 | `core/Test_NSFR_Harness.bas` | The harness: run state, outcomes, summary |
 | `core/Test_NSFR_HarnessSelfTest.bas` | Its self-test, with a suite that passes and suites that fail on purpose |
 | `fixtures/` | The [numerical fixtures](../docs/validation/VALIDATION.md); the harness will execute them once an engine exists |
+| `evidence/` | The [host evidence records](../docs/validation/HOST_EVIDENCE.md), one per tested commit |
 
 Both modules are standard modules with `Option Private Module`. They use VBA
 only: no Excel object model, workbook, sheet, file, clock or random number.
@@ -132,10 +133,13 @@ template, import the modules by hand:
    `?Test_NSFR_HarnessSelfTest.RunSelfTest()`.
 6. Close the workbook without saving it; the run leaves nothing behind.
 
-Record in #12: the commit SHA, the Excel version and build with its bitness
-(**File → Account → About Excel**), the Windows version, whether the import
-and compilation succeeded, and the complete output of step 5. A run on one
-commit is no evidence for another.
+Record the run as a [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run)
+in [`evidence/`](evidence/README.md): the commit SHA and the file fingerprints,
+the Windows version, the Excel version and build with its bitness
+(**File → Account → About Excel**), the outcome of the import, the
+compilation, the run and the cleanup, and the complete output of step 5. The
+`host-evidence` gate rejects a record that is not bound to its commit. A run
+on one commit is no evidence for another.
 
 <a id="reproducibility"></a>
 
