@@ -54,7 +54,7 @@ reported **NOT RUN** without them.
 | `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
 | `fixtures` | Python | `check_fixtures.py`: every [numerical fixture](../docs/validation/VALIDATION.md) under `tests/fixtures/` against `fixture-v1.json`, its hand derivation re-derived and its expected result re-evaluated with exact rational arithmetic; it never runs the engine |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
-| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit |
+| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
@@ -91,7 +91,9 @@ These checks neither compile VBA nor run Excel or an NSFR calculation. The
 VBA static checks read source text only (see their
 [limitations](#vba-static-limitations)). The [neutral harness](../tests/README.md)
 (#12) is VBA and runs only in Excel; packaging and actual host evidence remain
-#13 and #14. Live issue triage is read-only and separate from offline CI;
+#13 and #14. `host/Record-HostEvidence.ps1` runs the harness self-test in
+Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run);
+it runs on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>

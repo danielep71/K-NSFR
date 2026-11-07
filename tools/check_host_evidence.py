@@ -32,7 +32,7 @@ EVIDENCE = Path("tests/evidence")
 SCHEMA = "k-nsfr-host-evidence/1"
 HARNESS_DIR = "tests/core/"
 CONFIG = (".gitattributes",)
-VBA_SUFFIXES = (".bas", ".cls", ".frm")  # checked out with CRLF (.gitattributes)
+VBA_SUFFIXES = (".bas", ".cls", ".frm")
 EXPECTED_SOURCE = "tests/README.md"
 
 PASS, FAIL, NOT_RUN = "PASS", "FAIL", "NOT_RUN"
@@ -77,17 +77,12 @@ def strings(value: Any) -> list[str]:
     return []
 
 
-def checkout_bytes(path: str, blob: bytes) -> bytes:
-    """The file as Git checks it out on Windows: VBA source with CRLF, the rest with LF."""
-    return blob.replace(b"\n", b"\r\n") if path.endswith(VBA_SUFFIXES) else blob
-
-
 def expected_fingerprints(sha: str, root: Path) -> dict[str, str]:
+    """The SHA-256 of the bytes stored in Git (LF), never of a CRLF checkout."""
     names = git("ls-tree", "-r", "--name-only", sha, "--", HARNESS_DIR, *CONFIG,
                 root=root).decode().split()
     modules = [n for n in names if n.startswith(HARNESS_DIR) and n.endswith(VBA_SUFFIXES)]
-    return {name: hashlib.sha256(checkout_bytes(name, git("cat-file", "blob", f"{sha}:{name}",
-                                                          root=root))).hexdigest()
+    return {name: hashlib.sha256(git("cat-file", "blob", f"{sha}:{name}", root=root)).hexdigest()
             for name in [*modules, *[n for n in CONFIG if n in names]]}
 
 
@@ -295,7 +290,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate the host evidence records.")
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--candidate", help="also require a PASS record for this full SHA")
+    parser.add_argument("--inventory", action="store_true",
+                        help="print the fingerprints that a record of --candidate must give")
     args = parser.parse_args(argv)
+    if args.inventory:
+        if not args.candidate:
+            parser.error("--inventory needs --candidate")
+        print(json.dumps(expected_fingerprints(args.candidate, args.root), indent=2))
+        return 0
     count, findings = check(args.root, args.candidate)
     for finding in findings:
         print(finding)

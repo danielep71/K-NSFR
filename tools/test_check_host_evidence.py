@@ -5,11 +5,13 @@ from __future__ import annotations
 import copy
 import datetime as dt
 import hashlib
+import io
 import json
 import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest import mock
 
 import check_host_evidence as he
 from check_source_control import git
@@ -58,8 +60,7 @@ class HostEvidenceTests(unittest.TestCase):
                               "(Build 18129.20158 Click-to-Run)",
                      "bitness": "64-bit"},
             "fingerprints": {
-                "tests/core/Test_Example.bas":
-                    hashlib.sha256(MODULE.replace(b"\n", b"\r\n")).hexdigest(),
+                "tests/core/Test_Example.bas": hashlib.sha256(MODULE).hexdigest(),
                 ".gitattributes": hashlib.sha256(ATTRIBUTES).hexdigest()},
             "steps": {"import": "PASS", "compile": "PASS", "run": "PASS", "cleanup": "PASS"},
             "result": "PASS",
@@ -151,7 +152,9 @@ class HostEvidenceTests(unittest.TestCase):
         record["fingerprints"][".gitattributes"] = "0" * 64
         self.assertFinding("fingerprints: .gitattributes differs", record)
         record = self.record()
-        record["fingerprints"]["tests/core/Test_Example.bas"] = hashlib.sha256(MODULE).hexdigest()
+        # The digest is of the bytes stored in Git, not of the CRLF checkout.
+        record["fingerprints"]["tests/core/Test_Example.bas"] = hashlib.sha256(
+            MODULE.replace(b"\n", b"\r\n")).hexdigest()
         self.assertFinding("fingerprints: tests/core/Test_Example.bas differs", record)
         record = self.record()
         del record["fingerprints"][".gitattributes"]
@@ -215,6 +218,29 @@ class HostEvidenceTests(unittest.TestCase):
         record = self.record()
         record["recorded_on"] = "2000-01-01"
         self.assertFinding("recorded_on: 2000-01-01 must fall between", record)
+
+    def test_the_recording_script_writes_the_record_the_gate_reads(self) -> None:
+        script = (Path(__file__).resolve().parent / "host" / "Record-HostEvidence.ps1").read_text(
+            encoding="ascii")
+        self.assertIn(f"$Schema = '{he.SCHEMA}'", script)
+        for key in sorted(he.KEYS - {"output", "reason"}):
+            self.assertRegex(script, rf"\n\s+{key}\s+=", key)
+        self.assertIn("$record.output", script)
+        self.assertIn("$record.reason", script)
+        steps = "[ordered]@{ " + "; ".join(f"{s} = 'NOT_RUN'" for s in he.STEPS) + " }"
+        self.assertIn(steps, script)
+        self.assertIn("ConvertTo-Json -InputObject $record", script)
+        self.assertIn("New-Object Text.UTF8Encoding $false", script)  # no BOM
+        # The script never changes Trust Center settings.
+        for forbidden in ("AccessVBOM", "Set-ItemProperty", "New-ItemProperty", "Remove-ItemProperty",
+                          "AutomationSecurity"):
+            self.assertNotIn(forbidden, script)
+
+    def test_the_inventory_prints_the_expected_fingerprints(self) -> None:
+        with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+            code = he.main(["--root", str(self.root), "--candidate", self.sha, "--inventory"])
+        self.assertEqual((code, json.loads(stdout.getvalue())),
+                         (0, self.record()["fingerprints"]))
 
     def test_the_repository_records_pass(self) -> None:
         root = Path(__file__).resolve().parents[1]
