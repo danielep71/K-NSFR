@@ -35,6 +35,7 @@ ALLOWED_WRITES: dict[tuple[str, str], frozenset[str]] = {
     ("traffic-history.yml", "collect"): frozenset({"contents"}),
     ("traffic-history.yml", "alert"): frozenset({"issues"}),
     ("pr-milestones.yml", "reconcile"): frozenset({"pull-requests"}),
+    ("codeql.yml", "analyze"): frozenset({"security-events"}),
 }
 
 LABELS_RECONCILE_IF = "github.event_name != 'pull_request' && " + DEFAULT_BRANCH_REF
@@ -47,6 +48,19 @@ INTEGRITY_CONCURRENCY = {
              "format('pr-{0}', github.event.pull_request.number) || "
              "format('run-{0}', github.run_id) }}",
     "cancel-in-progress": "${{ github.event_name == 'pull_request' }}",
+}
+
+CODEQL_FILE = "codeql.yml"
+CODEQL_ACTION = re.compile(r"^github/codeql-action/(init|analyze)@([0-9a-f]{40})$")
+# Every language the repository contains that CodeQL supports; VBA has no extractor.
+CODEQL_LANGUAGES = ["actions", "python", "javascript-typescript"]
+CODEQL_INIT = {"languages": "${{ matrix.language }}", "build-mode": "none",
+               "queries": "security-extended"}
+CODEQL_ANALYZE = {"category": "/language:${{ matrix.language }}"}
+CODEQL_PERMISSIONS = {"contents": "read", "security-events": "write"}
+CODEQL_CONCURRENCY = {
+    "group": INTEGRITY_CONCURRENCY["group"].replace("integrity-", "codeql-", 1),
+    "cancel-in-progress": INTEGRITY_CONCURRENCY["cancel-in-progress"],
 }
 
 TRIAGE_FILE = "issue-triage.yml"
@@ -239,6 +253,42 @@ def labels_sync_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     return findings
 
 
+def codeql_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    """One analysis per language, with the extended queries, on the protected branches."""
+    workflow = workflows.get(CODEQL_FILE)
+    if workflow is None:
+        return [f"{CODEQL_FILE}: not found"]
+    findings = []
+    on = triggers(workflow)
+    branches = {"branches": ["main", "release/**"]}
+    if (not isinstance(on, Mapping) or on.get("push") != branches
+            or on.get("pull_request") != branches or not on.get("schedule")):
+        findings.append(f"{CODEQL_FILE}: must run on push and pull_request with {branches} "
+                        "and no other filter, and on a schedule")
+    if workflow.get("concurrency") != CODEQL_CONCURRENCY:
+        findings.append(f"{CODEQL_FILE}: concurrency must be {CODEQL_CONCURRENCY}")
+    job = dict(jobs(workflow)).get("analyze")
+    if job is None:
+        return findings + [f"{CODEQL_FILE}: no analyze job"]
+    if job.get("permissions") != CODEQL_PERMISSIONS:
+        findings.append(f"{CODEQL_FILE}: analyze's permissions must be {CODEQL_PERMISSIONS}")
+    matrix = (job.get("strategy") or {}).get("matrix") or {}
+    if matrix != {"language": CODEQL_LANGUAGES}:
+        findings.append(f"{CODEQL_FILE}: the matrix must be exactly language: {CODEQL_LANGUAGES}")
+    actions: dict[str, list[tuple[str, Any]]] = {}
+    for step in steps_of(job):
+        match = CODEQL_ACTION.match(str(step.get("uses", "")))
+        if match:
+            actions.setdefault(match.group(1), []).append((match.group(2), step.get("with")))
+    expected = {"init": CODEQL_INIT, "analyze": CODEQL_ANALYZE}
+    for action, inputs in expected.items():
+        if [given for _, given in actions.get(action, [])] != [inputs]:
+            findings.append(f"{CODEQL_FILE}: exactly one {action} step, with {inputs}")
+    if len({sha for steps in actions.values() for sha, _ in steps}) > 1:
+        findings.append(f"{CODEQL_FILE}: init and analyze must be pinned to the same commit")
+    return findings
+
+
 def triage_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     workflow = workflows.get(TRIAGE_FILE)
     if workflow is None:
@@ -420,7 +470,7 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
         findings += action_findings(name, workflow) + permission_findings(name, workflow)
     findings += integrity_findings(workflows, governance, settings)
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
-    findings += triage_findings(workflows)
+    findings += triage_findings(workflows) + codeql_findings(workflows)
     findings += traffic_findings(workflows)
     findings += runtime_findings(workflows, tooling)
     findings += dependabot_findings(dependabot)

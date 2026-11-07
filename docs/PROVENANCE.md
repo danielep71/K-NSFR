@@ -29,7 +29,7 @@ copyright ownership or permission to redistribute.
 | --- | --- | --- |
 | Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits; `.github/scripts/markdown.mjs`, the summary helper they share, authored locally in #145 | Source, revision and license per file in the third-party notices |
 | Issue templates and triage Python code/tests | Imported (see the third-party notices), adapted for the K-NSFR issue model | Source, revision and license per file in the third-party notices |
-| GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
+| GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `.github/workflows/codeql.yml` authored locally in #146 | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook, regulatory parameters, numerical fixtures | None admitted in the setup baseline | Future source/version, licensing and independent validation required |

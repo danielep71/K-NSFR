@@ -202,6 +202,18 @@ session.xml
 *.pvk
 *.key
 *.pem
+*.jks
+*.keystore
+*.kdbx
+
+# Private SSH keys. Their public halves remain trackable; the re-inclusion is
+# limited to these names so that it cannot re-include another ignored file.
+id_rsa*
+id_ecdsa*
+id_ed25519*
+!id_rsa*.pub
+!id_ecdsa*.pub
+!id_ed25519*.pub
 
 
 #------------------------------------------------------------------------------

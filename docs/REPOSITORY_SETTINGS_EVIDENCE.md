@@ -69,8 +69,9 @@ Both PR rules disable stale-review dismissal, code-owner review and last-push
 approval, and name no required reviewers. Both also report
 `require_extra_approval_for_unattributed_changes` as enabled; its effect here
 was not tested. Zero approvals fits my role as sole maintainer and is not
-independent approval. The rulesets require only Repository integrity. CodeQL
-reports a check on pull requests into `main`, but no rule requires it.
+independent approval. The rulesets require only Repository integrity. The
+`CodeQL` workflow reports one check per language on pull requests, but no rule
+requires it.
 
 The `traffic-history` branch has existed since 2026-10-29 and its ruleset applies
 to it (API branch-rules read-back). Traffic collection is described in [traffic history](TRAFFIC.md) (#103).

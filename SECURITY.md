@@ -79,10 +79,9 @@ normal deletion commit does not erase previous versions.
 
 ## ⚙️ Automation risk surface
 
-All the workflows below are on `main` since the integration of 2026-11-03
-(#107). Traffic history has not collected yet: the `analytics` environment
-restriction and credential below are required setup, not verified provisioned
-controls. Live collection remains tracked in #16.
+The workflows below are on `main`, except `CodeQL` (#146) until I integrate
+it; meanwhile it runs on pull requests and pushes from the release branch.
+Traffic history has collected since 2026-11-07 (#16).
 
 No workflow runs VBA, Excel or an NSFR calculation. The workflows use the
 workflow token, except in the collect job of `Traffic history`. There, one step
@@ -99,6 +98,7 @@ that token, and it runs `curl` and no repository code
 | `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
 | `Sync issue labels` | `contents: read`; `issues: write` and `pull-requests: read` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
 | `Traffic history` | `contents: read`; `contents: write` in `collect` (default branch only, `analytics` environment); `issues: write` in `alert`, which never receives the token | Daily schedule; manual dispatch (collection runs only from the default branch) |
+| `CodeQL` | `contents: read`; `security-events: write` in its one job, to upload the results | Pull requests into and pushes to `main` and `release/**`; weekly schedule; manual dispatch |
 | `Keep milestones issue-only` | None at workflow level; `pull-requests: write` in its one job | `pull_request_target` (opened, reopened, edited, milestoned); daily schedule; its own pushes to `main`; manual dispatch on the default branch |
 
 In these workflows every checkout sets `persist-credentials: false` and every
@@ -111,12 +111,15 @@ milestones. No workflow approves, merges or dismisses alerts. The
 [tooling guide](tools/README.md) describes what each
 workflow runs.
 
-CodeQL code scanning runs separately as GitHub's default setup: a
-GitHub-managed workflow with no file in this repository. It analyzes the
-workflows and the Python tools on GitHub's default-setup triggers and weekly,
-and uploads its results to code scanning. It uses GitHub's actions by version
-tag (its first run used `github/codeql-action/analyze@v4`), so the full-SHA
-pins above do not apply to it.
+CodeQL code scanning runs from the `CodeQL` workflow
+([.github/workflows/codeql.yml](.github/workflows/codeql.yml)), which replaces
+GitHub's default setup (#146). One job per language analyzes the workflows
+(`actions`), the Python tools (`python`) and the label scripts in
+`.github/scripts/` (`javascript-typescript`) with the `security-extended`
+queries, and uploads the results to code scanning. Its actions are pinned to a
+full SHA like the others. The default setup must stay off: while it is on,
+code scanning rejects the results of a workflow. The VBA is not analyzed,
+because CodeQL has no extractor for it.
 
 <a id="existing-controls"></a>
 <a id="security-features"></a>
@@ -124,7 +127,7 @@ pins above do not apply to it.
 ## 🛡️ Security features
 
 Recorded on **2026-10-28** for the public repository and updated on
-**2026-10-29** (#75) and **2026-11-05** (#115). The source column says
+**2026-10-29** (#75), **2026-11-05** (#115) and **2026-11-07** (#146). The source column says
 how each state is known; a state marked *not verified* has not been read back
 and must not be assumed.
 
@@ -140,7 +143,7 @@ and must not be assumed.
 | Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
 | Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
 | Dependabot alerts | Enabled by inference: security updates require alerts | Not readable without admin access; not verified directly |
-| Code scanning | CodeQL default setup, enabled 2026-10-29: Actions and Python, default query suite, remote threat model, weekly schedule. It covers the workflows and Python tools, not the VBA | GitHub API read-back, 2026-10-29. The first analysis, on `main` at `d272338`, succeeded and scanned 4 of 4 workflow files and 8 of 8 Python files ([run 40838760015](https://github.com/danielep71/K-NSFR/actions/runs/40838760015)). Alerts are not readable without security-events access; *not verified* |
+| Code scanning | CodeQL from the `CodeQL` workflow (#146): Actions, Python and JavaScript/TypeScript, `security-extended` queries, on pull requests, pushes and weekly. It covers the workflows, the Python tools and the label scripts, not the VBA. The default setup, enabled on 2026-10-29 for Actions and Python with the default queries, is off | The workflow file. The switch-off of the default setup and the workflow's first analyses are *not verified* yet. The default setup's first analysis, on `main` at `d272338`, succeeded ([run 40838760015](https://github.com/danielep71/K-NSFR/actions/runs/40838760015)). Alerts are not readable without security-events access; *not verified* |
 
 Update this table, with its date and source, when a feature is enabled,
 changed or read back. These controls do not constitute a security
