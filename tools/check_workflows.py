@@ -241,6 +241,13 @@ def integrity_findings(workflows: Mapping[str, Workflow], governance: str,
                             f"{expected!r} and no other filter")
     if workflow.get("concurrency") != INTEGRITY_CONCURRENCY:
         findings.append(f"{file}: concurrency must be {INTEGRITY_CONCURRENCY}")
+    for job_id, job in matching:
+        checkouts = [step for step in steps_of(job)
+                     if str(step.get("uses", "")).startswith("actions/checkout@")]
+        if not checkouts or any((step.get("with") or {}).get("fetch-depth") != 0
+                                for step in checkouts):
+            findings.append(f"{file}: required job {job_id} must check out with fetch-depth: 0, "
+                            "so that host evidence can be bound to its commit")
     return findings
 
 
