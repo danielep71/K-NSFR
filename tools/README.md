@@ -59,15 +59,16 @@ reported **NOT RUN** without them.
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency and permissions; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency and permissions; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
 
 Internal links to Markdown sections must point to explicit `<a id="..."></a>`
 anchors. This policy avoids reliance on renderer-specific heading slugs and
-keeps links stable when headings or glyphs change. Remote URLs are not fetched;
-remote availability and final visual rendering still require review. Fragments
+keeps links stable when headings or glyphs change. The gates never fetch a
+remote URL: the separate [external link check](#external-links) does, weekly
+and on demand. Final visual rendering still requires review. Fragments
 inside non-Markdown assets are not validated.
 
 The runner writes `test-results/repository-integrity.json`, its Markdown summary
@@ -187,6 +188,7 @@ described in the security policy.
 | Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`; `pull-requests: read` for the prune check) |
 | Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
 | CodeQL | Every PR into and push to `main` and `release/**`; weekly on Monday at 05:23 UTC; manual dispatch | CodeQL with the `security-extended` queries, one job per language: `actions`, `python`, `javascript-typescript` | Code-scanning results (`security-events: write`) |
+| External links | Weekly on Wednesday at 06:41 UTC; manual dispatch. Never on a PR or push | `tools/check_links.py` against the external URLs of the committed Markdown ([external links](#external-links)) | Nothing; its job summary lists every link that is not verified |
 | Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`); its job summary lists each pull request and the milestone title removed |
 
 Concurrency: a new push to a pull request cancels that pull request's
@@ -200,6 +202,37 @@ head into the base. Its Markdown report is added to the job summary and
 `test-results/` is uploaded as `repository-integrity-<sha>-<run>-<attempt>`,
 retained for 30 days. It downloads only the pinned actions, the locked Python
 wheels and the checksum-verified actionlint archive.
+
+<a id="external-links"></a>
+
+## 🌐 External links
+
+`check_links.py` fetches every `http` and `https` URL that a link, image or
+HTML `href`/`src` of a committed Markdown file points to. A URL is fetched
+once, without its fragment, and its outcome lists every file that links to
+it. The *External links* workflow runs it weekly and on manual dispatch, never
+on a pull request or push: the network is not reproducible, so it never gates
+a change, and Repository integrity stays offline.
+
+| Outcome | Answer | Effect |
+| --- | --- | --- |
+| Verified | 2xx after the redirects | None |
+| Not verifiable | 403, 429, 5xx, a timeout or another network error | A warning annotation and a row in the job summary; the run reports **WARN**, never PASS |
+| Broken | Any other status outside 2xx, including a redirect loop longer than the limit | An error annotation and a row in the job summary; the run fails |
+
+Limits, as constants in the script:
+
+- `GET` with up to 10 redirects and a `K-NSFR-link-check` user agent;
+- a 15-second timeout for the connection and for each read of the answer;
+- 4 URLs at a time;
+- 2 retries after a 429, a 5xx or a network error, after 5 and 10 seconds. A
+  403 is not retried.
+
+Absolute URLs to this repository are skipped: the content gate checks their
+relative equivalents, and an issue or settings page is not a file. The script
+reads the repository from `--repository owner/name`, else `GITHUB_REPOSITORY`,
+else the `origin` remote. `test_check_links.py` covers each outcome, the
+retries and the URL selection with a fake fetcher, without network access.
 
 <a id="issue-triage"></a>
 

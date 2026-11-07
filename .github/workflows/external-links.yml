@@ -1,0 +1,42 @@
+name: External links
+run-name: External links — ${{ github.ref_name }} @ ${{ github.sha }}
+# Fetches the external URLs of the committed Markdown with tools/check_links.py.
+# Weekly and on demand only: the network is not reproducible, so this check is
+# never part of Repository integrity, which stays offline. A broken link fails
+# the run; a link that cannot be verified is a warning in the summary.
+on:
+  schedule:
+    - cron: "41 6 * * 3"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: external-links
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  links:
+    name: External links
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    env:
+      PYTHONUTF8: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Check out the commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13.18"
+      - name: Install hash-locked content tools
+        run: |
+          python -m pip install --disable-pip-version-check --only-binary=:all: --require-hashes -r tools/requirements-quality-ci.txt
+      - name: Check the external links
+        run: python tools/check_links.py --summary "$GITHUB_STEP_SUMMARY"
