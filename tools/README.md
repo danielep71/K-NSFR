@@ -30,8 +30,10 @@ python tools/check.py --ci
 Other platforms can run compatible tools locally, but the wheel lock targets
 CPython 3.13 on Linux x86_64. CI remains the reference environment. A diagnostic
 `python tools/check.py --allow-missing` run may report **INCOMPLETE**, never PASS,
-if a tool is unavailable. It is not merge evidence. `--ci` rejects a dirty tree
-and missing tools. No gate is skipped after an earlier gate fails.
+if a tool is unavailable. It is not merge evidence. `--ci` rejects a dirty tree,
+missing tools and any change the gates make to the working tree: it reads the
+tree again after the gates and reports a change separately from a tree that was
+dirty before them. No gate is skipped after an earlier gate fails.
 
 <a id="gates-and-reports"></a>
 
@@ -57,7 +59,7 @@ reported **NOT RUN** without them.
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
@@ -69,8 +71,8 @@ remote availability and final visual rendering still require review. Fragments
 inside non-Markdown assets are not validated.
 
 The runner writes `test-results/repository-integrity.json`, its Markdown summary
-and one log per gate. Reports identify the candidate SHA, dirty state and tool
-versions. CI uploads them even after failure, retains them for 30 days, and names
+and one log per gate. Reports identify the candidate SHA, the dirty state, whether
+the gates changed the tree (`changed_during_gates`) and the tool versions. CI uploads them even after failure, retains them for 30 days, and names
 the artifact with candidate SHA, run ID and attempt. Download evidence needed
 for longer retention before expiry. Setup failures before the runner starts
 produce no gate report and fail the upload rather than inventing evidence.
@@ -240,11 +242,18 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 
 | Tool | Version | Pinned in |
 | --- | --- | --- |
-| Python | 3.13 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets |
-| Node.js | 22 | `actions/setup-node` in the workflows |
+| Python | 3.13.18 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets the 3.13 series |
+| Node.js | 22.23.4 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.1, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
 | PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
+
+Python and Node.js are pinned to exact patch versions, recorded here only: the
+`workflow-invariants` gate rejects a workflow whose `python-version` or
+`node-version` differs from this table, or a row that is not an exact `X.Y.Z`.
+Dependabot does not update them. I review them on the first working day of each
+month and whenever a security release of either appears, and change the table
+and every workflow in one pull request.
 
 Update a version only as [dependency updates](#dependency-updates) describes,
 and change every place that pins it in the same pull request.

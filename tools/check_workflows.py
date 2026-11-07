@@ -24,6 +24,7 @@ WORKFLOWS = Path(".github/workflows")
 DEPENDABOT = Path(".github/dependabot.yml")
 GOVERNANCE = Path("docs/GOVERNANCE.md")
 SETTINGS = Path("docs/REPOSITORY_SETTINGS.md")
+TOOLING = Path("tools/README.md")
 
 SHA_PINNED = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]+@[0-9a-f]{40}$")
 DEFAULT_BRANCH_REF = "github.ref == format('refs/heads/{0}', github.event.repository.default_branch)"
@@ -68,6 +69,10 @@ MILESTONES_CONCURRENCY = {
 MILESTONES_IF = ("github.event_name == 'pull_request_target' || "
                  "github.event_name == 'schedule' || " + DEFAULT_BRANCH_REF)
 SCRIPT = re.compile(r"<<'PY'\n(.*)\nPY\s*$", re.S)
+
+# setup-* action input -> the Tool versions row of tools/README.md that records it.
+RUNTIME_INPUTS = {"python-version": "Python", "node-version": "Node.js"}
+EXACT_VERSION = re.compile(r"^\d+\.\d+\.\d+$")
 
 TRAFFIC_FILE = "traffic-history.yml"
 TOKEN_ACTION = "actions/create-github-app-token@"
@@ -385,8 +390,31 @@ def dependabot_findings(config: Any) -> list[str]:
     return findings
 
 
+def documented_versions(tooling: str) -> dict[str, str]:
+    """The Tool versions rows of tools/README.md: tool -> version."""
+    return dict(re.findall(r"^\| (Python|Node\.js) \| ([^ |]+) \|", tooling, re.M))
+
+
+def runtime_findings(workflows: Mapping[str, Workflow], tooling: str) -> list[str]:
+    """Every runtime is an exact patch version, the one tools/README.md records."""
+    documented = documented_versions(tooling)
+    findings = []
+    for tool in RUNTIME_INPUTS.values():
+        if not EXACT_VERSION.match(documented.get(tool, "")):
+            findings.append(f"{TOOLING}: the {tool} row must give an exact X.Y.Z version")
+    for name, workflow in sorted(workflows.items()):
+        for job_id, job in jobs(workflow):
+            for step in steps_of(job):
+                for key, tool in RUNTIME_INPUTS.items():
+                    value = dict(step.get("with") or {}).get(key)
+                    if value is not None and str(value) != documented.get(tool):
+                        findings.append(f"{name}: job {job_id}: {key} `{value}` must be the "
+                                        f"exact version {TOOLING} records for {tool}")
+    return findings
+
+
 def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance: str,
-                 settings: str) -> list[str]:
+                 settings: str, tooling: str) -> list[str]:
     findings = []
     for name, workflow in sorted(workflows.items()):
         findings += action_findings(name, workflow) + permission_findings(name, workflow)
@@ -394,6 +422,7 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
     findings += triage_findings(workflows)
     findings += traffic_findings(workflows)
+    findings += runtime_findings(workflows, tooling)
     findings += dependabot_findings(dependabot)
     return findings
 
@@ -404,13 +433,14 @@ def workflow_files(root: Path) -> list[Path]:
     return sorted([*folder.glob("*.yml"), *folder.glob("*.yaml")])
 
 
-def load(root: Path, yaml: Any) -> tuple[dict[str, Workflow], Any, str, str]:
+def load(root: Path, yaml: Any) -> tuple[dict[str, Workflow], Any, str, str, str]:
     loader = strict_loader(yaml)
     workflows = {path.name: yaml.load(path.read_text(encoding="utf-8"), Loader=loader)
                  for path in workflow_files(root)}
     dependabot = yaml.load((root / DEPENDABOT).read_text(encoding="utf-8"), Loader=loader)
     return (workflows, dependabot, (root / GOVERNANCE).read_text(encoding="utf-8"),
-            (root / SETTINGS).read_text(encoding="utf-8"))
+            (root / SETTINGS).read_text(encoding="utf-8"),
+            (root / TOOLING).read_text(encoding="utf-8"))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -426,11 +456,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("workflow-invariants: SKIPPED locally: PyYAML is not installed")
         return 2
     try:
-        workflows, dependabot, governance, settings = load(args.root, yaml)
+        workflows, dependabot, governance, settings, tooling = load(args.root, yaml)
     except yaml.YAMLError as error:
         print(f"workflow-invariants: FAIL: {error}")
         return 1
-    findings = findings_for(workflows, dependabot, governance, settings)
+    findings = findings_for(workflows, dependabot, governance, settings, tooling)
     for finding in findings:
         print(finding)
     print(f"workflow-invariants: {'FAIL' if findings else 'PASS'} "

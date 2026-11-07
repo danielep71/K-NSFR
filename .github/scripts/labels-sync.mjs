@@ -4,6 +4,8 @@ import assert from "node:assert/strict";
 import { appendFile, readFile } from "node:fs/promises";
 import process from "node:process";
 
+import { markdownCode, markdownText } from "./markdown.mjs";
+
 const EXPECTED_SCHEMA_VERSION = 2;
 const DEFAULT_MANIFEST = ".github/labels.json";
 const API_VERSION = "2022-11-28";
@@ -298,13 +300,9 @@ async function applyChanges(repository, token, changes) {
   }
 }
 
-function markdownEscape(value) {
-  return String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
-}
-
 function renderLabelNames(labels) {
   if (labels.length === 0) return "none";
-  return labels.map(label => markdownEscape(JSON.stringify(label.name))).join(", ");
+  return labels.map(label => markdownText(JSON.stringify(label.name))).join(", ");
 }
 
 function renderSummary({
@@ -328,7 +326,7 @@ function renderSummary({
     "# Repository label synchronization",
     "",
     `- Mode: \`${mode}\`${dryRun ? " (dry run)" : ""}`,
-    `- Label manifest: \`${manifestPath ?? "unavailable"}\``,
+    `- Label manifest: ${markdownCode(manifestPath ?? "unavailable")}`,
     `- Schema: **${manifest?.schema_version ?? "unavailable"}**`,
     `- Labels: **${resolvedLabels.length}**`,
     `- Prune: **${manifest ? (manifest.prune ? "enabled" : "disabled") : "unavailable"}**`,
@@ -343,7 +341,7 @@ function renderSummary({
     `- Labels (${resolvedLabels.length}): ${renderLabelNames(resolvedLabels)}`
   );
   if (error) {
-    lines.push("", "## Failure", "", `\`${markdownEscape(error)}\``);
+    lines.push("", "## Failure", "", markdownCode(error));
     if (partial) {
       lines.push("", "The failure happened during or after reconciliation: some changes may already be applied. Compare the live labels with the manifest.");
     }
@@ -355,7 +353,7 @@ function renderSummary({
     lines.push("", "| Action | Label | Detail |", "|---|---|---|");
     for (const change of changes) {
       const detail = change.action === "update" ? change.fields.join(", ") : change.action === "delete" ? "outside the manifest" : "missing live label";
-      lines.push(`| ${change.action} | \`${markdownEscape(change.name)}\` | ${markdownEscape(detail)} |`);
+      lines.push(`| ${change.action} | ${markdownCode(change.name)} | ${markdownText(detail)} |`);
     }
   }
   return `${lines.join("\n")}\n`;
@@ -512,7 +510,23 @@ async function runSelfTest(manifestPath) {
   assert.match(summary, new RegExp(`Labels \\(${desired.length}\\):`));
   for (const label of desired) assert.match(summary, new RegExp(`"${label.name}"`));
 
-  process.stdout.write("SELF-TEST PASS: retry delays, validation, deletion guard and reconciliation fixtures\n");
+  // API values are data: backticks, pipes and line breaks cannot change the table.
+  assert.equal(markdownCode("plain"), "`plain`");
+  assert.equal(markdownCode("a`b"), "``a`b``");
+  assert.equal(markdownCode("``x"), "``` ``x ```");
+  assert.equal(markdownCode("a|b\r\nc\rd"), "`a\\|b c d`");
+  assert.equal(markdownText("a\\|b\nc"), "a\\\\\\|b c");
+  const tricky = renderSummary({
+    mode: "plan",
+    manifest,
+    manifestPath: "fixture-labels.json",
+    desiredLabels: desired,
+    changes: [{ action: "create", name: "x`|y\nz" }]
+  });
+  assert.ok(tricky.includes("| create | ``x`\\|y z`` | missing live label |"), tricky);
+  assert.equal(tricky.split("\n").filter(line => line.startsWith("| create")).length, 1);
+
+  process.stdout.write("SELF-TEST PASS: retry delays, validation, deletion guard, reconciliation and summary-escaping fixtures\n");
 }
 
 // What the run knew before a failure, so that the failure summary reports it.

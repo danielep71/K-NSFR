@@ -14,6 +14,7 @@ on:
     paths:
       - .github/labels.json
       - .github/scripts/labels-sync.mjs
+      - .github/scripts/markdown.mjs
       - .github/workflows/labels-sync.yml
   push:
     branches:
@@ -21,6 +22,7 @@ on:
     paths:
       - .github/labels.json
       - .github/scripts/labels-sync.mjs
+      - .github/scripts/markdown.mjs
       - .github/workflows/labels-sync.yml
   workflow_dispatch:
 
@@ -48,7 +50,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22"
+          node-version: "22.23.4"
 
       - name: Exercise validation and reconciliation paths
         run: node .github/scripts/labels-sync.mjs --self-test
@@ -77,7 +79,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: "22"
+          node-version: "22.23.4"
 
       - name: Exercise validation and reconciliation paths
         run: node .github/scripts/labels-sync.mjs --self-test
