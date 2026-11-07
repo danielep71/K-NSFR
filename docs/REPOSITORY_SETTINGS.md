@@ -108,7 +108,7 @@ dated read-back belongs in the local evidence record.
 | Dependabot alerts | **On** | Required by Dependabot security updates; the public API does not report it directly. |
 | Dependabot security updates | **On** | Proposes fixes as pull requests for review. |
 | Dependabot version updates | Configured in `.github/dependabot.yml` | A repository file, not a setting; it takes effect from the default branch. |
-| Code scanning | **On**: CodeQL default setup, default query suite, weekly | Languages follow the repository's code. Alerts are not part of this comparison. |
+| Code scanning | **On**: CodeQL advanced setup from a workflow file; default setup **off** | The workflow sets the languages and the `security-extended` queries; the default setup would make code scanning reject its results. Alerts are not part of this comparison. |
 
 Rulesets do not require a code-scanning result: the required status check
 above is the only check that blocks a merge.

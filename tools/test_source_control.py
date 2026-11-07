@@ -153,6 +153,24 @@ class SourceControlTests(unittest.TestCase):
         self.assertEqual(len(tracked.stdout.splitlines()), 4)
         self.assertTrue(all(line.startswith("::\t") for line in tracked.stdout.splitlines()))
 
+    def test_keystores_and_private_ssh_keys_are_ignored_but_public_keys_are_not(self) -> None:
+        ignore = Path(__file__).resolve().parents[1] / ".gitignore"
+        self.write(".gitignore", ignore.read_bytes())
+        secret = ["release.jks", "android/app.keystore", "vault.kdbx", "id_rsa",
+                  "id_rsa_backup", "keys/id_ecdsa", "id_ecdsa_sk", "id_ed25519",
+                  ".ssh/id_ed25519_work", "id_ed25519.pub.bak",
+                  # The re-inclusion names only SSH keys: another `.pub` stays ignored.
+                  ".env.pub"]
+        public = ["id_rsa.pub", "keys/id_ecdsa.pub", "id_ecdsa_sk.pub", "id_ed25519.pub",
+                  ".ssh/id_ed25519_work.pub", ".env.example"]
+        for name in secret:
+            with self.subTest(path=name):
+                self.assertEqual(git("check-ignore", "--no-index", name,
+                                     cwd=self.repo).decode().strip(), name)
+        tracked = subprocess.run(["git", "check-ignore", "--no-index", *public],
+                                 cwd=self.repo, capture_output=True, text=True)
+        self.assertEqual((tracked.returncode, tracked.stdout), (1, ""))
+
     def test_regulatory_source_copies_are_kept_byte_for_byte(self) -> None:
         copy = "docs/methodology/sources/example-standard.txt"
         original = b"Paragraph 1  \r\nParagraph 2\r\n\r\n"

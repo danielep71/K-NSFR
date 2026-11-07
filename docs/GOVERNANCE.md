@@ -328,7 +328,8 @@ through the API on 2026-10-29; branch-rule enforcement scenarios are tracked
 by #15. The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
-(#75). The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
+(#75), and replaced the default setup with the `CodeQL` workflow (Actions,
+Python and JavaScript/TypeScript, `security-extended` queries) in #146. The [non-default settings reference](REPOSITORY_SETTINGS.md) lists the
 deliberate differences from GitHub's defaults, and the
 [settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md) holds their dated
 read-back, with ruleset IDs.

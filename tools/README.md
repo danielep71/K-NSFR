@@ -59,7 +59,7 @@ reported **NOT RUN** without them.
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency and permissions; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
@@ -175,10 +175,9 @@ on `main`; the Traffic history schedule also requires the setup in
 the PR base branch on pull-request events. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
 the default token is read-only. Only label reconciliation, the milestone
-workflow and the two traffic jobs can write. CodeQL
-code scanning also runs, as GitHub's default setup with no workflow file here;
-its [risk surface](../SECURITY.md#automation-risk-surface) is described in the
-security policy.
+workflow, the two traffic jobs and the CodeQL upload can write. The
+[risk surface](../SECURITY.md#automation-risk-surface) of the workflows is
+described in the security policy.
 
 | Workflow | Triggers | Runs | Writes |
 | --- | --- | --- | --- |
@@ -187,10 +186,11 @@ security policy.
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
 | Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`; `pull-requests: read` for the prune check) |
 | Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
+| CodeQL | Every PR into and push to `main` and `release/**`; weekly on Monday at 05:23 UTC; manual dispatch | CodeQL with the `security-extended` queries, one job per language: `actions`, `python`, `javascript-typescript` | Code-scanning results (`security-events: write`) |
 | Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`); its job summary lists each pull request and the milestone title removed |
 
 Concurrency: a new push to a pull request cancels that pull request's
-superseded Repository integrity run, but every push and manual run has a
+superseded Repository integrity and CodeQL runs, but every push and manual run has a
 group of its own and is never cancelled. *Keep milestones issue-only* queues
 each pull request's events separately from the full scans and cancels nothing.
 
