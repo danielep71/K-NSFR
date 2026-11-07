@@ -12,9 +12,9 @@ an invalid or incomplete collection leaves the history unchanged. After each
 merge it rewrites the badge files under badges/ from the stored data; the
 README does not display them.
 
-The alert command compares the two latest snapshots and, when traffic spikes,
+The alert command compares the two latest snapshots and, when views spike,
 stars or forks increase, or a new referrer appears, writes the title and body
-of one alert issue for the workflow to open.
+of one alert issue for the workflow to open. Clones raise no alert.
 """
 
 from __future__ import annotations
@@ -424,8 +424,10 @@ def initialize(data: Path) -> list[str]:
 
 # --- Traffic alert ---------------------------------------------------------------
 
-# A 14-day total that at least doubles and grows by this much is a spike.
-SPIKE_GROWTH = {"views_14d": 100, "clones_14d": 10}
+# A 14-day total that at least doubles and grows by this much is a spike. Clones
+# are kept in the history and the badges but raise no alert: CI checkouts count
+# as clones, so a clone spike says nothing about readers.
+SPIKE_GROWTH = {"views_14d": 100}
 NEW_REFERRER_VIEWS = 5
 ALERT_DAYS = 7
 
@@ -437,8 +439,8 @@ def number(row: Mapping[str, str], key: str) -> int | None:
 def alert(data: Path, milestone_due: str) -> dict[str, str] | None:
     """The alert issue for the latest snapshot, or None when nothing stands out.
 
-    It compares the latest snapshot with the one before: a views or clones
-    spike, more stars or forks, or a referrer never seen before that brings at
+    It compares the latest snapshot with the one before: a views spike, more
+    stars or forks, or a referrer never seen before that brings at
     least NEW_REFERRER_VIEWS views. Counts missing from the older snapshot
     (collected before they were recorded) raise nothing.
     """

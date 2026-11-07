@@ -116,6 +116,58 @@ class WorkflowInvariantTests(unittest.TestCase):
         self.repo.job("traffic-history.yml", "alert")["permissions"]["contents"] = "write"
         self.assertFinding("traffic-history.yml: job alert has write permission ['contents']")
 
+    def traffic_step(self, job: str, predicate: Callable[[Any], bool]) -> Any:
+        return next(step for step in self.repo.job("traffic-history.yml", job)["steps"]
+                    if predicate(step))
+
+    def token_step(self) -> Any:
+        return self.traffic_step("collect", lambda s: str(s.get("uses", "")).startswith(cw.TOKEN_ACTION))
+
+    def test_the_repository_traffic_workflow_passes(self) -> None:
+        self.assertEqual(cw.traffic_findings(self.repo.workflows), [])
+
+    def test_the_app_token_has_only_administration_read_on_this_repository(self) -> None:
+        for key, value in (("permission-administration", "write"), ("permission-contents", "read"),
+                           ("repositories", "K-NSFR,other")):
+            with self.subTest(key=key):
+                self.repo = Repository()
+                self.token_step()["with"][key] = value
+                self.assertFinding("the App token step must be `app-token` with exactly")
+
+    def test_the_private_key_reaches_only_the_token_step(self) -> None:
+        fetch = self.traffic_step("collect", lambda s: s.get("id") == "fetch")
+        fetch["env"]["KEY"] = "${{ secrets.TRAFFIC_APP_PRIVATE_KEY }}"
+        self.assertFinding("secrets used outside the App token step: ['secrets.TRAFFIC_APP_PRIVATE_KEY']")
+
+    def test_the_preflight_sees_only_whether_the_key_is_set(self) -> None:
+        preflight = self.traffic_step("collect", lambda s: "HAS_KEY" in (s.get("env") or {}))
+        preflight["env"]["HAS_KEY"] = "${{ secrets.TRAFFIC_APP_PRIVATE_KEY }}"
+        self.assertFinding("a preflight before the token step must test only whether")
+        self.assertFinding("secrets used outside the App token step")
+
+    def test_only_the_fetch_step_receives_the_token(self) -> None:
+        merge = self.traffic_step("collect", lambda s: s.get("name") == "Merge into the history")
+        merge["env"]["LEAK"] = "${{ steps.app-token.outputs.token }}"
+        self.assertFinding("only the fetch step may receive the App token")
+
+    def test_the_alert_reads_the_published_commit(self) -> None:
+        checkout = self.traffic_step("alert", lambda s: (s.get("with") or {}).get("path") == "history")
+        checkout["with"]["ref"] = "traffic-history"
+        self.assertFinding("the alert job must check out the history at")
+
+    def test_the_alert_validates_the_sha_before_its_checkout(self) -> None:
+        steps = self.repo.job("traffic-history.yml", "alert")["steps"]
+        steps.append(steps.pop(0))
+        self.assertFinding("the alert job must validate the published SHA before its checkout")
+
+    def test_the_alert_has_no_environment_or_secret(self) -> None:
+        self.repo.job("traffic-history.yml", "alert")["environment"] = "analytics"
+        self.assertFinding("the alert job must have no environment and no secret")
+
+    def test_collect_publishes_the_history_sha(self) -> None:
+        del self.repo.job("traffic-history.yml", "collect")["outputs"]
+        self.assertFinding("collect must output history-sha from the publish step")
+
     def test_traffic_collect_cannot_write_issues(self) -> None:
         self.repo.job("traffic-history.yml", "collect")["permissions"]["issues"] = "write"
         self.assertFinding("traffic-history.yml: job collect has write permission ['issues']")

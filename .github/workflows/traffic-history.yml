@@ -7,19 +7,23 @@ run-name: "Traffic history — ${{ github.event_name }}"
 # files on the data-only `traffic-history` branch with
 # tools/traffic_history.py, which also writes badge files there (not shown in
 # the README).
-# When traffic spikes, stars or forks increase, or a new referrer appears, the
+# When views spike, stars or forks increase, or a new referrer appears, the
 # alert job opens one issue for that day. Analytics only: it is not CI and
 # must never run builds or tests. Operation, credentials and recovery:
 # docs/TRAFFIC.md.
 #
 # Credentials
-#   TRAFFIC_TOKEN, a fine-grained personal access token limited to this
-#   repository with Administration: read (the traffic API needs it; the
-#   workflow token cannot read traffic), stored in the `analytics`
-#   environment, whose deployment branches are limited to the default branch.
-#   Only the fetch step receives it; that step runs curl and no repository
-#   code. The workflow token pushes the history, with contents: write; the
-#   alert job, which never sees TRAFFIC_TOKEN, opens issues with issues: write.
+#   The traffic API needs Administration: read, which the workflow token cannot
+#   have. The collect job therefore creates a short-lived installation token of
+#   a private GitHub App installed on this repository only, with Administration:
+#   read only. The `analytics` environment, limited to the default branch,
+#   holds the App's client ID (variable TRAFFIC_APP_CLIENT_ID) and private key
+#   (secret TRAFFIC_APP_PRIVATE_KEY). The preflight sees only whether the key
+#   is present; the key enters only the token step, and the token only the
+#   fetch step, which runs curl and no repository code. The workflow token
+#   pushes the history, with contents: write; the alert job, which has no
+#   environment and sees neither, opens issues with issues: write and reads the
+#   exact history commit the collect job published.
 
 on:
   schedule:
@@ -50,6 +54,10 @@ jobs:
     environment: analytics
     permissions:
       contents: write
+    outputs:
+      # The traffic-history commit this collection published; the alert job
+      # reads exactly that commit, never the moving branch.
+      history-sha: ${{ steps.publish.outputs.sha }}
     env:
       PYTHONUTF8: "1"
       PYTHONDONTWRITEBYTECODE: "1"
@@ -73,15 +81,39 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Check the App configuration
+        # The key itself never reaches this step: only whether it is set.
+        env:
+          CLIENT_ID: ${{ vars.TRAFFIC_APP_CLIENT_ID }}
+          HAS_KEY: ${{ secrets.TRAFFIC_APP_PRIVATE_KEY != '' }}
+        run: |
+          set -euo pipefail
+          missing=()
+          [ -n "${CLIENT_ID:-}" ] || missing+=("variable TRAFFIC_APP_CLIENT_ID")
+          [ "$HAS_KEY" = "true" ] || missing+=("secret TRAFFIC_APP_PRIVATE_KEY")
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error::Not set in the analytics environment: ${missing[*]} (docs/TRAFFIC.md)"
+            exit 1
+          fi
+
+      - name: Create the App installation token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.TRAFFIC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.TRAFFIC_APP_PRIVATE_KEY }}
+          repositories: ${{ github.event.repository.name }}
+          permission-administration: read
+
       - name: Fetch traffic from the GitHub API
         id: fetch
         env:
-          TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          TRAFFIC_TOKEN: ${{ steps.app-token.outputs.token }}
           API: ${{ github.api_url }}/repos/${{ github.repository }}
         run: |
           set -euo pipefail
           if [ -z "${TRAFFIC_TOKEN:-}" ]; then
-            echo "::error::TRAFFIC_TOKEN is not set in the analytics environment (docs/TRAFFIC.md)"
+            echo "::error::The App token step returned no token (docs/TRAFFIC.md)"
             exit 1
           fi
           echo "collected_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
@@ -114,6 +146,7 @@ jobs:
           --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push the history
+        id: publish
         working-directory: history
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -127,6 +160,9 @@ jobs:
           auth="AUTHORIZATION: basic $basic"
           git_auth() { git -c "http.https://github.com/.extraheader=$auth" "$@"; }
 
+          # The commit the alert job reads: the one pushed, or the unchanged tip.
+          published() { echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"; }
+
           commit() {
             git add data
             if git diff --cached --quiet; then
@@ -136,9 +172,10 @@ jobs:
             git commit --quiet -m "chore: record traffic collected at $COLLECTED_AT"
           }
 
-          commit || exit 0
+          commit || { published; exit 0; }
           for attempt in 1 2 3; do
             if git_auth push origin HEAD:traffic-history; then
+              published
               exit 0
             fi
             # Another writer moved the branch: rebuild this collection on its
@@ -148,7 +185,7 @@ jobs:
             git reset --hard FETCH_HEAD
             python ../source/tools/traffic_history.py merge \
               --raw "$RAW" --data data --collected-at "$COLLECTED_AT"
-            commit || exit 0
+            commit || { published; exit 0; }
           done
           echo "::error::Could not push the history after 3 attempts"
           exit 1
@@ -158,7 +195,7 @@ jobs:
     needs: collect
     runs-on: ubuntu-24.04
     timeout-minutes: 5
-    # No environment: this job never receives TRAFFIC_TOKEN.
+    # No environment: this job never receives the App's key or token.
     permissions:
       contents: read
       issues: write
@@ -167,16 +204,26 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
 
     steps:
+      - name: Check the published history commit
+        env:
+          HISTORY_SHA: ${{ needs.collect.outputs.history-sha }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$HISTORY_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::The collect job published no traffic-history commit SHA"
+            exit 1
+          fi
+
       - name: Check out the default branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: source
           persist-credentials: false
 
-      - name: Check out traffic-history
+      - name: Check out the published history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: traffic-history
+          ref: ${{ needs.collect.outputs.history-sha }}
           path: history
           persist-credentials: false
 
