@@ -37,6 +37,20 @@ ALLOWED_WRITES: dict[tuple[str, str], frozenset[str]] = {
 }
 
 LABELS_RECONCILE_IF = "github.event_name != 'pull_request' && " + DEFAULT_BRANCH_REF
+# The prune check reads the issues API, which also lists pull requests.
+LABELS_RECONCILE_PERMISSIONS = {"contents": "read", "issues": "write", "pull-requests": "read"}
+
+# A pull request's superseded run is cancelled; every push or manual run keeps its own.
+INTEGRITY_CONCURRENCY = {
+    "group": "integrity-${{ github.event_name == 'pull_request' && "
+             "format('pr-{0}', github.event.pull_request.number) || "
+             "format('run-{0}', github.run_id) }}",
+    "cancel-in-progress": "${{ github.event_name == 'pull_request' }}",
+}
+
+TRIAGE_FILE = "issue-triage.yml"
+# A changed due date, or a closed or deleted milestone, changes the audit.
+TRIAGE_MILESTONE_EVENTS = {"types": ["created", "edited", "closed", "opened", "deleted"]}
 
 MILESTONES_FILE = "pr-milestones.yml"
 MILESTONES_EVENTS: dict[str, Any] = {
@@ -44,6 +58,12 @@ MILESTONES_EVENTS: dict[str, Any] = {
     "pull_request_target": {"types": ["opened", "reopened", "edited", "milestoned"]},
     "schedule": [{"cron": "17 3 * * *"}],
     "workflow_dispatch": None,
+}
+# One queue per pull request for its own events; full scans share another.
+MILESTONES_CONCURRENCY = {
+    "group": "pr-milestones-${{ github.event_name == 'pull_request_target' && "
+             "format('pr-{0}', github.event.pull_request.number) || 'scan' }}",
+    "cancel-in-progress": False,
 }
 MILESTONES_IF = ("github.event_name == 'pull_request_target' || "
                  "github.event_name == 'schedule' || " + DEFAULT_BRANCH_REF)
@@ -196,6 +216,8 @@ def integrity_findings(workflows: Mapping[str, Workflow], governance: str,
             actual = on.get(event) if isinstance(on, Mapping) else on
             findings.append(f"{file}: `{event}` filters are {actual!r}; {GOVERNANCE} requires "
                             f"{expected!r} and no other filter")
+    if workflow.get("concurrency") != INTEGRITY_CONCURRENCY:
+        findings.append(f"{file}: concurrency must be {INTEGRITY_CONCURRENCY}")
     return findings
 
 
@@ -204,8 +226,21 @@ def labels_sync_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     if job is None:
         return ["labels-sync.yml: no reconcile job"]
     # The whole condition, so that a negation or an appended `|| true` cannot pass.
+    findings = []
     if squash(job.get("if", "")) != LABELS_RECONCILE_IF:
-        return [f"labels-sync.yml: reconcile's condition must be: {LABELS_RECONCILE_IF}"]
+        findings.append(f"labels-sync.yml: reconcile's condition must be: {LABELS_RECONCILE_IF}")
+    if job.get("permissions") != LABELS_RECONCILE_PERMISSIONS:
+        findings.append(f"labels-sync.yml: reconcile's permissions must be {LABELS_RECONCILE_PERMISSIONS}")
+    return findings
+
+
+def triage_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    workflow = workflows.get(TRIAGE_FILE)
+    if workflow is None:
+        return [f"{TRIAGE_FILE}: not found"]
+    on = triggers(workflow)
+    if not isinstance(on, Mapping) or on.get("milestone") != TRIAGE_MILESTONE_EVENTS:
+        return [f"{TRIAGE_FILE}: milestone events must be {TRIAGE_MILESTONE_EVENTS}"]
     return []
 
 
@@ -228,6 +263,8 @@ def milestone_findings(workflows: Mapping[str, Workflow]) -> list[str]:
         findings.append(f"{MILESTONES_FILE}: events changed: {triggers(workflow)!r}")
     if workflow.get("permissions") != {}:
         findings.append(f"{MILESTONES_FILE}: workflow-level permissions must be {{}}")
+    if workflow.get("concurrency") != MILESTONES_CONCURRENCY:
+        findings.append(f"{MILESTONES_FILE}: concurrency must be {MILESTONES_CONCURRENCY}")
     all_jobs = dict(jobs(workflow))
     if list(all_jobs) != ["reconcile"]:
         findings.append(f"{MILESTONES_FILE}: jobs must be exactly [reconcile], not {list(all_jobs)}")
@@ -355,6 +392,7 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
         findings += action_findings(name, workflow) + permission_findings(name, workflow)
     findings += integrity_findings(workflows, governance, settings)
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
+    findings += triage_findings(workflows)
     findings += traffic_findings(workflows)
     findings += dependabot_findings(dependabot)
     return findings

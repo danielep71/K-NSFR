@@ -66,6 +66,8 @@ jobs:
     permissions:
       contents: read
       issues: write
+      # The prune check reads the issues API, which lists pull requests too.
+      pull-requests: read
 
     steps:
       - name: Check out the exact SHA to apply

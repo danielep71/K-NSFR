@@ -57,7 +57,7 @@ reported **NOT RUN** without them.
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the label-reconcile condition; the milestone workflow's events, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
@@ -181,11 +181,16 @@ security policy.
 | Workflow | Triggers | Runs | Writes |
 | --- | --- | --- | --- |
 | Repository integrity | Every PR into and push to `main` and `release/**`; manual dispatch. No path filter, so it can be a required check. | `python tools/check.py --ci` | Nothing; uploads `test-results/` |
-| Issue triage | Issue events (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
+| Issue triage | Issue events and milestone created, edited, closed, opened or deleted (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
-| Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`) |
+| Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`; `pull-requests: read` for the prune check) |
 | Traffic history | Daily at 06:17 UTC; manual dispatch (collection only on the default branch) | `tools/traffic_history.py` merges the traffic API responses; the alert job compares snapshots | The `traffic-history` branch (`collect`, `contents: write`); one alert issue (`alert`, `issues: write`). See [traffic history](../docs/TRAFFIC.md) |
-| Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`) |
+| Keep milestones issue-only | `pull_request_target` (opened, reopened, edited, milestoned); daily at 03:17 UTC; its own pushes to `main`; manual dispatch on the default branch | Its inline script only; never a pull request's contents | Removes PR milestones (`pull-requests: write`); its job summary lists each pull request and the milestone title removed |
+
+Concurrency: a new push to a pull request cancels that pull request's
+superseded Repository integrity run, but every push and manual run has a
+group of its own and is never cancelled. *Keep milestones issue-only* queues
+each pull request's events separately from the full scans and cancels nothing.
 
 Repository integrity checks out the exact commit under review and verifies that
 `HEAD` is that commit; for a pull request this is GitHub's test merge of the
@@ -205,7 +210,8 @@ active release, a valid ISO target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a
 reference; a pull request never counts as a prerequisite, so the workflow
-token also needs `pull-requests: read`. Issue events run the workflow from the
+token also needs `pull-requests: read`. Issue events, and milestone events (a
+changed due date, or a closed or deleted milestone), run the workflow from the
 default branch, so a rule change takes effect after integration into `main`.
 
 ```sh

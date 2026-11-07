@@ -95,9 +95,9 @@ that token, and it runs `curl` and no repository code
 | Workflow | Job token permissions | Runs on |
 | --- | --- | --- |
 | `Repository integrity` | `contents: read` | Pull requests into and pushes to `main` and `release/**`; manual dispatch |
-| `Issue triage` | `contents: read`, `issues: read`, `pull-requests: read` | Issue events, from the default branch; manual dispatch |
+| `Issue triage` | `contents: read`, `issues: read`, `pull-requests: read` | Issue and milestone events, from the default branch; manual dispatch |
 | `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
-| `Sync issue labels` | `contents: read`; `issues: write` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
+| `Sync issue labels` | `contents: read`; `issues: write` and `pull-requests: read` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
 | `Traffic history` | `contents: read`; `contents: write` in `collect` (default branch only, `analytics` environment); `issues: write` in `alert`, which never receives the token | Daily schedule; manual dispatch (collection runs only from the default branch) |
 | `Keep milestones issue-only` | None at workflow level; `pull-requests: write` in its one job | `pull_request_target` (opened, reopened, edited, milestoned); daily schedule; its own pushes to `main`; manual dispatch on the default branch |
 

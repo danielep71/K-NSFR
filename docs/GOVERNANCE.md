@@ -101,6 +101,8 @@ request, closed and merged ones included. It runs only its own inline code,
 from the base branch for pull request events and from the default branch for
 the schedule, a push or a manual run, and never a pull request's contents. Its
 only permission is `pull-requests: write`, and it refuses to change an issue.
+Each pull request's events queue separately from the full scans, and its job
+summary lists each pull request and the milestone title it removed.
 
 The read-only Issue triage workflow audits open issues on issue events and
 manual dispatch. I triage findings; the workflow never edits
