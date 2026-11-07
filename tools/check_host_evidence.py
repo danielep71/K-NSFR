@@ -43,6 +43,7 @@ REQUIRED = KEYS - {"output", "reason"}
 HOST_KEYS = {"os", "excel", "bitness"}
 
 SHA = re.compile(r"^[0-9a-f]{40}$")
+WINDOWS_DETAILS = re.compile(r"\b\d{2}H\d\b.*\bOS build \d+\.\d+\b")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 CASE = re.compile(r"^([A-Z0-9-]{1,32}) (PASS|FAIL|SKIPPED|MISSING)(?: .*)?$")
 COUNT_NAMES = ("declared", "executed", "passed", "failed", "skipped", "missing",
@@ -187,6 +188,9 @@ def host_findings(host: Any) -> list[str]:
     findings = []
     if not host["os"].startswith("Windows 11"):
         findings.append("host: os must be Windows 11, the supported host")
+    elif not WINDOWS_DETAILS.search(host["os"]):
+        findings.append("host: os must give the Windows version and OS build, "
+                        "as Settings > System > About shows them (24H2, OS build 26100.2314)")
     if "Microsoft 365" not in host["excel"] or not re.search(r"Version \S+ \(Build [\d.]+",
                                                               host["excel"]):
         findings.append("host: excel must be Microsoft 365 with its version and build, "

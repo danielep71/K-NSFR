@@ -34,7 +34,7 @@ fields:
 | `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of `release/0.1.0` or `main`: a task-branch commit disappears with its squash merge |
 | `recorded_on` | The ISO date of the run, from the commit date to today |
 | `worktree_clean` | `true`: `git status --porcelain` printed nothing before the import |
-| `host.os` | The Windows edition, version and OS build, starting with `Windows 11` (**Settings → System → About**) |
+| `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
 | `host.excel` | The Microsoft 365 product line with `Version … (Build …)`, as **File → Account → About Excel** shows it |
 | `host.bitness` | `64-bit` |
 | `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, as checked out (VBA source with CRLF) |
@@ -96,7 +96,7 @@ reason. If no supported host is available, #14 stays open with that blocker.
   - a file name that differs from the SHA;
   - a dirty worktree;
   - a fingerprint that differs from the files Git checks out at the candidate, or a missing or extra one.
-- **Another host:** anything but Windows 11, Microsoft 365 with its exact build, and 64-bit.
+- **Another host:** anything but Windows 11 with its version and OS build, Microsoft 365 with its version and build, and 64-bit.
 - **Inconsistent results:**
   - a result that the steps do not give, or a step that ran after a failed one;
   - a missing reason;

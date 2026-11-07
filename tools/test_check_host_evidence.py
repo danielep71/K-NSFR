@@ -151,6 +151,10 @@ class HostEvidenceTests(unittest.TestCase):
     def test_the_host_must_be_the_supported_one(self) -> None:
         for key, value, fragment in (("bitness", "32-bit", "bitness must be 64-bit"),
                                      ("os", "Windows 10 Pro", "os must be Windows 11"),
+                                     ("os", "Windows 11", "the Windows version and OS build"),
+                                     ("os", "Windows 11 Pro 24H2", "the Windows version and OS build"),
+                                     ("os", "Windows 11 Pro, OS build 26100.2314",
+                                      "the Windows version and OS build"),
                                      ("excel", "Microsoft 365", "with its version and build")):
             with self.subTest(key=key):
                 record = self.record()
