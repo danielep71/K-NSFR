@@ -109,8 +109,9 @@ Importing modules through COM needs Excel's *Trust access to the VBA project
 object model* (**File → Options → Trust Center → Trust Center Settings →
 Macro Settings**). The script never turns it on by itself. Pass
 `-AllowVbomForRun` to turn it on for this run only: the previous value is
-restored at the end. Pass `-Visible` to watch Excel. If a compile error opens
-a dialog, close it; the step is then recorded as `FAIL`.
+restored at the end. Excel stays visible during the run: if a compile error
+opens a dialog, close it, and the step is recorded as `FAIL`. Pass `-Hidden`
+to hide it.
 
 Without the script, follow the [manual route](../../tests/README.md#running-in-excel):
 

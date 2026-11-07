@@ -30,8 +30,9 @@
     Turn on "Trust access to the VBA project object model" for this run only,
     and restore the previous value afterwards.
 
-.PARAMETER Visible
-    Show the Excel window during the run.
+.PARAMETER Hidden
+    Hide the Excel window during the run. By default it is visible, so that a
+    compile error dialog can be seen and closed.
 
 .EXAMPLE
     powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1
@@ -39,7 +40,7 @@
 [CmdletBinding()]
 param(
     [switch]$AllowVbomForRun,
-    [switch]$Visible
+    [switch]$Hidden
 )
 
 Set-StrictMode -Version 3
@@ -158,9 +159,12 @@ try {
     $excelText = $null
     $excel = $null
     $workbook = $null
+    $project = $null
+    $compile = $null
+    $closed = $true
     try {
         $excel = New-Object -ComObject Excel.Application
-        $excel.Visible = [bool]$Visible
+        $excel.Visible = -not $Hidden
         $excel.DisplayAlerts = $false
         $excel.EnableEvents = $false
         $excelText = '{0} ({1}), Version {2} (Build {3} Click-to-Run)' -f $product, $products, $excel.Version, $build
@@ -217,7 +221,6 @@ try {
         }
     } finally {
         # 5. Cleanup: close without saving, quit, and check that nothing was left behind
-        $closed = $true
         try {
             if ($null -ne $workbook) { $workbook.Close($false) }
             if ($null -ne $excel) { $excel.Quit() }
@@ -225,6 +228,8 @@ try {
             $closed = $false
             $reasons.Add("Cleanup failed: $(Get-PublicMessage $_.Exception.Message)")
         }
+        Release-ComObject $compile
+        Release-ComObject $project
         Release-ComObject $workbook
         Release-ComObject $excel
         [GC]::Collect()
