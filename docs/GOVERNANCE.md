@@ -177,16 +177,18 @@ The [Traffic history workflow](../.github/workflows/traffic-history.yml)
 collects repository traffic daily at 06:17 UTC or by manual dispatch on the
 default branch. Its `collect` job uses the `analytics` environment and
 `contents: write` to append history on the protected, data-only
-`traffic-history` branch. Only its fetch step receives `TRAFFIC_TOKEN` and
-runs `curl`; the merge script runs without that secret. The dependent `alert`
-job has `issues: write` and `contents: read`, has no environment and receives
-no traffic token. It opens at most one alert issue per snapshot date with an
+`traffic-history` branch. It creates a short-lived installation token of my
+GitHub App, with *Administration: read* on this repository only. Only the App
+token step receives the App's key, and only the fetch step receives the token
+and runs `curl`; the merge script runs without either. The dependent `alert`
+job has `issues: write` and `contents: read`, has no environment, receives
+neither, and reads the exact `traffic-history` commit the collection published. It opens at most one alert issue per snapshot date with an
 assignee, priority, open milestone and target date before the milestone due date.
 
 The workflow reached `main` with #107 on 2026-11-03. A restricted
-`analytics` environment and the credential setup must precede live
-operation; until they exist the collect job fails with
-`TRAFFIC_TOKEN is not set`. Follow the
+`analytics` environment and the App credential setup must precede live
+operation; until they exist the collect job fails at its *Check the App
+configuration* step. Follow the
 [operating guide](TRAFFIC.md) for stored-data meaning, setup, renewal and
 recovery. No live collection, history push or alert is verified; #16 tracks
 operational acceptance. The workflow builds and tests nothing.

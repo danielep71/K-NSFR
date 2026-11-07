@@ -85,10 +85,11 @@ restriction and credential below are required setup, not verified provisioned
 controls. Live collection remains tracked in #16.
 
 No workflow runs VBA, Excel or an NSFR calculation. The workflows use the
-workflow token, except one step: the fetch step of `Traffic history` reads the
-`TRAFFIC_TOKEN` secret from the `analytics` environment, which must be restricted to the
-default branch before the secret is added. That fine-grained token has only *Administration: read*
-on this repository, and the step runs `curl` and no repository code
+workflow token, except in the collect job of `Traffic history`. There, one step
+turns the private key of my GitHub App, a secret of the `analytics` environment
+restricted to the default branch, into a short-lived installation token with
+only *Administration: read* on this repository. Only the fetch step receives
+that token, and it runs `curl` and no repository code
 ([traffic history](docs/TRAFFIC.md#credential-setup-and-renewal)).
 
 | Workflow | Job token permissions | Runs on |

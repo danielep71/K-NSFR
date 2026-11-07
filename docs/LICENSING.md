@@ -68,6 +68,7 @@ relicense them.
 | Tool | License |
 | --- | --- |
 | GitHub checkout, Python/Node setup and artifact upload actions | MIT |
+| GitHub App token action (`actions/create-github-app-token`) | MIT |
 | actionlint | MIT |
 | Ruff | MIT |
 | mypy and its runtime dependencies | Retained in the installed distributions |

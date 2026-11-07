@@ -49,6 +49,21 @@ MILESTONES_IF = ("github.event_name == 'pull_request_target' || "
                  "github.event_name == 'schedule' || " + DEFAULT_BRANCH_REF)
 SCRIPT = re.compile(r"<<'PY'\n(.*)\nPY\s*$", re.S)
 
+TRAFFIC_FILE = "traffic-history.yml"
+TOKEN_ACTION = "actions/create-github-app-token@"
+# The App token step's inputs: the App, its key, this repository only, and only
+# the one permission the traffic API needs.
+TOKEN_INPUTS = {
+    "client-id": "${{ vars.TRAFFIC_APP_CLIENT_ID }}",
+    "private-key": "${{ secrets.TRAFFIC_APP_PRIVATE_KEY }}",
+    "repositories": "${{ github.event.repository.name }}",
+    "permission-administration": "read",
+}
+KEY_PRESENT = "${{ secrets.TRAFFIC_APP_PRIVATE_KEY != '' }}"
+TRAFFIC_TOKEN_ENV = "${{ steps.app-token.outputs.token }}"
+HISTORY_SHA = "${{ needs.collect.outputs.history-sha }}"
+SECRET = re.compile(r"secrets\.[A-Za-z_]+")
+
 # Ecosystems whose versions are pinned here, and where Dependabot must look.
 PINNED_ECOSYSTEMS = {"github-actions": "/", "pip": "/tools"}
 PRIORITY = re.compile(r"^P\d$")
@@ -232,6 +247,82 @@ def milestone_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     return findings
 
 
+def strings(value: Any) -> Iterator[str]:
+    """Every string in a parsed YAML value, keys excluded."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, Mapping):
+        for item in value.values():
+            yield from strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from strings(item)
+
+
+def steps_of(job: Mapping[str, Any]) -> list[Mapping[str, Any]]:
+    return [step for step in job.get("steps") or [] if isinstance(step, Mapping)]
+
+
+def traffic_credential_findings(collect: Mapping[str, Any], name: str) -> list[str]:
+    """The App's key reaches only the token step, and the token only the fetch step."""
+    findings = []
+    steps = steps_of(collect)
+    token_steps = [step for step in steps if str(step.get("uses", "")).startswith(TOKEN_ACTION)]
+    if len(token_steps) != 1:
+        return [f"{name}: collect must create exactly one App token with {TOKEN_ACTION}"]
+    token = token_steps[0]
+    if token.get("id") != "app-token" or dict(token.get("with") or {}) != TOKEN_INPUTS:
+        findings.append(f"{name}: the App token step must be `app-token` with exactly {TOKEN_INPUTS}")
+    preflight = [step for step in steps if KEY_PRESENT in strings(step.get("env"))]
+    if len(preflight) != 1 or steps.index(preflight[0]) > steps.index(token):
+        findings.append(f"{name}: a preflight before the token step must test only whether "
+                        "the private key is set")
+    secret_uses = sorted(found for step in steps if step is not token
+                         for text in strings(step) for found in SECRET.findall(text)
+                         if text != KEY_PRESENT)
+    if secret_uses:
+        findings.append(f"{name}: secrets used outside the App token step: {secret_uses}")
+    users = [step for step in steps if any("steps.app-token.outputs.token" in text
+                                           for text in strings(step))]
+    if len(users) != 1 or dict(users[0].get("env") or {}).get("TRAFFIC_TOKEN") != TRAFFIC_TOKEN_ENV:
+        findings.append(f"{name}: only the fetch step may receive the App token, as TRAFFIC_TOKEN")
+    return findings
+
+
+def traffic_alert_findings(collect: Mapping[str, Any], alert: Mapping[str, Any], name: str) -> list[str]:
+    """The alert job reads the exact history commit the collect job published."""
+    findings = []
+    if dict(collect.get("outputs") or {}).get("history-sha") != "${{ steps.publish.outputs.sha }}":
+        findings.append(f"{name}: collect must output history-sha from the publish step")
+    if "environment" in alert or any(SECRET.search(text) for text in strings(alert)):
+        findings.append(f"{name}: the alert job must have no environment and no secret")
+    steps = steps_of(alert)
+    checkouts = [i for i, step in enumerate(steps)
+                 if dict(step.get("with") or {}).get("path") == "history"]
+    guards = [i for i, step in enumerate(steps)
+              if "^[0-9a-f]{40}$" in str(step.get("run", ""))
+              and dict(step.get("env") or {}).get("HISTORY_SHA") == HISTORY_SHA]
+    if len(checkouts) != 1 or dict(steps[checkouts[0]].get("with") or {}).get("ref") != HISTORY_SHA:
+        findings.append(f"{name}: the alert job must check out the history at {HISTORY_SHA}")
+    elif not guards or guards[0] > checkouts[0]:
+        findings.append(f"{name}: the alert job must validate the published SHA before its checkout")
+    return findings
+
+
+def traffic_findings(workflows: Mapping[str, Workflow]) -> list[str]:
+    workflow = workflows.get(TRAFFIC_FILE)
+    if workflow is None:
+        return [f"{TRAFFIC_FILE}: not found"]
+    all_jobs = dict(jobs(workflow))
+    collect, alert = all_jobs.get("collect"), all_jobs.get("alert")
+    if collect is None or alert is None:
+        return [f"{TRAFFIC_FILE}: jobs collect and alert are required"]
+    if collect.get("environment") != "analytics":
+        return [f"{TRAFFIC_FILE}: collect must run in the analytics environment"]
+    return (traffic_credential_findings(collect, TRAFFIC_FILE)
+            + traffic_alert_findings(collect, alert, TRAFFIC_FILE))
+
+
 def dependabot_findings(config: Any) -> list[str]:
     updates = config.get("updates") if isinstance(config, Mapping) else None
     if not isinstance(updates, list):
@@ -264,6 +355,7 @@ def findings_for(workflows: Mapping[str, Workflow], dependabot: Any, governance:
         findings += action_findings(name, workflow) + permission_findings(name, workflow)
     findings += integrity_findings(workflows, governance, settings)
     findings += labels_sync_findings(workflows) + milestone_findings(workflows)
+    findings += traffic_findings(workflows)
     findings += dependabot_findings(dependabot)
     return findings
 

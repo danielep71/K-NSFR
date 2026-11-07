@@ -16,8 +16,9 @@ is repository analytics, not CI: it builds and tests nothing.
 
 The workflow is on `main` since the integration of 2026-11-03 (#107). The
 schedule and manual dispatch described below also require the credential
-setup; until it exists the collect job fails with `TRAFFIC_TOKEN is not set`. No live collection,
-push or alert is verified; operational validation remains tracked in #16.
+setup; until it exists the collect job fails at its *Check the App
+configuration* step. No live collection, push or alert is verified;
+operational validation remains tracked in #16.
 
 <a id="schedule"></a>
 
@@ -32,33 +33,56 @@ A manual run on any other branch is skipped.
 
 ## 🔑 Credential setup and renewal
 
-The traffic API needs a token with **Administration: read** on the
-repository. The workflow token cannot be given that permission, so a
-fine-grained personal access token is used. I create and renew it; until it
-exists, the collect job fails with `TRAFFIC_TOKEN is not set`.
+The traffic API needs **Administration: read** on the repository, which the
+workflow token cannot have. The collect job therefore creates a short-lived
+installation token of a private GitHub App that I own, installed on this
+repository only and allowed only *Administration: read* (#143). The token
+expires within an hour and is revoked when the job ends; no personal access
+token is used.
 
-1. **Settings → Environments → New environment** `analytics`. Under
-   *Deployment branches and tags*, select *Selected branches and tags* and
-   allow `main` only. Do this before adding the secret: a run that names a
-   missing environment creates it without that restriction.
-2. **Settings → Developer settings → Fine-grained tokens → Generate new
-   token**: resource owner `danielep71`, *Only select repositories*:
-   `K-NSFR`, repository permission **Administration: Read-only**, nothing
-   else. Set an expiry of at most 90 days.
-3. In the `analytics` environment, add the secret **TRAFFIC_TOKEN** with that
-   token. Never put the token in a file, issue, comment or chat.
-4. Run the workflow manually on `main` and check that it passes and that
+1. **Settings → Environments → `analytics`.** Under *Deployment branches and
+   tags*, select *Selected branches and tags* and allow `main` only. A run that
+   names a missing environment creates it without that restriction, so check
+   it before adding the credentials.
+2. **Settings → Developer settings → GitHub Apps → New GitHub App** under my
+   account:
+   - a name and a homepage URL;
+   - *Webhook*: *Active* unchecked;
+   - *Repository permissions*: **Administration: Read-only**, and nothing else
+     (*Metadata: Read-only* is added by GitHub);
+   - *Where can this GitHub App be installed?*: *Only on this account*.
+3. In the App's settings, **Generate a private key**, which downloads a
+   `.pem` file, and **Install App** on my account with *Only select
+   repositories*: `K-NSFR`.
+4. In the `analytics` environment:
+   - add the **variable** `TRAFFIC_APP_CLIENT_ID` with the App's *Client ID*;
+     it is not secret;
+   - add the **secret** `TRAFFIC_APP_PRIVATE_KEY` with the whole content of
+     the `.pem` file, then delete the file.
+
+   Never put the key in a file of the repository, an issue, a comment or chat.
+5. Run the workflow manually on `main` and check that it passes and that
    `traffic-history` gains a commit.
 
-**Renewal:** before the token expires, and at least every 90 days, generate a
-new token with the same settings, replace the secret, and repeat step 4.
-Revoke the token at once if it may have been exposed, or if the workflow is
-changed by anyone but me. Collections missed while the token is invalid are
-lost once they fall outside the 14-day window.
+**Rotation:** generate a new private key in the App's settings, replace the
+secret, run step 5, then delete the old key in the App's settings. Delete a key
+at once if it may have been exposed, or if the workflow is changed by anyone
+but me. Collections missed while the credential is invalid are lost once they
+fall outside the 14-day window.
 
-Only the fetch step receives `TRAFFIC_TOKEN`, and it runs `curl` only. The
-merge script runs without it, and the push uses the workflow token with
-`contents: write`.
+The collect job keeps the key and the token apart from everything else:
+
+- *Check the App configuration* reads the client ID and only whether the key
+  is set (a boolean), never the key itself. A missing value fails here, naming
+  the setting.
+- *Create the App installation token* (`actions/create-github-app-token`,
+  pinned by commit) is the only step that receives the key. It asks for a
+  token on this repository with *Administration: read* only.
+- *Fetch traffic from the GitHub API* is the only step that receives the token,
+  as `TRAFFIC_TOKEN`, and it runs `curl` only. The merge script runs without
+  it, and the push uses the workflow token with `contents: write`.
+
+The workflow-invariant checks enforce these rules (`tools/check_workflows.py`).
 
 <a id="stored-data"></a>
 
@@ -154,12 +178,14 @@ After each collection the **Traffic alert** job compares the latest snapshot
 with the one before (`traffic_history.py alert`) and opens one issue, titled
 `Traffic alert: <snapshot date>`, when any of these holds:
 
-- **Views or clones spike:** the 14-day total at least doubles and grows by
-  at least 100 views or 10 clones;
+- **Views spike:** the 14-day total at least doubles and grows by at least
+  100 views;
 - **Stars or forks increase;**
 - **New referrer:** a referrer never stored before brings at least 5 views.
 
-A count blank in the older snapshot raises nothing. At most one issue is
+Clones raise no alert: they include every CI checkout, so a rise says nothing
+about readers. They stay in the history and the `clones` badge. A count blank
+in the older snapshot raises nothing. At most one issue is
 opened per snapshot date: the job skips a date whose issue exists, open or
 closed. The issue is assigned to me, labelled `P3` and `repository`, and
 filed under the open milestone with the earliest due date. Its *Planning*
@@ -175,8 +201,12 @@ result while the active release's milestone has the earliest due date, so give
 any later milestone a later due date.
 
 The job uses the workflow token with `issues: write` and `contents: read`. It
-has no environment, so it never receives `TRAFFIC_TOKEN`, and it runs only
-after a successful collection.
+has no environment, so it never receives the App's key or token, and it runs
+only after a successful collection. It reads exactly the `traffic-history`
+commit that collection published: the collect job outputs that commit's SHA,
+and the alert job checks that it is a 40-character hex SHA before checking it
+out, so another writer moving the branch in between cannot change what the
+alert reads.
 
 <a id="branch-protection"></a>
 
@@ -203,12 +233,14 @@ invalid, and leaves the history unchanged. Read the failing step:
 
 | Step and message | Cause | Action |
 | --- | --- | --- |
-| *Fetch*: `TRAFFIC_TOKEN is not set` | Secret missing, or the run is not in the `analytics` environment. | Follow the credential setup. |
-| *Fetch*: HTTP 401 | Token expired or revoked. | Renew the token. |
-| *Fetch*: HTTP 403 or 404 | Token lacks *Administration: read* on this repository. | Regenerate it with the settings above. |
+| *Check the App configuration*: `Not set in the analytics environment: ...` | The named variable or secret is missing, or the run is not in the `analytics` environment. | Follow the credential setup. |
+| *Create the App installation token* fails | The client ID or key is wrong, the key was deleted, or the App is not installed on this repository. | Check the App's installation and key, then replace the variable or secret. |
+| *Fetch*: HTTP 401 | The token was rejected. | Run again; if it persists, rotate the key. |
+| *Fetch*: HTTP 403 or 404 | The App lacks *Administration: read*, or its installation does not include this repository. | Fix the App's permissions or installation; a permission change must be accepted on the installation. |
 | *Fetch*: HTTP 429 or 5xx after retries | Rate limit or GitHub outage. | Run it again later; the next run collects the same 14 days. |
 | *Merge*: `ERROR: ...; the history was not changed` | The API returned an unexpected shape, or a history file no longer has the expected layout. | Inspect the response or the named file; a file edited by hand must keep its header and columns. |
 | *Commit and push*: `Could not push the history` | `traffic-history` kept moving, or a rule rejected the push. | Check the branch's rules and recent commits, then run again. |
+| *Traffic alert*: `The collect job published no traffic-history commit SHA` | The collect job ended without publishing. | Read the collect job's log; run the workflow again. |
 | *Check out traffic-history* fails | The branch was deleted. | Restore it from the last known commit; never recreate it empty over existing history. |
 | *Traffic alert*: `No open milestone with a due date` | Every milestone is closed, or none has a due date. | Open the next milestone with a due date, then run the workflow again. |
 | *Traffic alert*: `gh issue create` fails | A label, the assignee or the milestone no longer exists. | Restore it, then run the workflow again; the history is already saved. |
