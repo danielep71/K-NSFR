@@ -98,6 +98,7 @@ are locked. Their licenses are listed in
 | Tool | Version identity | Purpose |
 | --- | --- | --- |
 | GitHub checkout, Python/Node setup, artifact upload actions | Full SHA in each workflow | CI execution |
+| GitHub App token action (`actions/create-github-app-token`) | v3.3.0, commit `64ab729a6294000f5aa4a4bc0b73d1f32bc45510` | Short-lived token for the traffic collection |
 | actionlint | 1.7.12 plus archive SHA-256 in workflow | Workflow validation |
 | Ruff | 0.17.1 plus the hashes of its published files | Python lint and complexity |
 | mypy and runtime dependencies | 2.4.0 (ast-serialize 0.13.1, with the hashes of its published files); exact transitive pins/hashes in lock | Strict typing |
