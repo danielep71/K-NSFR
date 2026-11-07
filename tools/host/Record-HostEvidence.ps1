@@ -7,10 +7,11 @@
     for the commit checked out in this repository:
 
     1. checks that the worktree is clean and takes the candidate SHA;
-    2. takes the SHA-256 of .gitattributes and of the modules in tests/core;
+    2. takes the SHA-256 of .gitattributes and of the modules in tests/core,
+       over the bytes stored in Git (LF), as the validator does;
     3. reads the Windows and Excel versions, builds and bitness;
-    4. starts a new Excel instance, adds a blank workbook, imports the
-       modules, compiles the project and runs
+    4. starts a new Excel instance, adds a blank workbook, imports CRLF copies
+       of the modules, compiles the project and runs
        Test_NSFR_HarnessSelfTest.RunSelfTest;
     5. closes the workbook without saving, quits Excel and checks that the
        worktree is still clean;
@@ -18,17 +19,13 @@
        validates it with tools/check_host_evidence.py.
 
     Importing modules needs Excel's "Trust access to the VBA project object
-    model". The script never changes that setting unless you pass
-    -AllowVbomForRun, and then only for this run: it restores the previous
-    value at the end.
+    model" (File > Options > Trust Center > Trust Center Settings > Macro
+    Settings). The script never changes that setting or any other Trust
+    Center setting: when the access is off, it stops and writes no record.
 
     This Source Code Form is subject to the terms of the Mozilla Public
     License, v. 2.0. If a copy of the MPL was not distributed with this
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
-.PARAMETER AllowVbomForRun
-    Turn on "Trust access to the VBA project object model" for this run only,
-    and restore the previous value afterwards.
 
 .PARAMETER Hidden
     Hide the Excel window during the run. By default it is visible, so that a
@@ -39,7 +36,6 @@
 #>
 [CmdletBinding()]
 param(
-    [switch]$AllowVbomForRun,
     [switch]$Hidden
 )
 
@@ -49,7 +45,6 @@ $ErrorActionPreference = 'Stop'
 $Schema = 'k-nsfr-host-evidence/1'
 $SelfTest = 'Test_NSFR_HarnessSelfTest.RunSelfTest'
 $CompileControlId = 578     # Debug > Compile VBAProject in the Visual Basic Editor
-$VbomKey = 'HKCU:\Software\Microsoft\Office\16.0\Excel\Security'
 
 function Invoke-Git {
     # Windows PowerShell 5.1 turns a native command's stderr into an error under
@@ -67,27 +62,57 @@ function Test-GitAncestor {
     return $LASTEXITCODE -eq 0
 }
 
+function Test-CleanWorktree {
+    return -not (Invoke-Git @('status', '--porcelain'))
+}
+
 function Get-RegistryValue {
     param([string]$Path, [string]$Name)
     try { return (Get-ItemProperty -Path $Path -Name $Name -ErrorAction Stop).$Name }
     catch { return $null }
 }
 
-function Test-CleanWorktree {
-    return -not (Invoke-Git @('status', '--porcelain'))
+function Get-LfBytes {
+    # The file as Git stores it: every CR LF of the checkout becomes LF.
+    param([string]$Path)
+    $bytes = [IO.File]::ReadAllBytes($Path)
+    $result = New-Object System.Collections.Generic.List[byte] ($bytes.Length)
+    for ($i = 0; $i -lt $bytes.Length; $i++) {
+        if ($bytes[$i] -eq 13 -and $i + 1 -lt $bytes.Length -and $bytes[$i + 1] -eq 10) { continue }
+        $result.Add($bytes[$i])
+    }
+    return ,$result.ToArray()
+}
+
+function Get-Sha256 {
+    param([byte[]]$Bytes)
+    $algorithm = [Security.Cryptography.SHA256]::Create()
+    try { return (($algorithm.ComputeHash($Bytes) | ForEach-Object { $_.ToString('x2') }) -join '') }
+    finally { $algorithm.Dispose() }
+}
+
+function ConvertTo-CrLfBytes {
+    # The Visual Basic Editor imports a module reliably only with CR LF.
+    param([byte[]]$LfBytes)
+    $result = New-Object System.Collections.Generic.List[byte] ($LfBytes.Length + 1024)
+    foreach ($byte in $LfBytes) {
+        if ($byte -eq 10) { $result.Add(13) }
+        $result.Add($byte)
+    }
+    return ,$result.ToArray()
 }
 
 function Get-PublicMessage {
     # Error text without the local paths, which must not be published.
     param([string]$Message)
     $text = $Message -replace '\s+', ' '
-    foreach ($path in @($script:Root, $env:USERPROFILE, $env:TEMP) | Where-Object { $_ }) {
-        $text = $text.Replace($path, '<local path>')
+    foreach ($path in @($script:Root, $script:Staging, $env:USERPROFILE, $env:TEMP)) {
+        if ($path) { $text = $text.Replace($path, '<local path>') }
     }
     return $text.Trim()
 }
 
-function Release-ComObject {
+function Clear-ComObject {
     param($Object)
     if ($null -ne $Object) {
         [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($Object)
@@ -95,6 +120,7 @@ function Release-ComObject {
 }
 
 $script:Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$script:Staging = $null
 Push-Location $script:Root
 try {
     # 1. Candidate and worktree
@@ -111,15 +137,23 @@ try {
                        'bound only to a commit of those branches (git fetch, then check one out).')
     }
 
-    # 2. Fingerprints, as checked out
+    # 2. Fingerprints over the bytes stored in Git
     $modules = @(Get-ChildItem -Path 'tests\core' -File |
                  Where-Object { $_.Extension -in '.bas', '.cls', '.frm' } |
                  Sort-Object Name)
     if ($modules.Count -eq 0) { throw 'No module found in tests\core.' }
     $fingerprints = [ordered]@{}
-    $fingerprints['.gitattributes'] = (Get-FileHash -Algorithm SHA256 -Path '.gitattributes').Hash.ToLowerInvariant()
+    $fingerprints['.gitattributes'] = Get-Sha256 (Get-LfBytes (Join-Path $script:Root '.gitattributes'))
+    $script:Staging = Join-Path ([IO.Path]::GetTempPath()) "k-nsfr-host-$($sha.Substring(0, 12))"
+    if (Test-Path $script:Staging) { Remove-Item -Path $script:Staging -Recurse -Force }
+    [void](New-Item -ItemType Directory -Path $script:Staging)
+    $imports = @()
     foreach ($module in $modules) {
-        $fingerprints["tests/core/$($module.Name)"] = (Get-FileHash -Algorithm SHA256 -Path $module.FullName).Hash.ToLowerInvariant()
+        $lf = Get-LfBytes $module.FullName
+        $fingerprints["tests/core/$($module.Name)"] = Get-Sha256 $lf
+        $copy = Join-Path $script:Staging $module.Name
+        [IO.File]::WriteAllBytes($copy, (ConvertTo-CrLfBytes $lf))
+        $imports += $copy
     }
 
     # 3. Host
@@ -139,20 +173,7 @@ try {
     $bitness = if ((Get-RegistryValue $clickToRun 'Platform') -eq 'x64') { '64-bit' } else { '32-bit' }
     $build = ($officeBuild -split '\.', 3)[2]     # 16.0.18129.20158 -> 18129.20158
 
-    # 4. Trust access to the VBA project object model
-    $vbomBefore = Get-RegistryValue $VbomKey 'AccessVBOM'
-    $vbomChanged = $false
-    if ($vbomBefore -ne 1) {
-        if (-not $AllowVbomForRun) {
-            throw ('Excel does not trust access to the VBA project object model. Turn it on in ' +
-                   'File > Options > Trust Center > Trust Center Settings > Macro Settings, ' +
-                   'or run again with -AllowVbomForRun to turn it on for this run only.')
-        }
-        if (-not (Test-Path $VbomKey)) { New-Item -Path $VbomKey -Force | Out-Null }
-        Set-ItemProperty -Path $VbomKey -Name 'AccessVBOM' -Value 1 -Type DWord
-        $vbomChanged = $true
-    }
-
+    # 4. Import, compile and run in a new Excel instance
     $steps = [ordered]@{ import = 'NOT_RUN'; compile = 'NOT_RUN'; run = 'NOT_RUN'; cleanup = 'NOT_RUN' }
     $reasons = New-Object System.Collections.Generic.List[string]
     $output = $null
@@ -168,12 +189,18 @@ try {
         $excel.DisplayAlerts = $false
         $excel.EnableEvents = $false
         $excelText = '{0} ({1}), Version {2} (Build {3} Click-to-Run)' -f $product, $products, $excel.Version, $build
-
-        # Fresh import into a new blank workbook
+        $workbook = $excel.Workbooks.Add()
         try {
-            $workbook = $excel.Workbooks.Add()
             $project = $workbook.VBProject
-            foreach ($module in $modules) { [void]$project.VBComponents.Import($module.FullName) }
+            $null = $project.VBComponents.Count
+        } catch {
+            throw ("Excel does not allow access to the VBA project. Turn on 'Trust access to the " +
+                   "VBA project object model' in File > Options > Trust Center > Trust Center " +
+                   'Settings > Macro Settings, then run the script again. No record was written.')
+        }
+
+        try {
+            foreach ($copy in $imports) { [void]$project.VBComponents.Import($copy) }
             $steps.import = 'PASS'
         } catch {
             $steps.import = 'FAIL'
@@ -228,19 +255,12 @@ try {
             $closed = $false
             $reasons.Add("Cleanup failed: $(Get-PublicMessage $_.Exception.Message)")
         }
-        Release-ComObject $compile
-        Release-ComObject $project
-        Release-ComObject $workbook
-        Release-ComObject $excel
+        Clear-ComObject $compile
+        Clear-ComObject $project
+        Clear-ComObject $workbook
+        Clear-ComObject $excel
         [GC]::Collect()
         [GC]::WaitForPendingFinalizers()
-        if ($vbomChanged) {
-            if ($null -eq $vbomBefore) {
-                Remove-ItemProperty -Path $VbomKey -Name 'AccessVBOM'
-            } else {
-                Set-ItemProperty -Path $VbomKey -Name 'AccessVBOM' -Value $vbomBefore -Type DWord
-            }
-        }
     }
     if ($steps.import -ne 'NOT_RUN') {
         if ($closed -and (Test-CleanWorktree)) {
@@ -285,5 +305,8 @@ try {
     }
     Write-Host 'Propose the record in a pull request, or send the file for review.'
 } finally {
+    if ($script:Staging -and (Test-Path $script:Staging)) {
+        Remove-Item -Path $script:Staging -Recurse -Force
+    }
     Pop-Location
 }

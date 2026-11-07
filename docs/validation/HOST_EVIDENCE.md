@@ -37,7 +37,7 @@ fields:
 | `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
 | `host.excel` | The Microsoft 365 product line with `Version … (Build …)`, as **File → Account → About Excel** shows it |
 | `host.bitness` | `64-bit` |
-| `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, as checked out (VBA source with CRLF) |
+| `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, over the bytes stored in Git (LF). A Windows checkout holds the VBA source with CRLF, so `Get-FileHash` on it gives another value: `python tools/check_host_evidence.py --candidate <SHA> --inventory` prints the expected ones |
 | `steps` | `import`, `compile`, `run` and `cleanup`, each `PASS`, `FAIL` or `NOT_RUN` |
 | `result` | `PASS`, `FAIL` or `NOT_RUN`, as the steps give it |
 | `output` | The complete Immediate-window output of the run, one string per line, without the trailing empty line; an empty list when a runtime error stopped the run before it printed; absent when the run did not happen |
@@ -89,12 +89,15 @@ the end.
 The script:
 
 1. checks the clean worktree and takes the candidate SHA;
-2. takes the fingerprints with `Get-FileHash`;
+2. takes the fingerprints over the bytes stored in Git: it reads each file and
+   turns CR LF into LF, which the clean worktree makes equal to the stored
+   bytes;
 3. reads the Windows version and build from the registry, and the Excel
    build and bitness from the Click-to-Run configuration;
 4. drives a new Excel instance through COM: a new blank workbook, the import
-   of every module of `tests/core/`, *Compile VBAProject* and
-   `Test_NSFR_HarnessSelfTest.RunSelfTest`;
+   of CRLF copies of every module of `tests/core/`, made in a temporary
+   folder because the Visual Basic Editor imports reliably only CR LF,
+   *Compile VBAProject* and `Test_NSFR_HarnessSelfTest.RunSelfTest`;
 5. closes the workbook without saving, quits Excel and checks that the
    worktree is still clean;
 6. writes the record, and validates it with `check_host_evidence.py
@@ -107,17 +110,18 @@ exactly.
 
 Importing modules through COM needs Excel's *Trust access to the VBA project
 object model* (**File → Options → Trust Center → Trust Center Settings →
-Macro Settings**). The script never turns it on by itself. Pass
-`-AllowVbomForRun` to turn it on for this run only: the previous value is
-restored at the end. Excel stays visible during the run: if a compile error
-opens a dialog, close it, and the step is recorded as `FAIL`. Pass `-Hidden`
-to hide it.
+Macro Settings**). The script never changes it, nor any other Trust Center or
+macro setting: when the access is off, it stops before the import and writes
+no record. Turn the access on yourself if you accept it, or use the manual
+route. Excel stays visible during the run: if a compile error opens a
+dialog, close it, and the step is recorded as `FAIL`. Pass `-Hidden` to hide
+it.
 
 Without the script, follow the [manual route](../../tests/README.md#running-in-excel):
 
-1. Take the fingerprints with
-   `Get-FileHash -Algorithm SHA256 .gitattributes, tests\core\*.bas`; the
-   values are case-insensitive.
+1. Print the fingerprints with
+   `python tools/check_host_evidence.py --candidate <SHA> --inventory`, on
+   any machine with a clone.
 2. Import, compile, run and close as the manual route says.
 3. Write the record by hand, and run
    `python tools/check_host_evidence.py --candidate <SHA>` if you can.
@@ -133,7 +137,7 @@ reason. If no supported host is available, #14 stays open with that blocker.
   - an unknown candidate, or one that is not an ancestor of the checked commit;
   - a file name that differs from the SHA;
   - a dirty worktree;
-  - a fingerprint that differs from the files Git checks out at the candidate, or a missing or extra one.
+  - a fingerprint that differs from the files Git stores at the candidate, or a missing or extra one.
 - **Another host:** anything but Windows 11 with its version and OS build, Microsoft 365 with its version and build, and 64-bit.
 - **Inconsistent results:**
   - a result that the steps do not give, or a step that ran after a failed one;
