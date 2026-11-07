@@ -34,11 +34,12 @@ class Repository:
     """A mutable copy of the repository's workflows, Dependabot file and documents."""
 
     def __init__(self) -> None:
-        workflows, dependabot, governance, settings = cw.load(ROOT, YAML)
+        workflows, dependabot, governance, settings, tooling = cw.load(ROOT, YAML)
         self.workflows: dict[str, Any] = copy.deepcopy(workflows)
         self.dependabot: Any = copy.deepcopy(dependabot)
         self.governance = governance
         self.settings = settings
+        self.tooling = tooling
 
     def job(self, workflow: str, job: str) -> Any:
         return self.workflows[workflow]["jobs"][job]
@@ -47,7 +48,8 @@ class Repository:
         return cw.triggers(self.workflows[workflow])
 
     def findings(self) -> list[str]:
-        return cw.findings_for(self.workflows, self.dependabot, self.governance, self.settings)
+        return cw.findings_for(self.workflows, self.dependabot, self.governance, self.settings,
+                               self.tooling)
 
 
 class WorkflowInvariantTests(unittest.TestCase):
@@ -245,6 +247,15 @@ class WorkflowInvariantTests(unittest.TestCase):
             self.assertIn("extra.yaml: job x step 1: `actions/checkout@v7` is not pinned to a 40-character SHA",
                           findings)
             self.assertIn("extra.yaml: job x has no timeout-minutes", findings)
+
+    def test_runtimes_are_exact_and_documented(self) -> None:
+        setup = next(step for step in self.repo.job("repository-integrity.yml", "integrity")["steps"]
+                     if "python-version" in (step.get("with") or {}))
+        setup["with"]["python-version"] = "3.13"
+        self.assertFinding("python-version `3.13` must be the exact version")
+        self.repo = Repository()
+        self.repo.tooling = self.repo.tooling.replace("| Node.js | 22.23.4 |", "| Node.js | 22 |")
+        self.assertFinding("the Node.js row must give an exact X.Y.Z version")
 
     def test_triage_runs_on_milestone_events(self) -> None:
         self.repo.on("issue-triage.yml")["milestone"]["types"].remove("edited")

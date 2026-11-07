@@ -78,7 +78,7 @@ even after failure and does not suppress the original diagnostic.
 | Environment | Declared support | Execution evidence at v0.1.0 setup |
 | --- | --- | --- |
 | Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | NOT RUN; #14 must record OS/Excel build, bitness, import, execution and cleanup |
-| Ubuntu 24.04, Python 3.13, Node 22 explicitly selected | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
+| Ubuntu 24.04, Python 3.13 and Node 22 at the exact patch versions of the [tool versions](../tools/README.md#tool-versions) | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
 | 32-bit Office, older/perpetual Excel, Excel for Mac | Outside initial host profile | NOT RUN; no compatibility claim |
 | Excel web/mobile, LibreOffice, server Excel automation | Unsupported | NOT RUN |
 

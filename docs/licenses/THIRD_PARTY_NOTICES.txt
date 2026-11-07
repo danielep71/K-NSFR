@@ -67,10 +67,15 @@ on 2026-10-31.
     security descriptions were later aligned with docs/GOVERNANCE.md (#115).
 .github/scripts/labels-drift.mjs
     First imported from K-LCR in 926e49f; replaced by this copy in #84.
+    Adapted by #145: its summary renders API values through the local
+    markdown.mjs helper, and its canonical-plan cross-check compares the
+    rendered label cells.
 .github/scripts/labels-sync.mjs
     First imported from K-LCR in 926e49f; adapted by #84: keeps the guard
     that refuses to delete a label still used by an issue or pull request,
-    including names that contain commas, and its self-tests.
+    including names that contain commas, and its self-tests. Adapted by
+    #145: its summary renders API values through the local markdown.mjs
+    helper.
 tools/check_issues.py, tools/test_check_issues.py
     First imported from K-LCR in 926e49f; adapted by #90: keeps the
     active-milestone, target-date and milestone-due rules and the

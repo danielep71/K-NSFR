@@ -27,7 +27,7 @@ copyright ownership or permission to redistribute.
 
 | Surface | Origin and current status | Obligation review |
 | --- | --- | --- |
-| Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits | Source, revision and license per file in the third-party notices |
+| Label catalogue and sync/drift scripts | Imported (see the third-party notices), then K-NSFR-specific edits; `.github/scripts/markdown.mjs`, the summary helper they share, authored locally in #145 | Source, revision and license per file in the third-party notices |
 | Issue templates and triage Python code/tests | Imported (see the third-party notices), adapted for the K-NSFR issue model | Source, revision and license per file in the third-party notices |
 | GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |

@@ -339,7 +339,8 @@ It checks committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,
 strict Python typing, lint and tests, the VBA static rules, and committed
 blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
-newline and blank lines at end of file). Python 3.13 and Node 22 are selected
-explicitly in the workflow. These portable checks do not run Excel
+newline and blank lines at end of file). Python and Node.js are selected by
+exact patch version, as the [tool versions](../tools/README.md#tool-versions)
+table records. These portable checks do not run Excel
 or validate regulatory results. A failing check blocks integration until a new
 candidate passes; no skipped outcome is treated as evidence.
