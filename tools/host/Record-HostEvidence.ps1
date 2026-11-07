@@ -248,12 +248,18 @@ try {
         }
     } finally {
         # 5. Cleanup: close without saving, quit, and check that nothing was left behind
-        try {
-            if ($null -ne $workbook) { $workbook.Close($false) }
-            if ($null -ne $excel) { $excel.Quit() }
-        } catch {
-            $closed = $false
-            $reasons.Add("Cleanup failed: $(Get-PublicMessage $_.Exception.Message)")
+        # Each call is tried on its own, so that a failed close still quits Excel.
+        if ($null -ne $workbook) {
+            try { $workbook.Close($false) } catch {
+                $closed = $false
+                $reasons.Add("Closing the workbook failed: $(Get-PublicMessage $_.Exception.Message)")
+            }
+        }
+        if ($null -ne $excel) {
+            try { $excel.Quit() } catch {
+                $closed = $false
+                $reasons.Add("Quitting Excel failed: $(Get-PublicMessage $_.Exception.Message)")
+            }
         }
         Clear-ComObject $compile
         Clear-ComObject $project
