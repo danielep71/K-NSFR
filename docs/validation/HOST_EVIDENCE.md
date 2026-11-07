@@ -40,7 +40,7 @@ fields:
 | `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, as checked out (VBA source with CRLF) |
 | `steps` | `import`, `compile`, `run` and `cleanup`, each `PASS`, `FAIL` or `NOT_RUN` |
 | `result` | `PASS`, `FAIL` or `NOT_RUN`, as the steps give it |
-| `output` | The complete Immediate-window output of the run, one string per line, without the trailing empty line; absent when the run did not happen |
+| `output` | The complete Immediate-window output of the run, one string per line, without the trailing empty line; an empty list when a runtime error stopped the run before it printed; absent when the run did not happen |
 | `reason` | Required unless the result is `PASS`: what failed or why a step did not run |
 
 Example of a passing record. The SHA and fingerprints are placeholders:

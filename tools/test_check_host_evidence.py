@@ -99,6 +99,15 @@ class HostEvidenceTests(unittest.TestCase):
         self.assertIn(f"candidate {self.sha}: its host evidence is not PASS",
                       self.findings(record, candidate=self.sha))
 
+    def test_a_run_stopped_by_an_error_has_empty_output(self) -> None:
+        record = self.record()
+        record.update(steps={**record["steps"], "run": "FAIL"}, result="FAIL", output=[],
+                      reason="Run-time error 9: Subscript out of range")
+        self.assertEqual(self.findings(record), [])
+        record = self.record()
+        record["output"] = []
+        self.assertFinding("output: a passing run prints the self-test summary", record)
+
     def test_not_run_needs_a_reason_and_no_output(self) -> None:
         record = self.record()
         del record["output"]

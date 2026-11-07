@@ -169,8 +169,11 @@ def output_findings(record: Mapping[str, Any], expected: list[str] | None) -> li
     output = record.get("output")
     if run == NOT_RUN:
         return [] if output is None else ["output: given although the run did not happen"]
-    if not isinstance(output, list) or not output or not all(isinstance(s, str) for s in output):
+    if not isinstance(output, list) or not all(isinstance(s, str) for s in output):
         return ["output: the complete Immediate-window output is required, one string per line"]
+    if not output:
+        # A run stopped by a runtime error returns no summary at all.
+        return [] if run == FAIL else ["output: a passing run prints the self-test summary"]
     if expected is None:
         return [f"output: no documented self-test output in {EXPECTED_SOURCE} at the candidate"]
     if run == PASS and output != expected:
