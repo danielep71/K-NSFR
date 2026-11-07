@@ -246,6 +246,28 @@ class WorkflowInvariantTests(unittest.TestCase):
                           findings)
             self.assertIn("extra.yaml: job x has no timeout-minutes", findings)
 
+    def test_triage_runs_on_milestone_events(self) -> None:
+        self.repo.on("issue-triage.yml")["milestone"]["types"].remove("edited")
+        self.assertFinding("issue-triage.yml: milestone events must be")
+        del self.repo.on("issue-triage.yml")["milestone"]
+        self.assertFinding("issue-triage.yml: milestone events must be")
+
+    def test_milestones_queue_per_pull_request(self) -> None:
+        self.repo.workflows["pr-milestones.yml"]["concurrency"]["group"] = "pr-milestones"
+        self.assertFinding("pr-milestones.yml: concurrency must be")
+        self.repo = Repository()
+        self.repo.workflows["pr-milestones.yml"]["concurrency"]["cancel-in-progress"] = True
+        self.assertFinding("pr-milestones.yml: concurrency must be")
+
+    def test_integrity_cancels_only_superseded_pull_request_runs(self) -> None:
+        self.repo.workflows["repository-integrity.yml"]["concurrency"] = {
+            "group": "integrity-${{ github.workflow }}-${{ github.ref }}", "cancel-in-progress": True}
+        self.assertFinding("repository-integrity.yml: concurrency must be")
+
+    def test_label_reconcile_reads_pull_requests(self) -> None:
+        del self.repo.job("labels-sync.yml", "reconcile")["permissions"]["pull-requests"]
+        self.assertFinding("labels-sync.yml: reconcile's permissions must be")
+
     def test_milestones_events(self) -> None:
         self.repo.on("pr-milestones.yml")["pull_request"] = None
         self.assertFinding("pr-milestones.yml: events changed")
@@ -375,7 +397,8 @@ class MilestoneScriptTests(unittest.TestCase):
         assert source is not None
         namespace: dict[str, Any] = {"__name__": "pr_milestones"}
         exec(compile(source, cw.MILESTONES_FILE, "exec"), namespace)
-        self.script: Callable[[Any, str, Any], None] = namespace["reconcile"]
+        self.script: Callable[[Any, str, Any], Any] = namespace["reconcile"]
+        self.summary: Callable[[Any], str] = namespace["summary"]
 
     def reconcile(self, api: FakeGitHub, repository: str, event: Any) -> None:
         with contextlib.redirect_stdout(io.StringIO()):
@@ -403,6 +426,19 @@ class MilestoneScriptTests(unittest.TestCase):
         self.assertTrue(any(n > 200 for n in api.patched), "the third page was not cleared")
         self.assertTrue(all(value is None for value in api.milestones(pulls=True).values()))
         self.assertEqual(api.milestones(pulls=False), issues)
+
+    def test_removed_milestones_are_returned_for_the_summary(self) -> None:
+        api = FakeGitHub({5: {"number": 2, "title": "v0.1.0 - Repo setup"}, 6: None}, {})
+        with contextlib.redirect_stdout(io.StringIO()):
+            removed = self.script(api, REPOSITORY, {"schedule": "17 3 * * *"})
+        self.assertEqual(removed, [(5, "v0.1.0 - Repo setup")])
+
+    def test_summary_lists_each_removal_and_treats_titles_as_data(self) -> None:
+        text = self.summary([(5, "a|b"), (7, "back\\slash\r\nnew row")])
+        self.assertIn("| #5 | a\\|b |", text)
+        self.assertIn("| #7 | back\\\\slash new row |", text)
+        self.assertEqual(text.count("\n| #"), 2)
+        self.assertIn("No pull request had a milestone.", self.summary([]))
 
     def test_issue_number_is_refused(self) -> None:
         api = FakeGitHub({5: {"number": 2}}, {9: {"number": 2}})

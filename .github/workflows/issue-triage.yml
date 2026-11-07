@@ -8,7 +8,7 @@ run-name: "Issue triage — ${{ github.event_name }} by ${{ github.actor }}"
 # External condition: line is present (tools/check_issues.py).
 # Read-only: it never changes an issue. A failed run is the triage signal;
 # I resolve each finding by hand (docs/GOVERNANCE.md, Issues).
-# Issue events run the workflow from the default branch only.
+# Issue and milestone events run the workflow from the default branch only.
 
 on:
   issues:
@@ -23,6 +23,14 @@ on:
       - unassigned
       - milestoned
       - demilestoned
+  # A changed due date, or a closed or deleted milestone, changes the audit.
+  milestone:
+    types:
+      - created
+      - edited
+      - closed
+      - opened
+      - deleted
   workflow_dispatch:
 
 permissions:
