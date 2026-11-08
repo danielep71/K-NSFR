@@ -2,8 +2,9 @@ name: CodeQL
 run-name: CodeQL — ${{ github.ref_name }} @ ${{ github.sha }}
 # Analyzes the workflows, the Python tools and the label scripts in
 # .github/scripts/ with the security-extended queries, and uploads the results
-# to code scanning. It replaces GitHub's default setup, which must be off for
-# this workflow's results to be accepted. No rule requires this check; the VBA
+# to code scanning on trusted events. PRs retain SARIF for 30 days only.
+# It replaces GitHub's default setup, which must be off for this workflow's
+# results to be accepted. No rule requires this check; the VBA
 # is not analyzed, because CodeQL has no VBA support.
 on:
   push:
@@ -21,6 +22,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   analyze:
+    if: github.event_name != 'pull_request'
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -46,3 +48,40 @@ jobs:
         uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
         with:
           category: /language:${{ matrix.language }}
+
+  analyze-pr:
+    if: github.event_name == 'pull_request'
+    name: Analyze pull request (${{ matrix.language }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [actions, python, javascript-typescript]
+    steps:
+      - name: Check out the exact SHA under review
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-extended
+      - name: Analyze
+        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          category: /language:${{ matrix.language }}
+          upload: never
+          upload-database: false
+          output: codeql-results
+      - name: Keep the SARIF results
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: codeql-pr-${{ matrix.language }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: codeql-results
+          if-no-files-found: error
+          retention-days: 30

@@ -273,16 +273,41 @@ def codeql_findings(workflows: Mapping[str, Workflow]) -> list[str]:
     on = triggers(workflow)
     branches = {"branches": ["main", "release/**"]}
     if (not isinstance(on, Mapping) or on.get("push") != branches
-            or on.get("pull_request") != branches or not on.get("schedule")):
+            or on.get("pull_request") != branches or not on.get("schedule")
+            or "workflow_dispatch" not in on):
         findings.append(f"{CODEQL_FILE}: must run on push and pull_request with {branches} "
                         "and no other filter, and on a schedule")
     if workflow.get("concurrency") != CODEQL_CONCURRENCY:
         findings.append(f"{CODEQL_FILE}: concurrency must be {CODEQL_CONCURRENCY}")
-    job = dict(jobs(workflow)).get("analyze")
-    if job is None:
-        return findings + [f"{CODEQL_FILE}: no analyze job"]
-    if job.get("permissions") != CODEQL_PERMISSIONS:
-        findings.append(f"{CODEQL_FILE}: analyze's permissions must be {CODEQL_PERMISSIONS}")
+    for name, condition in (("analyze", "github.event_name != 'pull_request'"),
+                            ("analyze-pr", "github.event_name == 'pull_request'")):
+        job = dict(jobs(workflow)).get(name)
+        if job is None:
+            findings.append(f"{CODEQL_FILE}: no {name} job")
+            continue
+        permissions = CODEQL_PERMISSIONS if name == "analyze" else {"contents": "read"}
+        if job.get("permissions") != permissions:
+            findings.append(f"{CODEQL_FILE}: {name}'s permissions must be {permissions}")
+        if job.get("if") != condition:
+            findings.append(f"{CODEQL_FILE}: {name}'s condition must be {condition}")
+        analysis_inputs: dict[str, Any] = dict(CODEQL_ANALYZE)
+        if name == "analyze-pr":
+            analysis_inputs.update({"upload": "never", "upload-database": False,
+                                    "output": "codeql-results"})
+            artifacts = [step for step in steps_of(job)
+                         if str(step.get("uses", "")).startswith("actions/upload-artifact@")]
+            expected_artifact = {
+                "name": "codeql-pr-${{ matrix.language }}-${{ github.run_id }}-${{ github.run_attempt }}",
+                "path": "codeql-results", "if-no-files-found": "error", "retention-days": 30}
+            if len(artifacts) != 1 or artifacts[0].get("with") != expected_artifact:
+                findings.append(f"{CODEQL_FILE}: PR SARIF must be retained for 30 days")
+        findings += codeql_job_findings(job, analysis_inputs)
+    return findings
+
+
+def codeql_job_findings(job: Workflow, analysis_inputs: Mapping[str, Any]) -> list[str]:
+    """Check the same languages and queries on both event paths."""
+    findings = []
     matrix = (job.get("strategy") or {}).get("matrix") or {}
     if matrix != {"language": CODEQL_LANGUAGES}:
         findings.append(f"{CODEQL_FILE}: the matrix must be exactly language: {CODEQL_LANGUAGES}")
@@ -291,7 +316,7 @@ def codeql_findings(workflows: Mapping[str, Workflow]) -> list[str]:
         match = CODEQL_ACTION.match(str(step.get("uses", "")))
         if match:
             actions.setdefault(match.group(1), []).append((match.group(2), step.get("with")))
-    expected = {"init": CODEQL_INIT, "analyze": CODEQL_ANALYZE}
+    expected = {"init": CODEQL_INIT, "analyze": analysis_inputs}
     for action, inputs in expected.items():
         if [given for _, given in actions.get(action, [])] != [inputs]:
             findings.append(f"{CODEQL_FILE}: exactly one {action} step, with {inputs}")

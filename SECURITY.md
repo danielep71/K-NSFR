@@ -100,7 +100,7 @@ that token, and it runs `curl` and no repository code
 | `Detect issue-label drift` | `contents: read`; `issues: read` for the live comparison | Label-file pull requests; daily schedule; manual dispatch |
 | `Sync issue labels` | `contents: read`; `issues: write` and `pull-requests: read` only in the reconcile job | Label-file pull requests (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) |
 | `Traffic history` | `contents: read`; `contents: write` in `collect` (default branch only, `analytics` environment); `issues: write` in `alert`, which never receives the token | Daily schedule; manual dispatch (collection runs only from the default branch) |
-| `CodeQL` | `contents: read`; `security-events: write` in its one job, to upload the results | Pull requests into and pushes to `main` and `release/**`; weekly schedule; manual dispatch |
+| `CodeQL` | `contents: read` on PRs; `security-events: write` only in the trusted-event job | Pull requests into and pushes to `main` and `release/**`; weekly schedule; manual dispatch |
 | `External links` | `contents: read` | Weekly schedule; manual dispatch |
 | `Keep milestones issue-only` | None at workflow level; `pull-requests: write` in its one job | `pull_request_target` (opened, reopened, edited, milestoned); daily schedule; its own pushes to `main`; manual dispatch on the default branch |
 
@@ -113,6 +113,11 @@ from the base branch; the script refuses to change an issue and only clears PR
 milestones. No workflow approves, merges or dismisses alerts. The
 [tooling guide](tools/README.md) describes what each
 workflow runs.
+
+Pull requests run a separate read-only CodeQL job with result and database
+uploads disabled. Each language's SARIF is retained as an artifact for 30 days;
+PRs receive no code scanning annotations. Pushes, scheduled runs and manual
+runs publish results with `security-events: write`.
 
 CodeQL code scanning runs from the `CodeQL` workflow
 ([.github/workflows/codeql.yml](.github/workflows/codeql.yml)), which replaces
