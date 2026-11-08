@@ -134,7 +134,11 @@ reason. If no supported host is available, #14 stays open with that blocker.
 ## 🚦 What the gate rejects
 
 - **Unbound evidence:**
-  - an unknown candidate, or one that is not an ancestor of the checked commit;
+  - an unknown candidate, one that is not an ancestor of the checked commit,
+    or one absent from published `origin/main` and `origin/release/*` history;
+    local task branches and synthetic PR merge ancestry are insufficient.
+    Fetch those remote branches before validation; missing published refs fail
+    validation when evidence records exist;
   - a file name that differs from the SHA;
   - a dirty worktree;
   - a fingerprint that differs from the files Git stores at the candidate, or a missing or extra one.

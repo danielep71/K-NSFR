@@ -198,6 +198,16 @@ def host_findings(host: Any) -> list[str]:
     return findings
 
 
+def published_candidate(sha: str, root: Path) -> bool:
+    """Only published main/release ancestry survives task-PR squash integration."""
+    refs = git("for-each-ref", "--format=%(refname)",
+               "refs/remotes/origin/main", "refs/remotes/origin/release/", root=root)
+    names = refs.decode().splitlines()
+    return any(git_ok("merge-base", "--is-ancestor", sha, ref, root=root)
+               for ref in names if ref == "refs/remotes/origin/main"
+               or ref.startswith("refs/remotes/origin/release/"))
+
+
 def candidate_findings(record: Mapping[str, Any], name: str, root: Path,
                        today: dt.date) -> tuple[list[str], str | None]:
     sha = record.get("candidate_sha")
@@ -212,6 +222,9 @@ def candidate_findings(record: Mapping[str, Any], name: str, root: Path,
     if not git_ok("merge-base", "--is-ancestor", sha, "HEAD", root=root):
         findings.append(f"candidate_sha: {sha} is not an ancestor of HEAD; test a commit of "
                         "the release branch or main, never one that a squash merge discards")
+    if not published_candidate(sha, root):
+        findings.append(f"candidate_sha: {sha} is not in published main/release history; "
+                        "fetch origin main and release branches, then test a published commit")
     recorded = record.get("recorded_on")
     committed = dt.date.fromisoformat(git("show", "-s", "--format=%cs", sha, root=root)
                                       .decode().strip())
