@@ -74,6 +74,10 @@ jobs:
                       result = request("PATCH", f"/repos/{repository}/issues/{number}", {"milestone": None})
                       if result.get("milestone") is not None:
                           raise ValueError(f"PR #{number} still has a milestone")
+                      # Confirm persisted state independently of the PATCH response.
+                      current = request("GET", f"/repos/{repository}/issues/{number}")
+                      if current.get("milestone") is not None:
+                          raise ValueError(f"PR #{number} still has a milestone after read-back")
                       removed.append((number, item["milestone"].get("title", "")))
                       print(f"Removed milestone from PR #{number}")
 

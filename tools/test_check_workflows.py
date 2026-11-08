@@ -321,6 +321,32 @@ class WorkflowInvariantTests(unittest.TestCase):
         self.repo.job("codeql.yml", "analyze")["permissions"]["contents"] = "write"
         self.assertFinding("job analyze has write permission ['contents'] outside the allowed list")
 
+    def test_codeql_pr_is_read_only(self) -> None:
+        self.repo.job("codeql.yml", "analyze-pr")["permissions"]["security-events"] = "write"
+        self.assertFinding("codeql.yml: analyze-pr's permissions must be")
+
+    def test_codeql_event_paths_are_separate(self) -> None:
+        for name in ("analyze", "analyze-pr"):
+            self.repo.job("codeql.yml", name)["if"] = "always()"
+            self.assertFinding(f"codeql.yml: {name}'s condition must be")
+
+    def test_codeql_pr_never_uploads_results_or_databases(self) -> None:
+        inputs = self.repo.job("codeql.yml", "analyze-pr")["steps"][2]["with"]
+        for key, value in (("upload", "always"), ("upload-database", True)):
+            original = inputs[key]
+            inputs[key] = value
+            self.assertFinding("codeql.yml: exactly one analyze step")
+            inputs[key] = original
+
+    def test_codeql_pr_retains_sarif(self) -> None:
+        artifact = self.repo.job("codeql.yml", "analyze-pr")["steps"][3]
+        artifact["with"]["retention-days"] = 1
+        self.assertFinding("codeql.yml: PR SARIF must be retained for 30 days")
+
+    def test_codeql_manual_trigger_is_required(self) -> None:
+        del self.repo.on("codeql.yml")["workflow_dispatch"]
+        self.assertFinding("codeql.yml: must run on push and pull_request")
+
     def test_codeql_workflow_is_required(self) -> None:
         del self.repo.workflows["codeql.yml"]
         self.assertFinding("codeql.yml: not found")
@@ -487,6 +513,41 @@ class MilestoneScriptTests(unittest.TestCase):
         self.reconcile(api, REPOSITORY, {"number": 5, "pull_request": {}})
         self.assertEqual(api.patched, [5])
         self.assertEqual(api.milestones(pulls=True), {5: None, 6: {"number": 2}})
+
+    def test_removal_requires_independent_read_back(self) -> None:
+        calls: list[str] = []
+
+        def request(method: str, path: str, data: Any = None) -> Any:
+            calls.append(method)
+            if method == "PATCH":
+                return {"milestone": None}
+            # PATCH claims success but the independent GET still sees the milestone.
+            return {"pull_request": {}, "milestone": {"number": 2}}
+
+        with self.assertRaisesRegex(ValueError, "after read-back"):
+            self.script(request, REPOSITORY, {"number": 5, "pull_request": {}})
+        self.assertEqual(calls, ["GET", "PATCH", "GET"])
+
+    def test_patch_response_must_confirm_removal(self) -> None:
+        def request(method: str, path: str, data: Any = None) -> Any:
+            return {"pull_request": {}, "milestone": {"number": 2}}
+
+        with self.assertRaisesRegex(ValueError, "still has a milestone"):
+            self.script(request, REPOSITORY, {"number": 5, "pull_request": {}})
+
+    def test_read_back_failure_is_not_success(self) -> None:
+        calls: list[str] = []
+
+        def request(method: str, path: str, data: Any = None) -> Any:
+            calls.append(method)
+            if method == "PATCH":
+                return {"milestone": None}
+            if len(calls) == 3:
+                raise OSError("GET failed")
+            return {"pull_request": {}, "milestone": {"number": 2}}
+
+        with self.assertRaisesRegex(OSError, "GET failed"):
+            self.script(request, REPOSITORY, {"number": 5, "pull_request": {}})
 
     def test_pull_request_without_milestone_is_left_alone(self) -> None:
         api = FakeGitHub({5: None}, {})
