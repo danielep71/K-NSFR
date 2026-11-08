@@ -43,6 +43,7 @@ class HostEvidenceTests(unittest.TestCase):
         git("add", "-A", cwd=self.root)
         git("commit", "-qm", "fixture", cwd=self.root)
         self.sha = git("rev-parse", "HEAD", cwd=self.root).decode().strip()
+        git("update-ref", "refs/remotes/origin/main", self.sha, cwd=self.root)
 
     def write(self, name: str, data: bytes) -> None:
         path = self.root / name
@@ -138,6 +139,36 @@ class HostEvidenceTests(unittest.TestCase):
         git("checkout", "-q", "--orphan", "other", cwd=self.root)
         git("commit", "-qm", "unrelated", cwd=self.root)
         self.assertFinding("is not an ancestor of HEAD", self.record())
+
+    def test_task_evidence_fails_in_synthetic_merge_and_after_squash(self) -> None:
+        base = self.sha
+        git("checkout", "-qb", "task", cwd=self.root)
+        self.write("task.txt", b"task change\n")
+        git("add", "task.txt", cwd=self.root)
+        git("commit", "-qm", "task", cwd=self.root)
+        self.sha = git("rev-parse", "HEAD", cwd=self.root).decode().strip()
+        task_record = self.record()
+        git("checkout", "-qb", "synthetic", base, cwd=self.root)
+        git("merge", "--no-ff", "-qm", "synthetic merge", "task", cwd=self.root)
+        self.assertFinding("not in published main/release history", task_record)
+        (self.root / he.EVIDENCE / f"{self.sha}.json").unlink()
+        git("checkout", "-qb", "release/0.1.0", base, cwd=self.root)
+        git("merge", "--squash", "task", cwd=self.root)
+        git("commit", "-qm", "squash task", cwd=self.root)
+        git("update-ref", "refs/remotes/origin/release/0.1.0", "HEAD", cwd=self.root)
+        self.assertFinding("not an ancestor of HEAD", task_record)
+        (self.root / he.EVIDENCE / f"{self.sha}.json").unlink()
+        self.sha = base
+        self.assertEqual(self.findings(self.record()), [])
+        self.sha = git("rev-parse", "HEAD", cwd=self.root).decode().strip()
+        self.assertEqual(self.findings(self.record()), [])
+
+    def test_local_or_task_refs_do_not_replace_published_history(self) -> None:
+        git("update-ref", "-d", "refs/remotes/origin/main", cwd=self.root)
+        git("update-ref", "refs/heads/main", self.sha, cwd=self.root)
+        git("update-ref", "refs/remotes/origin/task", self.sha, cwd=self.root)
+        git("update-ref", "refs/remotes/origin/main-extra", self.sha, cwd=self.root)
+        self.assertFinding("not in published main/release history", self.record())
 
     def test_the_file_name_binds_the_candidate(self) -> None:
         self.assertFinding("file name must be", self.record(), name="evidence.json")
