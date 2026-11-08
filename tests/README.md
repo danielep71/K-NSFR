@@ -24,6 +24,7 @@ asserts nothing about one. Tracking: #12.
 | `core/Test_NSFR_Harness.bas` | The harness: run state, outcomes, summary |
 | `core/Test_NSFR_HarnessSelfTest.bas` | Its self-test, with a suite that passes and suites that fail on purpose |
 | `fixtures/` | The [numerical fixtures](../docs/validation/VALIDATION.md); the harness will execute them once an engine exists |
+| `evidence/` | The [host evidence records](../docs/validation/HOST_EVIDENCE.md), one per tested commit |
 
 Both modules are standard modules with `Option Private Module`. They use VBA
 only: no Excel object model, workbook, sheet, file, clock or random number.
@@ -120,8 +121,10 @@ line of its summary that differs.
 ## ▶️ Running in Excel
 
 You need the [intended host](../docs/IMPLEMENTATION.md#supported-and-tested-environments):
-Windows 11, Microsoft 365 desktop Excel, 64-bit. Until #13 provides a host
-template, import the modules by hand:
+Windows 11, Microsoft 365 desktop Excel, 64-bit.
+`tools/host/Record-HostEvidence.ps1` runs the steps below through COM and
+writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run).
+Until #13 provides a host template, the manual route is:
 
 1. Check out the commit to test and note its full SHA.
 2. Open a new blank workbook and the Visual Basic Editor (Alt+F11).
@@ -132,10 +135,13 @@ template, import the modules by hand:
    `?Test_NSFR_HarnessSelfTest.RunSelfTest()`.
 6. Close the workbook without saving it; the run leaves nothing behind.
 
-Record in #12: the commit SHA, the Excel version and build with its bitness
-(**File → Account → About Excel**), the Windows version, whether the import
-and compilation succeeded, and the complete output of step 5. A run on one
-commit is no evidence for another.
+Record the run as a [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run)
+in [`evidence/`](evidence/README.md): the commit SHA and the file fingerprints,
+the Windows version, the Excel version and build with its bitness
+(**File → Account → About Excel**), the outcome of the import, the
+compilation, the run and the cleanup, and the complete output of step 5. The
+`host-evidence` gate rejects a record that is not bound to its commit. A run
+on one commit is no evidence for another.
 
 <a id="reproducibility"></a>
 

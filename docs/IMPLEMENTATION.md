@@ -83,9 +83,10 @@ even after failure and does not suppress the original diagnostic.
 | Excel web/mobile, LibreOffice, server Excel automation | Unsupported | NOT RUN |
 
 A declared target does not become tested merely because portable CI passes.
-Host evidence in #14 binds the exact candidate commit, builds, bitness, source
-import/export and observed outcome; follow-up host variants need their own
-record. #13 owns packaging and a reproducible source-to-workbook process.
+A [host evidence record](validation/HOST_EVIDENCE.md) (#14) binds the exact
+candidate commit, the Windows and Excel builds, the bitness, the fingerprints
+of the imported files and the observed outcome; follow-up host variants need
+their own record. #13 owns packaging and a reproducible source-to-workbook process.
 
 <a id="vba-source-and-environment"></a>
 

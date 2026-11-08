@@ -115,6 +115,7 @@ def default_gates() -> list[Gate]:
         Gate("contracts", "python", (python, "tools/check_contracts.py")),
         Gate("fixtures", "python", (python, "tools/check_fixtures.py")),
         Gate("vba-static", "python", (python, "tools/check_vba.py")),
+        Gate("host-evidence", "python", (python, "tools/check_host_evidence.py")),
         Gate("ruff", "ruff", ("ruff", "check", "--no-cache", "tools")),
         Gate("ruff-complexity-probe", "ruff", probe=ruff_complexity_probe),
         Gate("mypy", "mypy", ("mypy", "--no-incremental"), requires=("python-libraries",)),

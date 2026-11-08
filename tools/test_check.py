@@ -154,6 +154,7 @@ class DefaultGatesTests(unittest.TestCase):
         self.assertIn("contracts", {g.name for g in gates})
         self.assertIn("fixtures", {g.name for g in gates})
         self.assertIn("vba-static", {g.name for g in gates})
+        self.assertIn("host-evidence", {g.name for g in gates})
 
     def test_each_gate_names_what_it_needs(self) -> None:
         tools = {g.name: g.tool for g in check.default_gates()}
