@@ -105,7 +105,7 @@ dated read-back belongs in the local evidence record.
 | Private vulnerability reporting | **On** | The difference listed under [General](#general). |
 | Secret scanning | **On** | Provider patterns. Non-provider patterns and validity checks are **off**. |
 | Secret scanning push protection | **On** | Blocks pushes that contain a supported secret. |
-| Dependabot alerts | **On** | Required by Dependabot security updates; the public API does not report it directly. |
+| Dependabot alerts | **On** | Required by Dependabot security updates; the public API does not report it directly, so the evidence record reads it from the settings page. |
 | Dependabot security updates | **On** | Proposes fixes as pull requests for review. |
 | Dependabot version updates | Configured in `.github/dependabot.yml` | A repository file, not a setting; it takes effect from the default branch. |
 | Code scanning | **On**: CodeQL advanced setup from a workflow file; default setup **off** | The workflow sets the languages and the `security-extended` queries; the default setup would make code scanning reject its results. Alerts are not part of this comparison. |

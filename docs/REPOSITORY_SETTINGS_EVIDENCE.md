@@ -113,7 +113,7 @@ setting or ruleset was changed, and no protected branch was touched.
 | Synchronization and documentation-only PRs are checked | Repository integrity ran on the empty-diff synchronization #171 ([run 42692557010](https://github.com/danielep71/K-NSFR/actions/runs/42692557010)) and on the documentation-only corrected head of #172 | Workflow runs |
 | Merge methods | `main` accepts merge commits only; `release/**` accepts squash or merge (ruleset read-back, 2026-11-09) | [Rulesets](#rulesets) |
 | Branch deletion | `main`, `release/**`, `v*` tags and `traffic-history` cannot be deleted (ruleset read-back); merged head branches are deleted automatically (`delete_branch_on_merge`, read 2026-11-09). A deletion of a protected branch was not attempted | [Rulesets](#rulesets), [general settings](#general-settings) |
-| Dependency alerts | Dependabot security updates read as enabled on 2026-11-09; the alerts themselves are not readable with the access used for this record, so they remain **unverified** | Repository API |
+| Dependency alerts | Dependabot alerts **On** and security updates enabled, read on 2026-11-09. The alerts setting is not in the API response used for this record, so I read it from **Settings → Advanced Security** | Repository API; settings page |
 
 <a id="maintenance"></a>
 
