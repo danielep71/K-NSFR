@@ -239,11 +239,13 @@ jobs:
           ASSIGNEE: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
-          # The active milestone: the open one with the earliest due date.
+          # The active milestone: the open one with the earliest due date after
+          # today, so that the alert's start date can precede its target end date.
+          today="$(date -u +%F)"
           milestone="$(gh api "repos/$GH_REPO/milestones?state=open&sort=due_on&direction=asc" \
-            --jq '[.[] | select(.due_on != null)][0] | [.title, .due_on[0:10]] | @tsv')"
+            --jq "[.[] | select(.due_on != null and .due_on[0:10] > \"$today\")][0] | [.title, .due_on[0:10]] | @tsv")"
           if [ -z "$milestone" ]; then
-            echo "::error::No open milestone with a due date to file the alert under"
+            echo "::error::No open milestone due after $today to file the alert under"
             exit 1
           fi
           IFS=$'\t' read -r title due <<< "$milestone"
