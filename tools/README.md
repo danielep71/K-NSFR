@@ -280,7 +280,7 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 | --- | --- | --- |
 | Python | 3.13.18 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets the 3.13 series |
 | Node.js | 22.23.4 | `actions/setup-node` in the workflows |
-| Ruff, mypy | 0.17.1, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
+| Ruff, mypy | 0.17.2, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
 | PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
