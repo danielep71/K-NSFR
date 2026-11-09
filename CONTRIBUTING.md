@@ -22,8 +22,9 @@ describes. Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 ## 🌿 Make a bounded change
 
 1. Use an issue form: keep me as assignee and the form's priority, and give
-   an ISO target end date and an explicit dependency section. Triage confirms
-   the priority and sets an open active milestone; the target end date must
+   an ISO start date and target end date and an explicit dependency section.
+   Triage confirms the priority and sets an open active milestone; the start
+   date must not be after the target end date, and the target end date must
    fall before that milestone's due date.
 2. Branch from `release/0.1.0`; keep one coherent issue or correction per PR.
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),

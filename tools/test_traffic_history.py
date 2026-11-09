@@ -382,7 +382,7 @@ class AlertTests(unittest.TestCase):
             self.assertEqual(issue["title"], "Traffic alert: 2026-10-14")
             self.assertIn("views spike, stars increased.", issue["body"])
             self.assertIn("| Stars | 2 | 1 |", issue["body"])
-            for line in ("- Planned start: 2026-10-14", "- Target end date: 2026-10-21 (Europe/Rome)",
+            for line in ("- Start date: 2026-10-14 (Europe/Rome)", "- Target end date: 2026-10-21 (Europe/Rome)",
                          "- Milestone due date: 2026-12-20",
                          "## Dependencies and blocking status\n\nNone."):
                 self.assertIn(line, issue["body"])
@@ -393,6 +393,18 @@ class AlertTests(unittest.TestCase):
             issue = traffic_history.alert(ws.data, "2026-10-17")
             assert issue is not None
             self.assertIn("- Target end date: 2026-10-16 (Europe/Rome)", issue["body"])
+
+    def test_alert_refuses_a_milestone_not_due_after_the_snapshot(self) -> None:
+        with workspace() as ws:
+            self.assertIsNotNone(self.history(ws, (50, 20, 1), (150, 40, 2)))
+            for due in ("2026-10-14", "2026-10-01"):
+                with self.subTest(due=due), self.assertRaisesRegex(
+                        traffic_history.TrafficError, "is not after the snapshot date 2026-10-14"):
+                    traffic_history.alert(ws.data, due)
+            issue = traffic_history.alert(ws.data, "2026-10-15")
+            assert issue is not None
+            self.assertIn("- Start date: 2026-10-14 (Europe/Rome)", issue["body"])
+            self.assertIn("- Target end date: 2026-10-14 (Europe/Rome)", issue["body"])
 
     def test_alert_issue_passes_issue_triage(self) -> None:
         with workspace() as ws:

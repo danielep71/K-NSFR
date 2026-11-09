@@ -15,9 +15,12 @@ one `labels` list (schema version 2), with no profile or domain overlays.
 ## 🏷️ Issues
 
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
-to danielep71, has exactly one priority, a valid `YYYY-MM-DD` target end date in
-Europe/Rome, and belongs to an open milestone for the active release selected
-during triage. The target end date must be earlier than the milestone's due
+to danielep71, has exactly one priority, a valid `YYYY-MM-DD` start date and
+target end date in Europe/Rome, and belongs to an open milestone for the active
+release selected during triage. The start date is the day the work starts or
+is planned to start, and it is not after the target end date. Both appear in
+the issue's Planning section (`- Start date: …` and `- Target end date: …`) or
+in the issue form's fields. The target end date must be earlier than the milestone's due
 date, so every milestone carries a due date; triage reads the calendar date of
 the milestone's `due_on` and reports a milestone without one rather than
 guessing it. The active milestone is `v0.1.0 - Repo setup`. Issues for the next
@@ -114,7 +117,7 @@ when `blocked` is not the only dependency status label, when a form or
 `.github/dependabot.yml` sets a label outside the catalogue, when either
 assigns someone other than the assignee configured in the Bug report form,
 when a form does not set exactly its default priority or lacks the
-dependencies or target end date field, or when blank issues are enabled.
+dependencies, start date or target end date field, or when blank issues are enabled.
 
 <a id="label-workflows"></a>
 
@@ -130,7 +133,8 @@ dependencies or target end date field, or when blank issues are enabled.
   and compares live labels daily at 05:17 UTC or on manual dispatch.
   It reports differences without changing labels and retains evidence for 30 days.
 - Issue triage checks assignee, exactly one priority, open active milestone,
-  ISO target end date before the milestone due date, catalogue membership and
+  ISO start date not after the ISO target end date, a target end date before
+  the milestone due date, catalogue membership and
   dependency status. It reports
   findings without changing issues. A pull request is never a prerequisite.
 - Before label synchronization deletes a label outside the manifest, it checks
