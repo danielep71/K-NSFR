@@ -135,22 +135,26 @@ because CodeQL has no extractor for it.
 ## 🛡️ Security features
 
 Recorded on **2026-10-28** for the public repository and updated on
-**2026-10-29** (#75), **2026-11-05** (#115) and **2026-11-07** (#146). The source column says
+**2026-10-29** (#75), **2026-11-05** (#115), **2026-11-07** (#146) and **2026-11-09** (#15). The source column says
 how each state is known; a state marked *not verified* has not been read back
 and must not be assumed.
 
 | Feature | State | Source |
 | --- | --- | --- |
-| Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | GitHub API read-back, 2026-10-29 ([settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md#rulesets)); enforcement scenarios tracked in #15 |
-| Default workflow token | Read-only | My statement in governance, not read back; each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
-| Full-SHA action pins | Required by the repository setting | My statement in governance, not read back; every `uses:` in the workflow files is a full SHA |
+| Rulesets on `main` and `release/**` | Active, as described in [governance](docs/GOVERNANCE.md#installed-settings-and-limits) | GitHub API read-back, 2026-10-29 and 2026-11-09 ([settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md#rulesets)); enforcement demonstrated on #172 ([enforcement](docs/REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)) |
+| Default workflow token | Read-only | Verified by its effect on 2026-11-09: a job without declared permissions received read access only ([enforcement](docs/REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)); each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
+| Full-SHA action pins | Required by the repository setting | Verified by its effect on 2026-11-09: an action used by tag was refused ([enforcement](docs/REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)); every `uses:` in the workflow files is a full SHA |
 | Dependabot version updates | GitHub Actions: configured and active. Python tools in `tools/`: configured (#85), read from `main` since 2026-11-03 and active; the first update, #109, was integrated into `main` on 2026-11-04. Proposals arrive as pull requests for review | `.github/dependabot.yml`; Actions activation evidenced in #6 by Dependabot PR #41; Python activation evidenced by Dependabot PR #109; Python dependency graph built on 2026-11-03 ([run 41699792588](https://github.com/danielep71/K-NSFR/actions/runs/41699792588)) |
-| Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28 |
+| Private vulnerability reporting | Enabled | GitHub API read-back, 2026-10-28; **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
 | Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
-| Dependabot alerts | Enabled by inference: security updates require alerts | Not readable without admin access; not verified directly |
+| Dependency graph | On | **Settings → Advanced Security**, read by me on 2026-11-09 |
+| Automatic dependency submission | Disabled | **Settings → Advanced Security**, read by me on 2026-11-09 |
+| Dependabot alerts | On | **Settings → Advanced Security**, read by me on 2026-11-09 (#15); the API does not report it with the access used for the other rows |
+| Dependabot malware alerts | Off | **Settings → Advanced Security**, read by me on 2026-11-09 |
+| Dependabot auto-triage rules | One rule enabled | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Code scanning | CodeQL from the `CodeQL` workflow (#146): Actions, Python and JavaScript/TypeScript, `security-extended` queries, on pull requests, pushes and weekly. It covers the workflows, the Python tools and the label scripts, not the VBA. The default setup, enabled on 2026-10-29 for Actions and Python with the default queries, is off | The workflow file and its first run, on #153 ([run 42356390686](https://github.com/danielep71/K-NSFR/actions/runs/42356390686)). The first attempt was rejected while the default setup was on. I turned the default setup off on 2026-11-07, and the second attempt uploaded all three analyses: 7 workflow files, 21 Python files and the 3 label scripts. The default setup's first analysis, on `main` at `d272338`, succeeded ([run 40838760015](https://github.com/danielep71/K-NSFR/actions/runs/40838760015)). Alerts are not readable without security-events access; *not verified* |
 
 Update this table, with its date and source, when a feature is enabled,
