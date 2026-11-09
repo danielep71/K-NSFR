@@ -244,7 +244,8 @@ retries and the URL selection with a fake fetcher, without network access.
 `check_issues.py` applies the [issue rules](../docs/GOVERNANCE.md#issues) to
 every open issue and reports findings; it never changes an issue. It checks the
 assignee configured in the Bug report form, exactly one priority (P1 only with `bug`), an open milestone of the
-active release, a valid ISO target end date before the milestone's due date,
+active release, a valid ISO start date not after a valid ISO target end date,
+the target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a
 reference; a pull request never counts as a prerequisite, so the workflow
@@ -262,7 +263,7 @@ A repository is always given as `owner/name`; `--input` requires
 `--repo-name`. `--check-config` validates the label catalogue with
 `.github/scripts/labels-sync.mjs`, the same validator synchronization uses, so
 it needs Node. It also checks that every issue form sets its default priority,
-known labels, the assignee and the `dependencies` and `target_end_date` fields;
+known labels, the assignee and the `dependencies`, `start_date` and `target_end_date` fields;
 that the label tables of [governance](../docs/GOVERNANCE.md#issues) explain
 each catalogue label exactly once; that `blocked` is the only dependency
 status label; that `ISSUE_TEMPLATE/config.yml` disables blank issues; and that

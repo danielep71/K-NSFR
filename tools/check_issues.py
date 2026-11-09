@@ -98,13 +98,31 @@ def references(lines: Iterable[str], repository: str, own: int) -> set[int]:
     return found
 
 
-def target_end_date(body: str) -> str | None:
+def planning_date(body: str, label: str) -> str | None:
     """Read the planning line or the GitHub issue-form field without guessing a date."""
-    planning = re.search(r"(?im)^\s*[-*]\s*Target end date:\s*(\S+)(?:\s+\(Europe/Rome\))?\s*$", body)
+    planning = re.search(rf"(?im)^\s*[-*]\s*{label}:\s*(\S+)(?:\s+\(Europe/Rome\))?\s*$", body)
     if planning:
         return planning.group(1)
-    field = re.search(r"(?im)^###\s+(?:🗓️\s*)?Target end date(?:\s*\(Europe/Rome\))?\s*$\n\s*(\S+)", body)
+    field = re.search(rf"(?im)^###\s+(?:🗓️\s*)?{label}(?:\s*\(Europe/Rome\))?\s*$\n\s*(\S+)", body)
     return field.group(1) if field else None
+
+
+def target_end_date(body: str) -> str | None:
+    return planning_date(body, "Target end date")
+
+
+def start_date(body: str) -> str | None:
+    return planning_date(body, "Start date")
+
+
+def iso_date(text: str | None) -> dt.date | None:
+    """A strict YYYY-MM-DD calendar date, or None."""
+    if text is None or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return None
+    try:
+        return dt.date.fromisoformat(text)
+    except ValueError:
+        return None
 
 
 def metadata_findings(issue: Issue, assignee: str) -> list[Finding]:
@@ -127,15 +145,18 @@ def metadata_findings(issue: Issue, assignee: str) -> list[Finding]:
                                 f"milestone must be open and target one of {', '.join(ACTIVE_MILESTONES)}"))
     else:
         active = True
-    date = target_end_date(issue.body)
-    try:
-        if date is None or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
-            raise ValueError("missing or non-ISO date")
-        target = dt.date.fromisoformat(date)
-    except ValueError:
+    start = iso_date(start_date(issue.body))
+    if start is None:
+        findings.append(Finding(issue.number, "start-date",
+                                "needs a valid ISO YYYY-MM-DD start date (Europe/Rome)"))
+    target = iso_date(target_end_date(issue.body))
+    if target is None:
         findings.append(Finding(issue.number, "target-date",
                                 "needs a valid ISO YYYY-MM-DD target end date (Europe/Rome)"))
         return findings
+    if start is not None and start > target:
+        findings.append(Finding(issue.number, "start-date",
+                                f"start date {start} must not be after the target end date {target}"))
     if active:
         findings += due_date_findings(issue, target)
     return findings
@@ -308,6 +329,8 @@ def config_findings(root: Path) -> list[str]:
             problems.append(f"{name} must assign {assignee}")
         if not re.search(r"^\s*id:\s*dependencies\s*$", text, re.M):
             problems.append(f"{name} has no dependencies field")
+        if not re.search(r"^\s*id:\s*start_date\s*$", text, re.M):
+            problems.append(f"{name} has no start date field")
         if not re.search(r"^\s*id:\s*target_end_date\s*$", text, re.M):
             problems.append(f"{name} has no target end date field")
     config = forms / "config.yml"
