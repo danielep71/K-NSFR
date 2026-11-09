@@ -87,6 +87,12 @@ to it (API branch-rules read-back). Traffic collection is described in [traffic 
 | Code scanning setup | Advanced setup from `.github/workflows/codeql.yml`; default setup off since 2026-11-07 (#146) | **Verified** through the workflow's results: on #153, the first attempt of [run 42356390686](https://github.com/danielep71/K-NSFR/actions/runs/42356390686) failed with "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"; after I turned the default setup off, the second attempt uploaded the `actions`, `python` and `javascript-typescript` analyses |
 | Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back on 2026-10-28 and 2026-10-29, with each row's source |
 
+<a id="enforcement"></a>
+
+## 🧪 Enforcement
+
+Deliberately failing probe for #15: this link points to a [missing section](#enforcement-probe-missing-anchor).
+
 <a id="maintenance"></a>
 
 ## ✅ Maintenance

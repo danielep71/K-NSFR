@@ -1,0 +1,16 @@
+name: Probe unpinned action
+# Temporary enforcement probe for #15: the repository requires full-SHA action
+# pins, so this run must fail before any job starts. Removed by the next commit.
+on:
+  pull_request:
+    branches: ["release/**"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
