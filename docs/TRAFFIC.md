@@ -188,14 +188,16 @@ about readers. They stay in the history and the `clones` badge. A count blank
 in the older snapshot raises nothing. At most one issue is
 opened per snapshot date: the job skips a date whose issue exists, open or
 closed. The issue is assigned to me, labelled `P3` and `repository`, and
-filed under the open milestone with the earliest due date. Its *Planning*
-section starts on the snapshot date and sets a target end date a week later,
-or the day before the milestone's due date if that is earlier, so it passes
-[Issue triage](GOVERNANCE.md#issues).
+filed under the open milestone with the earliest due date after today (UTC).
+Its *Planning* section has the snapshot date as its start date and a target
+end date a week later, or the day before the milestone's due date if that is
+earlier, so it passes [Issue triage](GOVERNANCE.md#issues). A milestone due
+on or before the snapshot date would leave no valid target end date, so the
+script refuses it and the step fails.
 
 The job picks the assignee and the milestone by its own rules:
 `github.repository_owner`, which is my account, and the open milestone with
-the earliest due date. Triage instead expects the assignee configured in the
+the earliest due date after today. Triage instead expects the assignee configured in the
 Bug report form and the milestone of the active release. Both give the same
 result while the active release's milestone has the earliest due date, so give
 any later milestone a later due date.
@@ -242,7 +244,7 @@ invalid, and leaves the history unchanged. Read the failing step:
 | *Commit and push*: `Could not push the history` | `traffic-history` kept moving, or a rule rejected the push. | Check the branch's rules and recent commits, then run again. |
 | *Traffic alert*: `The collect job published no traffic-history commit SHA` | The collect job ended without publishing. | Read the collect job's log; run the workflow again. |
 | *Check out traffic-history* fails | The branch was deleted. | Restore it from the last known commit; never recreate it empty over existing history. |
-| *Traffic alert*: `No open milestone with a due date` | Every milestone is closed, or none has a due date. | Open the next milestone with a due date, then run the workflow again. |
+| *Traffic alert*: `No open milestone due after …` | Every milestone is closed, has no due date, or is already due. | Open the next milestone with a later due date, then run the workflow again. |
 | *Traffic alert*: `gh issue create` fails | A label, the assignee or the milestone no longer exists. | Restore it, then run the workflow again; the history is already saved. |
 
 A failed run can always be repeated: the merge is idempotent, and each
