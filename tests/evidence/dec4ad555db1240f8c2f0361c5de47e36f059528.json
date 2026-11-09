@@ -1,0 +1,35 @@
+{
+    "schema":  "k-nsfr-host-evidence/1",
+    "candidate_sha":  "dec4ad555db1240f8c2f0361c5de47e36f059528",
+    "recorded_on":  "2026-11-09",
+    "worktree_clean":  true,
+    "host":  {
+                 "os":  "Windows 11 Enterprise 25H2, OS build 26200.9711",
+                 "excel":  "Microsoft 365 Apps (O365ProPlusRetail), Version 16.0 (Build 20430.20180 Click-to-Run)",
+                 "bitness":  "64-bit"
+             },
+    "fingerprints":  {
+                         ".gitattributes":  "498cfbfbf3b38677337b493381feb15fc0b46bdef1d6039b9e8a03f22ca632a3",
+                         "tests/core/Test_NSFR_Harness.bas":  "39b8081b5601bc08b55e41964254d134b210386e8151d46099a3bf3475726510",
+                         "tests/core/Test_NSFR_HarnessSelfTest.bas":  "2c3806b30558665b4488854c254ecb7c351820800fb08f0fc10afd92d52b1301"
+                     },
+    "steps":  {
+                  "import":  "PASS",
+                  "compile":  "PASS",
+                  "run":  "PASS",
+                  "cleanup":  "PASS"
+              },
+    "result":  "PASS",
+    "output":  [
+                   "SUITE HARNESS-SELF-TEST",
+                   "H-001 PASS",
+                   "H-002 PASS",
+                   "H-003 PASS",
+                   "H-004 PASS",
+                   "H-005 PASS",
+                   "H-006 PASS",
+                   "H-007 PASS",
+                   "COUNTS declared=7 executed=7 passed=7 failed=0 skipped=0 missing=0 undeclared=0 cleanup_failed=0 problems=0",
+                   "RESULT PASS"
+               ]
+}
