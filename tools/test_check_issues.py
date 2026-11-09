@@ -17,7 +17,8 @@ from check_issues import Issue
 ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY = "example-org/sample-project"
 BLOCKED_LABEL = check_issues.BLOCKED
-PLANNING = "## Planning\n- Target end date: 2026-11-04 (Europe/Rome)\n\n"
+PLANNING = ("## Planning\n- Start date: 2026-10-28 (Europe/Rome)\n"
+            "- Target end date: 2026-11-04 (Europe/Rome)\n\n")
 READY = PLANNING + "## Dependencies and blocking status\n\n**Ready to start**: none.\n"
 
 
@@ -60,11 +61,28 @@ class MetadataTests(unittest.TestCase):
                                    assignee="triage-person")
         self.assertIn("one of v0.1.0, v0.2.0", found[0].message)
 
+    def test_a_start_date_is_required_and_not_after_the_target(self) -> None:
+        for date in ("2026-02-30", "2026-10-1", "soon"):
+            with self.subTest(date=date):
+                self.assertEqual(rules([issue(1, body=READY.replace("2026-10-28", date))]),
+                                 [(1, "start-date")])
+        no_start = READY.replace("- Start date: 2026-10-28 (Europe/Rome)\n", "")
+        self.assertEqual(rules([issue(1, body=no_start)]), [(1, "start-date")])
+        self.assertEqual(rules([issue(1, body=READY.replace("2026-10-28", "2026-11-04"))]), [])
+        late = check_issues.audit([issue(1, body=READY.replace("2026-10-28", "2026-11-05"))],
+                                  {1: "open"}, REPOSITORY, assignee="triage-person")
+        self.assertEqual([(f.rule, f.message) for f in late], [
+            ("start-date", "start date 2026-11-05 must not be after the target end date 2026-11-04")])
+        form = "### 🗓️ Start date (Europe/Rome)\n\n2028-02-01\n\n### 🗓️ Target end date (Europe/Rome)\n\n2028-02-29\n"
+        self.assertEqual((check_issues.start_date(form), check_issues.target_end_date(form)),
+                         ("2028-02-01", "2028-02-29"))
+
     def test_dates_are_required_and_calendar_valid(self) -> None:
         for date in ("2026-02-30", "2026-11-4", "tomorrow", "2025-13-01"):
             with self.subTest(date=date):
                 self.assertEqual(rules([issue(1, body=READY.replace("2026-11-04", date))]), [(1, "target-date")])
-        self.assertEqual(rules([issue(1, body=READY.replace(PLANNING, ""))]), [(1, "target-date")])
+        self.assertEqual(rules([issue(1, body=READY.replace(PLANNING, ""))]),
+                         [(1, "start-date"), (1, "target-date")])
         form = "### 🗓️ Target end date (Europe/Rome)\n\n2028-02-29\n\n" + READY.split("## Dependencies", 1)[1]
         self.assertEqual(check_issues.target_end_date(form), "2028-02-29")
 
@@ -220,6 +238,8 @@ class ConfigTests(unittest.TestCase):
             self.assertRegex(text, r"(?m)^\s*id:\s*target_end_date\s*$")
             form.write_text(text.replace("id: target_end_date", "id: end_date"), encoding="utf-8")
             self.assertIn("documentation.yml has no target end date field", check_issues.config_findings(root))
+            form.write_text(text.replace("id: start_date", "id: begin_date"), encoding="utf-8")
+            self.assertIn("documentation.yml has no start date field", check_issues.config_findings(root))
 
     def test_dependabot_labels_and_assignees_are_checked(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

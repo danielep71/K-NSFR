@@ -382,7 +382,7 @@ class AlertTests(unittest.TestCase):
             self.assertEqual(issue["title"], "Traffic alert: 2026-10-14")
             self.assertIn("views spike, stars increased.", issue["body"])
             self.assertIn("| Stars | 2 | 1 |", issue["body"])
-            for line in ("- Planned start: 2026-10-14", "- Target end date: 2026-10-21 (Europe/Rome)",
+            for line in ("- Start date: 2026-10-14 (Europe/Rome)", "- Target end date: 2026-10-21 (Europe/Rome)",
                          "- Milestone due date: 2026-12-20",
                          "## Dependencies and blocking status\n\nNone."):
                 self.assertIn(line, issue["body"])
