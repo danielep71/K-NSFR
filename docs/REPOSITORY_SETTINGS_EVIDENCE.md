@@ -14,7 +14,9 @@ features. GitHub's live settings remain authoritative. This record is a
 snapshot, not a certification. It does not enforce or authorize any change,
 and it must not be copied as evidence for another repository.
 
-Snapshot date: **2026-10-29 (Europe/Rome)**. Tracking: #80.
+Snapshot date: **2026-10-29 (Europe/Rome)**. Tracking: #80. The rulesets, the
+general settings and the Actions behavior were read again on **2026-11-09** (#15);
+the [enforcement](#enforcement) section records what was observed.
 
 <a id="reading-the-record"></a>
 
@@ -54,8 +56,10 @@ read 2026-10-29. Every row is **verified**.
 
 ## 🛡️ Branch and tag rulesets
 
-All five rulesets were read in full through the API on **2026-10-29**. All
-have active enforcement, an empty bypass list and no excluded refs.
+All five rulesets were read in full through the API on **2026-10-29** and again
+on **2026-11-09**, with the same result: none has changed since 2026-10-28
+(`updated_at`). All have active enforcement, an empty bypass list and no
+excluded refs.
 
 | Ruleset (ID) | Target | Observed rules |
 | --- | --- | --- |
@@ -82,10 +86,34 @@ to it (API branch-rules read-back). Traffic collection is described in [traffic 
 
 | Setting | State | Source |
 | --- | --- | --- |
-| Full-SHA action pins required | Required | My statement in [governance](GOVERNANCE.md#installed-settings-and-limits); the Actions permissions API was not readable with the access used for this record, so this is **unverified** on the snapshot date |
-| Default workflow token | Read-only | My statement in governance; **unverified** on the snapshot date. Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
+| Full-SHA action pins required | Required | **Verified** on 2026-11-09 by its effect: a probe that used `actions/checkout@v4` was refused before its job ran ([enforcement](#enforcement)). The Actions permissions API is still not readable with the access used for this record |
+| Default workflow token | Read-only | **Verified** on 2026-11-09 by its effect: a probe job without declared permissions received `Contents: read`, `Metadata: read` and `Packages: read` ([enforcement](#enforcement)). Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Code scanning setup | Advanced setup from `.github/workflows/codeql.yml`; default setup off since 2026-11-07 (#146) | **Verified** through the workflow's results: on #153, the first attempt of [run 42356390686](https://github.com/danielep71/K-NSFR/actions/runs/42356390686) failed with "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"; after I turned the default setup off, the second attempt uploaded the `actions`, `python` and `javascript-typescript` analyses |
 | Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back on 2026-10-28 and 2026-10-29, with each row's source |
+
+<a id="enforcement"></a>
+
+## 🧪 Enforcement
+
+Demonstrated on **2026-11-09** (#15) with the task PR #172. Its first commit,
+`b30bd997aab72a0b452d4785bef3b76e73a66975`, was deliberately failing:
+- a broken section link, which the `content` gate rejects;
+- a workflow using an action by tag;
+- a workflow without declared permissions.
+
+The second commit removed the three probes and recorded this section. No
+setting or ruleset was changed, and no protected branch was touched.
+
+| Scenario | Observation | Evidence |
+| --- | --- | --- |
+| A failing head cannot be merged | Repository integrity failed on the first commit: the `content`, `workflow-invariants` and `tool-tests` gates. GitHub showed the PR as `blocked`, and the merge API answered `405 Repository rule violations found — Required status check "Repository integrity" is failing.` | [run 42704609522](https://github.com/danielep71/K-NSFR/actions/runs/42704609522) |
+| A corrected head can be merged | After the correcting commit, Repository integrity passed and the PR was squash-merged into `release/0.1.0` | The run and merge commit are recorded in #15 |
+| Actions must be pinned to a full SHA | The probe failed before its job ran: `The action actions/checkout@v4 is not allowed in danielep71/K-NSFR because all actions must be pinned to a full-length commit SHA.` | [run 42704609606](https://github.com/danielep71/K-NSFR/actions/runs/42704609606) |
+| The default token is read-only | The probe job, with no `permissions`, received `Contents: read`, `Metadata: read`, `Packages: read` | [run 42704609584](https://github.com/danielep71/K-NSFR/actions/runs/42704609584) |
+| Synchronization and documentation-only PRs are checked | Repository integrity ran on the empty-diff synchronization #171 ([run 42692557010](https://github.com/danielep71/K-NSFR/actions/runs/42692557010)) and on the documentation-only corrected head of #172 | Workflow runs |
+| Merge methods | `main` accepts merge commits only; `release/**` accepts squash or merge (ruleset read-back, 2026-11-09) | [Rulesets](#rulesets) |
+| Branch deletion | `main`, `release/**`, `v*` tags and `traffic-history` cannot be deleted (ruleset read-back); merged head branches are deleted automatically (`delete_branch_on_merge`, read 2026-11-09). A deletion of a protected branch was not attempted | [Rulesets](#rulesets), [general settings](#general-settings) |
+| Dependency alerts | Dependabot security updates read as enabled on 2026-11-09; the alerts themselves are not readable with the access used for this record, so they remain **unverified** | Repository API |
 
 <a id="maintenance"></a>
 
