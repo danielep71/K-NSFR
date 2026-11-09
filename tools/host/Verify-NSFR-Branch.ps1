@@ -93,6 +93,7 @@ Write-Step "K-NSFR host verification of $Branch at $sha"
 Write-Step "Bundle folder: $bundle"
 $result = 'NOT_RUN'
 $record = $null
+$exitCode = $null
 try {
     [void](Invoke-Git @('worktree', 'add', '--detach', $checkout, $sha))
     Write-Step 'Worktree checked out; running that commit''s Record-HostEvidence.ps1'
@@ -133,6 +134,10 @@ $report.Add($rule)
 $report.Add('K-NSFR host verification: Record-HostEvidence.ps1 on one exact commit')
 $report.Add("Branch: $Branch")
 $report.Add("Commit: $sha")
+# A passing record counts only when the recorder also finished cleanly.
+if ($null -ne $exitCode -and $exitCode -ne 0) {
+    $result = "FAIL (Record-HostEvidence.ps1 exited with code $exitCode; record result: $result)"
+}
 $report.Add("Result: $result")
 if ($null -ne $record) {
     $report.Add('')

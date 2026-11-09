@@ -257,7 +257,8 @@ class HostEvidenceTests(unittest.TestCase):
                        "worktree remove --force $checkout",
                        "Join-Path $checkout 'tools\\host\\Record-HostEvidence.ps1'",
                        "tests\\evidence\\$sha.json",
-                       "[Parameter(Mandatory)][string]$Branch"):
+                       "[Parameter(Mandatory)][string]$Branch",
+                       "$exitCode -ne 0", "if ($result -ne 'PASS') { exit 1 }"):
             self.assertIn(needed, script)
         # Like the recorder, the verifier never changes Trust Center settings.
         for forbidden in ("AccessVBOM", "Set-ItemProperty", "New-ItemProperty", "Remove-ItemProperty",
