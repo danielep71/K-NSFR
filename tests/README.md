@@ -10,10 +10,12 @@ The harness records the outcome of each test case and prints a deterministic
 summary. It is neutral: it implements no NSFR calculation and its self-test
 asserts nothing about one. Tracking: #12.
 
-> [!WARNING]
-> The harness has not been compiled or run in Excel yet. The portable checks
-> read its source only (`vba-static`); its first host run is recorded in #12,
-> and host evidence in general belongs to #14.
+> [!NOTE]
+> The harness was imported, compiled and run in Excel on 2026-11-09 at
+> `5231985`, with the self-test result `RESULT PASS`
+> ([host evidence](evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json); #12, #14).
+> The portable checks read its source only (`vba-static`). A run on one commit
+> is no evidence for another, so a change to the harness needs a new run.
 
 <a id="layout"></a>
 
@@ -123,7 +125,9 @@ line of its summary that differs.
 You need the [intended host](../docs/IMPLEMENTATION.md#supported-and-tested-environments):
 Windows 11, Microsoft 365 desktop Excel, 64-bit.
 `tools/host/Record-HostEvidence.ps1` runs the steps below through COM and
-writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run).
+writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run);
+`tools/host/Verify-NSFR-Branch.ps1 -Branch <branch>` does the same for the
+head of a branch, in a separate worktree, in one command.
 Until #13 provides a host template, the manual route is:
 
 1. Check out the commit to test and note its full SHA.

@@ -48,9 +48,9 @@ must be approved before any numerical implementation.
 | --- | --- |
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
 | Calculation | Not implemented; no ASF, RSF or ratio output is available. A benchmark [prototype](prototype/README.md) is stored but not admitted |
-| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; Excel execution **NOT RUN** |
+| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; it passed in Excel on 2026-11-09 at `5231985` ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)) |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
-| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; execution **NOT RUN** |
+| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; only the neutral harness has run there ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)); no engine or workbook exists yet |
 | Data | Synthetic-only policy; no production or client data |
 
 <a id="scope"></a>
