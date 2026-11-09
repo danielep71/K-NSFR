@@ -71,9 +71,24 @@ Example of a passing record. The SHA and fingerprints are placeholders:
 
 ## ▶️ Recording a run
 
-`tools/host/Record-HostEvidence.ps1` records a run in one command. You need
-the supported host and Git. Python is optional and validates the record at
-the end.
+`tools/host/Verify-NSFR-Branch.ps1` verifies a branch in one command, from
+any clone of the repository on the supported host:
+
+```text
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0
+```
+
+It fetches the branch, checks its head out in a separate Git worktree beside
+the clone, runs that commit's own `Record-HostEvidence.ps1` there, removes the
+worktree, and prints a summary with the commit, the result and the complete
+record. The bundle folder `..\nsfr-verify-<first 7 characters of the SHA>`
+keeps the record (`<SHA>.json`), the run log and the summary. Your clone and
+its branch are not changed. `-Force` replaces the bundle of an earlier run of
+the same commit, and `-Hidden` hides Excel.
+
+`tools/host/Record-HostEvidence.ps1` records a run of the commit already
+checked out. You need the supported host and Git. Python is optional and
+validates the record at the end.
 
 1. Clone the repository fresh, or check that `git status --porcelain` prints
    nothing, and check out a commit of `release/0.1.0` or `main`.

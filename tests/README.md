@@ -125,7 +125,9 @@ line of its summary that differs.
 You need the [intended host](../docs/IMPLEMENTATION.md#supported-and-tested-environments):
 Windows 11, Microsoft 365 desktop Excel, 64-bit.
 `tools/host/Record-HostEvidence.ps1` runs the steps below through COM and
-writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run).
+writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run);
+`tools/host/Verify-NSFR-Branch.ps1 -Branch <branch>` does the same for the
+head of a branch, in a separate worktree, in one command.
 Until #13 provides a host template, the manual route is:
 
 1. Check out the commit to test and note its full SHA.
