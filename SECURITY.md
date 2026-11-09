@@ -153,7 +153,7 @@ and must not be assumed.
 | Dependency graph | On | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Automatic dependency submission | Disabled | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Dependabot alerts | On | **Settings → Advanced Security**, read by me on 2026-11-09 (#15); the API does not report it with the access used for the other rows |
-| Dependabot malware alerts | Off | **Settings → Advanced Security**, read by me on 2026-11-09 |
+| Dependabot malware alerts | On | Off when read on 2026-11-09; I turned them on the same day (**Settings → Advanced Security**) |
 | Dependabot auto-triage rules | One rule enabled | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Code scanning | CodeQL from the `CodeQL` workflow (#146): Actions, Python and JavaScript/TypeScript, `security-extended` queries, on pull requests, pushes and weekly. It covers the workflows, the Python tools and the label scripts, not the VBA. The default setup, enabled on 2026-10-29 for Actions and Python with the default queries, is off | The workflow file and its first run, on #153 ([run 42356390686](https://github.com/danielep71/K-NSFR/actions/runs/42356390686)). The first attempt was rejected while the default setup was on. I turned the default setup off on 2026-11-07, and the second attempt uploaded all three analyses: 7 workflow files, 21 Python files and the 3 label scripts. The default setup's first analysis, on `main` at `d272338`, succeeded ([run 40838760015](https://github.com/danielep71/K-NSFR/actions/runs/40838760015)). Alerts are not readable without security-events access; *not verified* |
 
