@@ -250,6 +250,20 @@ class HostEvidenceTests(unittest.TestCase):
         record["recorded_on"] = "2000-01-01"
         self.assertFinding("recorded_on: 2000-01-01 must fall between", record)
 
+    def test_the_branch_verifier_runs_the_candidate_recorder_in_a_worktree(self) -> None:
+        script = (Path(__file__).resolve().parent / "host" / "Verify-NSFR-Branch.ps1").read_text(
+            encoding="ascii")
+        for needed in ("'worktree', 'add', '--detach', $checkout, $sha",
+                       "worktree remove --force $checkout",
+                       "Join-Path $checkout 'tools\\host\\Record-HostEvidence.ps1'",
+                       "tests\\evidence\\$sha.json",
+                       "[Parameter(Mandatory)][string]$Branch"):
+            self.assertIn(needed, script)
+        # Like the recorder, the verifier never changes Trust Center settings.
+        for forbidden in ("AccessVBOM", "Set-ItemProperty", "New-ItemProperty", "Remove-ItemProperty",
+                          "AutomationSecurity"):
+            self.assertNotIn(forbidden, script)
+
     def test_the_recording_script_writes_the_record_the_gate_reads(self) -> None:
         script = (Path(__file__).resolve().parent / "host" / "Record-HostEvidence.ps1").read_text(
             encoding="ascii")
