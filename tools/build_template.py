@@ -7,8 +7,10 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 Writes templates/NSFR_Template.xlsx with the layout of every sheet of the
 non-admitted prototype (prototype/tools/build_template.py): the same sheets,
-headers, formats, input regions, validations and workbook names, located
-through the names of their first header cells (hdr*). It leaves out what is
+headers, formats, input regions and validations, located through the names of
+their first header cells (hdr*). The workbook names differ where
+docs/SOURCE_CONTROL.md (gaps against the contract and the prototype) says,
+and the layout is not yet contract v1. It leaves out what is
 not admitted: the regulatory factors and template rows, the demo data and
 bank figures, the expected results, and the macro buttons. The parameter set
 (PROD-01) and the admitted modules (#137) bring them.
