@@ -246,7 +246,7 @@ class Builder:
                                                      "error_message": "Choose a category of Params."})
         ws.data_validation(5, 9, 4 + INPUT_ROWS, 9, {"validate": "list", "source": ["<6M", "6M-1Y", ">=1Y"]})
         ws.freeze_panes(5, 3)
-        ws.autofilter(4, 2, 4, 11)
+        ws.autofilter(4, 2, 4 + INPUT_ROWS, 11)
 
     def bank_cells(self) -> None:
         ws = self.sheet("BankCells", TAB_IN, "Bank figures", 8)
@@ -268,7 +268,7 @@ class Builder:
         self.name("hdrBankCells", ws, bh, 2)
         self.blanks(ws, bh + 1, INPUT_ROWS, 2, ["in_ctr", "in_ctr", "in_ctr", "in_amt", "in_txt"])
         ws.freeze_panes(bh + 1, 0)
-        ws.autofilter(bh, 2, bh, 6)
+        ws.autofilter(bh, 2, bh + INPUT_ROWS, 6)
 
     def results(self) -> None:
         ws = self.sheet("Results", TAB_OUT, "Results", 9)

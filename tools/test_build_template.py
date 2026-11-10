@@ -59,6 +59,15 @@ class TemplateTests(unittest.TestCase):
             self.assertNotRegex(xml, r'<c r="[A-Z]+\d+"(?: s="\d+")?><v>')
         self.assertTrue(any("COUNTIFS" in xml for xml in sheets))
 
+    def test_the_input_filters_cover_every_input_row(self) -> None:
+        path = build_to(self.folder)
+        with zipfile.ZipFile(path) as z:
+            xml = {n: z.read(n).decode("utf-8") for n in z.namelist() if n.startswith("xl/worksheets/sheet")}
+        filters = {re.search(r'<autoFilter ref="([^"]+)"', x).group(1)  # type: ignore[union-attr]
+                   for x in xml.values() if "<autoFilter" in x}
+        self.assertIn(f"C5:L{5 + bt.INPUT_ROWS}", filters)    # Positions
+        self.assertIn(f"C10:G{10 + bt.INPUT_ROWS}", filters)  # BankCells
+
     def test_a_vba_project_or_macro_content_type_is_reported(self) -> None:
         path = self.folder / "m.xlsm"
         with zipfile.ZipFile(path, "w") as z:
