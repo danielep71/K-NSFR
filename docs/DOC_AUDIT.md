@@ -171,7 +171,7 @@ Every finding was corrected in #21 unless its row says otherwise.
 | C-06 | The host-evidence descriptions omitted the published-history rule | Corrected |
 | C-07 | The invariants list omitted the full-history checkout | Corrected |
 | C-08 | The CI download list omitted the runtimes | Corrected |
-| C-09 | `Record-HostEvidence.ps1` warns only for `release/0.1.0` and `main` | Kept: the [release procedure](RELEASE.md#next-release-branch) changes it when the next release branch opens; the script cannot be run here |
+| C-09 | `Record-HostEvidence.ps1` warns only for `release/0.1.0` and `main` | Kept: the [release procedure](RELEASE.md#next-release-branch) changes it when the next release branch opens, and a change to the script needs a run on the supported host |
 | C-10 | The `--check-config` help text was incomplete | Corrected |
 | C-11 | The link checker's docstring omitted HTML links | Corrected |
 | C-12 | A contract test name contradicted its assertion | Corrected |
