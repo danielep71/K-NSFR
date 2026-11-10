@@ -16,7 +16,9 @@ bank figures, the expected results, and the macro buttons. The parameter set
 The file is reproducible: XlsxWriter writes every ZIP member with a fixed
 date, and the document properties carry the fixed date CREATED. With --check
 the template is built in a temporary folder and compared, byte for byte, with
-the committed one; the `template` gate of tools/check.py runs it.
+templates/NSFR_Template.xlsx in this file's worktree; the `template` gate of
+tools/check.py runs it, and with --ci that worktree must be clean, so the file
+compared is the committed one.
 
 Usage: python tools/build_template.py [--output PATH | --check]
 """
@@ -461,7 +463,7 @@ def macro_findings(path: Path) -> list[str]:
 
 
 def check(committed: Path) -> list[str]:
-    """Rebuild the template and compare it with the committed file."""
+    """Rebuild the template and compare it with the file at the given path."""
     if not committed.is_file():
         return [f"{committed.relative_to(ROOT)} is missing: run python tools/build_template.py"]
     with tempfile.TemporaryDirectory() as tmp:

@@ -44,7 +44,7 @@ reported **NOT RUN** without them.
 
 | Gate | Needs | Evidence |
 | --- | --- | --- |
-| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history, external links, host evidence and the VBA static checks |
+| `tool-tests` | PyYAML, markdown-it-py, XlsxWriter, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history, external links, host evidence, the VBA static checks and the workbook template |
 | `labels-sync-self-test` | Node | Label synchronization self-tests |
 | `labels-manifest` | Node | Label catalogue validation |
 | `labels-drift-self-test` | Node | Label drift self-tests |
@@ -58,7 +58,7 @@ reported **NOT RUN** without them.
 | `template` | PyYAML, markdown-it-py, XlsxWriter | `build_template.py --check`: builds the [workbook template](../docs/SOURCE_CONTROL.md#workbook-template) afresh and compares it byte for byte with `templates/NSFR_Template.xlsx`, which must hold no VBA project or macro-enabled content type |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
-| `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
+| `mypy` | mypy, PyYAML, markdown-it-py, XlsxWriter | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
 | `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; a full-history checkout (`fetch-depth: 0`) for the required job; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency, separate PR/trusted-event permissions and 30-day PR SARIF retention; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
@@ -93,7 +93,8 @@ These checks neither compile VBA nor run Excel or the NSFR engine; the
 VBA static checks read source text only (see their
 [limitations](#vba-static-limitations)). The [neutral harness](../tests/README.md)
 is VBA and runs only in Excel; its host evidence records are in
-`tests/evidence/`, and packaging (the workbook template) remains #13. `host/Record-HostEvidence.ps1` runs the harness self-test in
+`tests/evidence/`. The workbook template is checked by the `template` gate;
+its synchronization round trip runs only in Excel. `host/Record-HostEvidence.ps1` runs the harness self-test in
 Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run),
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
 separate worktree; `host/Test-NSFR-Sync.ps1` runs the [template and
@@ -175,7 +176,7 @@ reported as `exception-unused`, so the file never keeps a stale exception.
 - Rules that need the Excel object model or a compiled project, such as
   `Option Private Module` hiding a procedure or the absence of Excel calls in
   the core, need Excel: they rest on the neutral harness, its host evidence
-  in `tests/evidence/` and packaging (#13).
+  in `tests/evidence/` and the synchronization round trip (#13).
 
 <a id="continuous-integration"></a>
 

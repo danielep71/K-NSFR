@@ -32,9 +32,9 @@ copyright ownership or permission to redistribute.
 | GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `.github/workflows/codeql.yml` authored locally in #146 | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
-| Workbook, regulatory parameters | None admitted | Future source/version, licensing and independent validation required |
+| Workbook engine, regulatory parameters | None admitted; the workbook template holds only the layout (below) | Future source/version, licensing and independent validation required |
 | Numerical fixtures | One neutral synthetic fixture, FX-0001 (#10) | Synthetic data and factors; no regulatory claim |
-| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, `openpyxl` and LibreOffice, which are not locked |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 

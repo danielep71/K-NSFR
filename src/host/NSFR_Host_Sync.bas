@@ -51,7 +51,7 @@ Public Function SyncImport( _
 '               file, after a backup copy of the workbook. This module itself
 '               is kept, because it is running: import it by hand.
 'INPUTS         RepoRoot: the folder of a clean clone, for example
-'               "C:\Dev\LIQ-NSFR\K-NSFR".
+'               "C:\path\to\K-NSFR".
 'RETURNS        The report: BACKUP, one IMPORTED or KEPT line per component,
 '               then RESULT PASS, or RESULT FAIL with the step and reason.
 'ERROR POLICY   Contained: a failure ends the report; the backup stays.

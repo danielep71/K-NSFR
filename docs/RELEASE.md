@@ -100,7 +100,6 @@ branch:
 - [governance](GOVERNANCE.md), [contributing](../CONTRIBUTING.md), the
   [installation guide](INSTALLATION.md), the README and the PR template;
 - the Dependabot `target-branch` in `.github/dependabot.yml`;
-- the published branches that `tools/host/Record-HostEvidence.ps1` accepts;
 - `ACTIVE_MILESTONES` in `tools/check_issues.py`, when the closed milestone
   leaves it.
 
@@ -167,7 +166,7 @@ material came from.
 | Byte-for-byte regulatory source copies | Adopted | Convention only; no source copy is stored yet (#95) |
 | VBA static checks | Authored | The VBA rules of ADR-008 (#11) |
 | Candidate-bound host evidence | Authored | Portable checks never prove Excel (#14) |
-| Workbook template and source synchronization | Deferred to v0.2.0 | Its layout is the prototype's (#13) |
-| Release tag and GitHub release | Deferred to the end of the milestone | This procedure; no tag exists yet |
+| Workbook template and source synchronization | Authored | Deferred from v0.1.0 and delivered in v0.2.0; its layout is the prototype's (#13) |
+| Release tag and GitHub release | Authored | This procedure; `v0.1.0` was tagged on 2026-11-10 (#22); a GitHub release is optional, and none is published |
 | Required approving reviews, required commit signing, Discussions | Not adopted | A sole maintainer cannot give an independent approval; no ruleset requires signed commits; Discussions are off ([settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#general-settings)) |
 | Public visibility | Adopted on 2026-10-28 | Post-publication review in #19 |

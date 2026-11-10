@@ -248,8 +248,9 @@ docs/user-manual/**/assets/** linguist-documentation
 #------------------------------------------------------------------------------
 # REGULATORY SOURCE COPIES
 #------------------------------------------------------------------------------
-# Convention: byte-for-byte copies whose SHA-256 is registered in
-# docs/methodology/sources/README.md. Never normalized, so the checked-out bytes
+# Convention: byte-for-byte copies whose SHA-256 will be registered in
+# docs/methodology/sources/README.md; the directory does not exist yet (#95).
+# Never normalized, so the checked-out bytes
 # keep the registered hash. Unsetting text also makes the committed-content
 # check treat each copy as binary: list it in tools/binary-allowlist.json. The
 # README itself is ordinary documentation.

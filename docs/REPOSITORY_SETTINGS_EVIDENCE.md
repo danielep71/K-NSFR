@@ -41,7 +41,7 @@ row says otherwise. Every row is **verified**.
 
 | Setting | Observed value | Interpretation |
 | --- | --- | --- |
-| Visibility / default branch | Public / `main` | Development targets `release/0.1.0`, not `main`. |
+| Visibility / default branch | Public / `main` | Development targets the active release branch, not `main`: `release/0.1.0` at this read-back, `release/0.2.0` since 2026-11-10. |
 | Issues / Wiki | Enabled / enabled | The wiki is a separate repository, which I publish. |
 | Projects / Discussions | Disabled / disabled | Repository feature flags only. |
 | Merge methods | Merge, squash and rebase enabled | The rulesets below restrict each protected branch further. |

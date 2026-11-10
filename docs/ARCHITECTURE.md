@@ -47,9 +47,9 @@ numeric/error behavior and the detailed supported-versus-tested matrix; the
 portable tooling's runtime is pinned as the
 [tooling guide](../tools/README.md#tool-versions) describes.
 #14 delivered candidate-bound host evidence: the neutral harness self-test
-passed on the supported host at `5231985` and `dec4ad5`
-([records](../tests/evidence/README.md)). #13, in v0.2.0, supplies the
-workbook template, packaging and the source synchronization round trip. No worksheet API, Windows API, COM reference, or external
+passed on the supported host in three
+[records](../tests/evidence/README.md). #13 delivered the workbook template
+and the source synchronization, with its round-trip script. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
 be justified and isolated.
 
@@ -94,14 +94,13 @@ real deliverable; the repository holds no empty scaffolding.
 | `src/api/` | Public validation and result boundary; #9 defines the contracts |
 | `src/host/` | Workbook adapters, isolated from core; `NSFR_Host_Sync` synchronizes the components that `src/manifest.txt` lists (#13) |
 | `tests/core/`, `tests/api/` | The deterministic [neutral harness](../tests/README.md) and its self-test (#12), then reviewed numerical cases |
-| `tests/host/` | Import, cleanup, and workbook round-trip tests; #13 (v0.2.0) |
 | `tests/fixtures/` | Registered numerical fixtures: synthetic inputs, parameters, independently derived expected results and provenance; #10 |
 | `tests/evidence/` | Host evidence records, one per tested commit; #14 |
 | `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
 | `docs/` | Scope, architecture, decisions, governance, installation, release, and the source register and validation guides |
 | `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
 | `docs/validation/` | Numerical fixture rules and their machine-readable schema (#10); the host evidence record format (#14) |
-| `tools/` | Python repository checks and their tests; `tools/host/` PowerShell scripts that record host evidence; future sync utilities (#13) |
+| `tools/` | Python repository checks and their tests; `tools/host/` PowerShell scripts that record host evidence and test the synchronization round trip (#13) |
 | `prototype/` | My benchmark prototype, stored as delivered and not admitted ([ADR-011](DECISIONS.md#recorded-decisions)); v0.2.0 moves it into this layout piece by piece |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |
@@ -130,7 +129,8 @@ governance tooling in place; do not move tests merely to match the future layout
 
 Portable CI checks the labels and issue forms, committed bytes, Markdown and
 YAML, the contracts and their examples, the numerical fixtures, the VBA static
-rules, the host evidence records and the workflows
+rules and the manifest, the host evidence records, the workbook template and
+the workflows
 ([gates](../tools/README.md#gates-and-reports)). It does not compile
 VBA, run Excel, or validate regulatory results. The VBA static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different

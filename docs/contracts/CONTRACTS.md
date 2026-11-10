@@ -28,8 +28,8 @@ and to independent validation (#10).
   off-balance-sheet item. A position is never split or netted by the
   contract.
 - Not supported, and rejected with `NSFR-E012`: the consolidated basis,
-  derivative contracts (Article 428d) and netted transactions
-  (Article 428e). Each needs its own decision and issue before admission.
+  derivative contracts (S-01 Article 428d) and netted transactions
+  (S-01 Article 428e). Each needs its own decision and issue before admission.
 - No value is inferred: a missing value is an error, never a zero or a
   default.
 
@@ -78,7 +78,7 @@ position. An empty cell is a missing value.
 | `classification` | classification | Yes | The register article that governs the position (see below) |
 | `encumbered` | enum `true`, `false` | Yes | Whether the position is encumbered at the as-of date |
 | `encumbrance_end_date` | date | When `encumbered` is `true`, otherwise empty | End of the encumbrance; not before `as_of_date` |
-| `counterparty_type` | enum `financial_customer`, `other`, `not_applicable` | Yes | Needed for the Article 510 treatment of short-term transactions with financial customers |
+| `counterparty_type` | enum `financial_customer`, `other`, `not_applicable` | Yes | Needed for the S-01 Article 510 treatment of short-term transactions with financial customers |
 | `transaction_type` | enum `secured_lending`, `capital_market_driven`, `unsecured`, `none` | Yes | `derivative` and `netted` are rejected in version 1 |
 | `source_record` | text | Yes | Lineage: the record in `source_system` the position comes from |
 
@@ -212,7 +212,7 @@ All data is synthetic ([data policy](../DATA_POLICY.md)).
 
 | Example | Shows |
 | --- | --- |
-| `valid-basic` | A valid input on both sides, with dated, undated, encumbered and Article 510 positions, and its reconciliation totals |
+| `valid-basic` | A valid input on both sides, with dated, undated, encumbered and S-01 Article 510 positions, and its reconciliation totals |
 | `invalid-positions` | At least one row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, a malformed date, another currency, past dates, side mismatches, a missing and an unexpected conditional date, a derivative, an extra cell and a duplicate `record_id` |
 | `invalid-run-basis` | The consolidated basis, rejected in version 1 |
 | `invalid-run-rows` | A run table with two rows |

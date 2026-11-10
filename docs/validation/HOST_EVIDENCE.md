@@ -16,10 +16,11 @@ portable checks never run Excel, so a green Repository integrity check is
 never host evidence. Only a valid record is.
 
 `tools/check_host_evidence.py` (gate `host-evidence`) validates every record
-in [`tests/evidence/`](../../tests/evidence) against the Git history. The
-source synchronization round trip and the host template belong to #13 in
-v0.2.0. Until then, the [manual route](../../tests/README.md#running-in-excel)
-is the only way to build the host project.
+in [`tests/evidence/`](../../tests/evidence) against the Git history. A
+record covers the neutral harness. The workbook template and the source
+synchronization (#13) are run by `tools/host/Test-NSFR-Sync.ps1`, which prints
+its outcome and writes no record
+([template and synchronization](../INSTALLATION.md#template-and-synchronization)).
 
 <a id="record"></a>
 
@@ -35,7 +36,7 @@ fields:
 | `recorded_on` | The ISO date of the run, from the commit date to today |
 | `worktree_clean` | `true`: `git status --porcelain` printed nothing before the import |
 | `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
-| `host.excel` | The Microsoft 365 product line with `Version … (Build …)`, as **File → Account → About Excel** shows it |
+| `host.excel` | The Microsoft 365 product and its channel, then `Version … (Build … Click-to-Run)`: the scripts record the version Excel reports through COM, such as `16.0`, and the build of the installation, which **File → Account → About Excel** also shows |
 | `host.bitness` | `64-bit` |
 | `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, over the bytes stored in Git (LF). A Windows checkout holds the VBA source with CRLF, so `Get-FileHash` on it gives another value: `python tools/check_host_evidence.py --candidate <SHA> --inventory` prints the expected ones |
 | `steps` | `import`, `compile`, `run` and `cleanup`, each `PASS`, `FAIL` or `NOT_RUN` |
@@ -53,7 +54,7 @@ Example of a passing record. The SHA and fingerprints are placeholders:
   "worktree_clean": true,
   "host": {
     "os": "Windows 11 Pro 24H2, OS build 26100.2314",
-    "excel": "Microsoft 365 Apps for enterprise, Version 2410 (Build 18129.20158 Click-to-Run)",
+    "excel": "Microsoft 365 Apps (O365ProPlusRetail), Version 16.0 (Build 18129.20158 Click-to-Run)",
     "bitness": "64-bit"
   },
   "fingerprints": {
