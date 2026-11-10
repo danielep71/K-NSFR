@@ -132,6 +132,7 @@ There is no `src/` yet: admitted VBA modules will live in `src/core/`,
 | [NSFR benchmark prototype](prototype/README.md) | My prototype, stored as delivered and not admitted (ADR-011) |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
+| [Release procedure](docs/RELEASE.md) · [Changelog](CHANGELOG.md) | Versions, release candidate, tag, rollback, milestone closure and what each version adds |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
 | [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights, attributions and provenance inventory |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |

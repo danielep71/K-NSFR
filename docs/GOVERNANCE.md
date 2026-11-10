@@ -243,7 +243,7 @@ validation. Merge the release PR into `main` with a merge commit, preserving
 ancestry. Then open a `main` to `release/0.1.0` PR and merge it with a merge
 commit; resume task merges only when synchronization completes. Never force push
 or delete protected branches. Release tags, publication and version claims
-require their own release procedure (#19).
+follow the [release procedure](RELEASE.md) (#19).
 
 Record exceptions or deferred acceptance criteria in the linked issue and PR,
 including the reason, my decision, affected candidate SHA and follow-up
