@@ -86,6 +86,7 @@ recorded in #19.
 | Installation guide, release procedure and changelog | Authored locally in #18 and #19 |
 | Tracked-file audit | Authored locally in #20; it lists every tracked file of its candidate with its origin |
 | Workbook template and its generator | Adapted in #13 from my prototype's generator, without its factors, template rows, demo data, expected results or buttons; the template is generated, never edited by hand |
+| Source manifest, `NSFR_Host_Sync` and the round-trip script | Authored locally in #13 |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |

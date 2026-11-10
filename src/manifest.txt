@@ -1,0 +1,7 @@
+# K-NSFR source manifest (#13): the VBA components of the workbook, one per
+# line, as "name path". NSFR_Host_Sync imports and exports exactly these and
+# never touches any other part of the workbook. The vba-static gate checks
+# that every admitted VBA file is listed once, under the name it declares.
+NSFR_Host_Sync src/host/NSFR_Host_Sync.bas
+Test_NSFR_Harness tests/core/Test_NSFR_Harness.bas
+Test_NSFR_HarnessSelfTest tests/core/Test_NSFR_HarnessSelfTest.bas

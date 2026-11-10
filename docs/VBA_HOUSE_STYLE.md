@@ -7,7 +7,8 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 These rules govern VBA implementation. The only admitted VBA modules are the
-[neutral test harness](../tests/README.md) and its self-test (#12); the seven
+[neutral test harness](../tests/README.md) and its self-test (#12) and the
+source synchronization `NSFR_Host_Sync` (#13); the seven
 modules of the non-admitted `prototype/` (ADR-011) are not checked until
 v0.2.0 admits them. The `vba-static` gate enforces the mechanical rules
 ([VBA static checks](../tools/README.md#vba-static-checks)); the harness's

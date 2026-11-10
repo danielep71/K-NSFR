@@ -265,6 +265,18 @@ class HostEvidenceTests(unittest.TestCase):
                           "AutomationSecurity"):
             self.assertNotIn(forbidden, script)
 
+    def test_the_sync_round_trip_script_uses_the_template_and_the_manifest(self) -> None:
+        script = (Path(__file__).resolve().parent / "host" / "Test-NSFR-Sync.ps1").read_text(
+            encoding="ascii")
+        for needed in ("templates\\NSFR_Template.xlsx", "src\\host\\NSFR_Host_Sync.bas",
+                       "NSFR_Host_Sync", ".SyncImport", ".SyncExport", "'status', '--porcelain'",
+                       "'checkout', '--', '.'", "if ($result -ne 'PASS') { exit 1 }"):
+            self.assertIn(needed, script)
+        # It never changes Trust Center or macro settings.
+        for forbidden in ("AccessVBOM", "Set-ItemProperty", "New-ItemProperty", "Remove-ItemProperty",
+                          "AutomationSecurity"):
+            self.assertNotIn(forbidden, script)
+
     def test_the_recording_script_writes_the_record_the_gate_reads(self) -> None:
         script = (Path(__file__).resolve().parent / "host" / "Record-HostEvidence.ps1").read_text(
             encoding="ascii")

@@ -77,7 +77,8 @@ reports **INCOMPLETE**, which is never merge evidence.
   Macro Settings**). The scripts import modules through COM, which needs it.
   They never change it, nor any other Trust Center or macro setting. Turn it
   on yourself if you accept it, and off again after the run if you prefer.
-  The manual route does not need it.
+  The manual route of the harness does not need it; the source
+  synchronization below does, while it runs.
 
 No add-in, COM reference or library is installed, and no workbook is saved:
 every route uses a new blank workbook and closes it without saving.
@@ -104,6 +105,61 @@ the folder where you want the bundle.
 A passing run ends with the self-test output `RESULT PASS` and, for the
 scripts, `Result: PASS`. Propose the record `tests/evidence/<SHA>.json` in a
 pull request: a run proves one commit only.
+
+<a id="template-and-synchronization"></a>
+
+## 🔁 Template and synchronization
+
+`templates/NSFR_Template.xlsx` is the macro-free layout of the workbook (#13).
+The VBA module `NSFR_Host_Sync` (`src/host/`) imports and exports exactly the
+components that `src/manifest.txt` lists, and nothing else: no sheet, cell,
+format, workbook name or unlisted component changes. Build a workbook from the
+template outside the repository:
+
+1. Copy `templates/NSFR_Template.xlsx` to a folder outside the clone, open it
+   and save it as an Excel Macro-Enabled Workbook (`.xlsm`).
+2. Open the Visual Basic Editor (Alt+F11) and **File → Import File…**
+   `src/host/NSFR_Host_Sync.bas`: the sync cannot import itself.
+3. With the trust setting on, run in the Immediate window (Ctrl+G), with your
+   clone's folder:
+
+   ```text
+   ?NSFR_Host_Sync.SyncImport("C:\Dev\LIQ-NSFR\K-NSFR")
+   ```
+
+   It saves a backup copy beside the workbook, imports every other listed
+   component, and prints one line per component and `RESULT PASS`.
+4. **Debug → Compile VBAProject**, and save.
+
+After editing a listed module in the Visual Basic Editor, write the changes
+back with `?NSFR_Host_Sync.SyncExport("C:\Dev\LIQ-NSFR\K-NSFR")`, then review
+them with `git diff`. A new module is synchronized only once it is listed in
+`src/manifest.txt`. Never commit the `.xlsm` or its backups: `.gitignore`
+excludes them.
+
+`tools/host/Test-NSFR-Sync.ps1` runs this round trip in one command, from a
+clean clone with Excel closed:
+
+```text
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Test-NSFR-Sync.ps1
+```
+
+It builds the workbook from the template in a temporary folder, imports twice,
+compiles, runs the harness self-test, exports into the clone, and checks that
+the export changed no byte Git stores, that the sheets, styles, strings and
+workbook names are the template's, and that the backups exist. It restores any
+file the export changed and prints a summary.
+
+**Recovery:**
+
+| Situation | What to do |
+| --- | --- |
+| `RESULT FAIL at manifest` | Pass the clone's folder; the manifest names each file as `name path`, and the file must exist |
+| `RESULT FAIL at trust access` | Turn on the trust setting for the run, then off again if you prefer |
+| `RESULT FAIL at backup` | Save the workbook as `.xlsm` first |
+| `RESULT FAIL at import <name>` | The workbook is left half imported: close it without saving and reopen its backup, `<name>.backup-<time>.xlsm` |
+| A sheet or workbook module has a listed name | The sync refuses it: rename the module or the manifest entry |
+| An export wrote something unexpected | `git diff` shows it; `git checkout -- <file>` restores the committed source |
 
 <a id="troubleshooting"></a>
 
@@ -139,10 +195,11 @@ These instructions were followed from fresh clones, with these outcomes:
 | 2026-11-09 | Record the checked-out commit, on the supported host | Fresh clone of `release/0.1.0` at `5231985` | PASS ([record](../tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json), #175) |
 | 2026-11-09 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `dec4ad5` in its own worktree | PASS, recorder exit code 0 ([record](../tests/evidence/dec4ad555db1240f8c2f0361c5de47e36f059528.json), #178) |
 | 2026-11-10 | Portable checks, Linux x86_64 with Python 3.13.17, Node 22.22.0 and Git 2.43.0 | Fresh clone of `release/0.1.0` at `cd2860f` | All 17 gates PASS. The locked tools were installed with `uv pip install --require-hashes` into a virtual environment, from the same lock file. Not the reference environment: CI pins Python 3.13.18 and Node 22.23.4 and installs with `pip --only-binary=:all:` |
+| 2026-11-10 | Template and synchronization, `Test-NSFR-Sync.ps1`, on the supported host | Clean clone of `feat/13-host-sync` at `cadf916` | PASS on all eight checks: two imports with a backup each, compilation, the harness self-test (`RESULT PASS`), the export, an unchanged worktree after the export, the template's sheets, styles, strings and names in the workbook, and the backups (#13) |
 
 Not executed:
 
-- the manual route, step by step;
-- the scripts' `-Hidden` and `-Force` options;
+- the manual routes of the harness and of the synchronization, step by step;
+- the scripts' `-Hidden`, `-Force` and `-Keep` options;
 - the portable checks on Windows or macOS;
 - any host other than the one above.

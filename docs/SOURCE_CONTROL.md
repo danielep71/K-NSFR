@@ -16,9 +16,10 @@ VBA source is ASCII only, as the
 [VBA house style](VBA_HOUSE_STYLE.md#export-compatibility) requires
 ([ADR-008](DECISIONS.md#recorded-decisions)); Windows-native scripts keep their
 host encoding. Neither is converted: the editor configuration does not force a
-charset, and no Git working-tree-encoding rule is active. #13 (v0.2.0) must
-record the exact code page and prove source import/export on the intended
-host; #14 evidenced only the import of the neutral harness.
+charset, and no Git working-tree-encoding rule is active. The source
+import/export round trip passed on the intended host on 2026-11-10 at
+`cadf916` (#13): the exported modules equal the committed bytes under that
+host's code page, which ASCII source makes irrelevant.
 
 `.editorconfig` defines editor defaults. `.gitattributes` normalizes repository
 text to LF and checks VBA and Windows-native scripts out as CRLF for the intended

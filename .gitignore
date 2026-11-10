@@ -74,6 +74,9 @@
 # compared byte for byte by the template gate (#13). No other exception.
 !/templates/NSFR_Template.xlsx
 
+# A VBA export in progress (NSFR_Host_Sync writes <module>.export first).
+*.export
+
 
 #------------------------------------------------------------------------------
 # RELEASE / BUILD STAGING
