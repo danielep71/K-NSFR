@@ -15,7 +15,10 @@ compliance.
 
 ## 🚧 Unreleased
 
-Nothing yet.
+- The macro-free workbook template `templates/NSFR_Template.xlsx`, generated
+  reproducibly by `tools/build_template.py` with a hash-locked XlsxWriter, and
+  the `template` gate that rebuilds and compares it (#13).
+- `release/0.2.0` is the active release branch (#189).
 
 <a id="v010"></a>
 

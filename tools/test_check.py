@@ -204,7 +204,7 @@ class LibraryAvailabilityTests(unittest.TestCase):
     def test_versions_name_each_library(self) -> None:
         with mock.patch("importlib.metadata.version", return_value="1.0"):
             self.assertEqual(check.library_versions("python-libraries"),
-                             "PyYAML 1.0, markdown-it-py 1.0")
+                             "PyYAML 1.0, markdown-it-py 1.0, XlsxWriter 1.0")
 
 
 if __name__ == "__main__":

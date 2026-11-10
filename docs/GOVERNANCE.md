@@ -342,12 +342,12 @@ read-back, with ruleset IDs.
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
-It runs the 17 gates that [tooling](../tools/README.md#gates-and-reports)
+It runs the 18 gates that [tooling](../tools/README.md#gates-and-reports)
 lists: committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,
 strict Python typing, lint and tests, the label catalogue and issue forms,
 the contracts and numerical fixtures, the VBA static rules, the host evidence
-records, and committed blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
+records, the workbook template, and committed blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
 newline and blank lines at end of file). Python and Node.js are selected by
 exact patch version, as the [tool versions](../tools/README.md#tool-versions)
 table records. These portable checks do not run Excel
