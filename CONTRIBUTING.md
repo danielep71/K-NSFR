@@ -27,13 +27,13 @@ describes. Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
    Triage confirms the priority and sets an open active milestone; the start
    date must not be after the target end date, and the target end date must
    fall before that milestone's due date.
-2. Branch from `release/0.1.0`; keep one coherent issue or correction per PR.
+2. Branch from `release/0.2.0`; keep one coherent issue or correction per PR.
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),
    [VBA house style](docs/VBA_HOUSE_STYLE.md) and
    [documentation style](docs/WRITING_STYLE.md).
 4. Install the [portable toolchain](tools/README.md#running-the-checks), commit
    the candidate and run `python tools/check.py --ci` from a clean checkout.
-5. Open the PR against `release/0.1.0`. Record the exact head, tested merge SHA,
+5. Open the PR against `release/0.2.0`. Record the exact head, tested merge SHA,
    check run, results, risks and deferred criteria. Mark unavailable host tests
    **NOT RUN** with their follow-up issue, and state what was not validated.
 6. Resolve findings and refresh evidence after changes; record review evidence

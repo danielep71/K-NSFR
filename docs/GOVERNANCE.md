@@ -23,10 +23,11 @@ the issue's Planning section (`- Start date: …` and `- Target end date: …`) 
 in the issue form's fields. The target end date must be earlier than the milestone's due
 date, so every milestone carries a due date; triage reads the calendar date of
 the milestone's `due_on` and reports a milestone without one rather than
-guessing it. The active milestone is `v0.1.0 - Repo setup`. Issues for the next
-release may already be planned in its milestone, `v0.2.0 - Prototype Setup`,
-before its release branch exists; triage accepts exactly these two
-(`ACTIVE_MILESTONES` in `tools/check_issues.py`). Update the list when a release
+guessing it. The active milestone is `v0.2.0 - Prototype Setup`; v0.1.0 was
+tagged on 2026-11-10 (#22). Issues for the next release may already be planned
+in its milestone, `v0.3.0`, once I create it and before its release branch
+exists; triage accepts exactly these two (`ACTIVE_MILESTONES` in
+`tools/check_issues.py`). Update the list when a release
 branch becomes active or a further release is planned. Never assign a closed
 milestone as a fallback. Forms default bugs to P2 and enhancements/documentation to P3.
 
@@ -165,7 +166,7 @@ repository. Issue forms and triage tooling target K-NSFR.
 
 Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
-updates to the hash-locked Python tools in `tools/` to `release/0.1.0` weekly on Mondays at
+updates to the hash-locked Python tools in `tools/` to `release/0.2.0` weekly on Mondays at
 05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
 Dependabot reads this configuration from `main`. The Actions entry's
 activation is evidenced in #6. The Python entry reached `main` with #107 on
@@ -206,10 +207,11 @@ setup, renewal and recovery. The workflow builds and tests nothing.
 | Branch | Role | Changes |
 | --- | --- | --- |
 | `main` | Stable default branch and integration record | Receives a reviewed release PR by a merge commit. |
-| `release/0.1.0` | Development and release candidate for milestone v0.1.0 | Receives task PRs by squash and the subsequent `main` synchronization by merge commit. |
-| Task branches | One bounded issue or related change | Start from the current release branch and target `release/0.1.0`. |
+| `release/0.2.0` | Development and release candidate for milestone v0.2.0 | Receives task PRs by squash and the subsequent `main` synchronization by merge commit. |
+| `release/0.1.0` | The v0.1.0 release branch, tagged `v0.1.0` | Kept, protected; receives no further task PR. |
+| Task branches | One bounded issue or related change | Start from the current release branch and target `release/0.2.0`. |
 
-Use the release branch as the default development target while v0.1.0 is in
+Use the release branch as the default development target while v0.2.0 is in
 progress. Link the task PR to its issue and name the exact candidate head SHA
 in its evidence. Milestones belong to issues; leave PR milestones empty. Record
 checks, tests and any manual validation against that candidate commit. Refresh
@@ -220,7 +222,7 @@ review.
 
 For a task PR, review the diff, resolve review threads and wait for the required
 Repository integrity check on the current head. I make the integration
-decision and squash the task PR into `release/0.1.0`. The squash commit
+decision and squash the task PR into `release/0.2.0`. The squash commit
 subject is the PR title in the [commit convention](../CONTRIBUTING.md#commit-messages)
 ending with the PR number, for example `docs: define review evidence (#<PR>)`.
 Its body says what changed and why, what was validated on the final head and
@@ -232,14 +234,14 @@ PR. Close the linked issue only after its criteria and evidence are complete on
 the integrated release branch, as [closing issues](#closing-issues) describes. Review dependent
 issues and their blocked labels then.
 
-For release integration, open a PR from `release/0.1.0` into `main`. Record the
+For release integration, open a PR from `release/0.2.0` into `main`. Record the
 candidate head and validation, resolve discussions, obtain my explicit
 integration decision, and wait for the required check at the current head.
 Pause task merges into the release branch after selecting the candidate until
 the release PR has merged and `main` has been synchronized back. If a task merge
 or new commit intervenes, select a new candidate and repeat the review and
 validation. Merge the release PR into `main` with a merge commit, preserving
-ancestry. Then open a `main` to `release/0.1.0` PR and merge it with a merge
+ancestry. Then open a `main` to `release/0.2.0` PR and merge it with a merge
 commit; resume task merges only when synchronization completes. Never force push
 or delete protected branches. Release tags, publication and version claims
 follow the [release procedure](RELEASE.md) (#19).
@@ -272,7 +274,7 @@ is edited in place, so a link to it later describes another commit.
 
 The bot does not review PRs authored by bots such as Dependabot. For those, my
 review of the final diff and head SHA is the only review; do not claim
-automated coverage that did not run. A `main` to `release/0.1.0`
+automated coverage that did not run. A `main` to release-branch
 synchronization PR whose diff is empty changes no file: it needs the required
 check only. Confirm that `git diff` between the two branches is empty and
 record that and the check result in the PR. A synchronization PR that changes
@@ -326,7 +328,7 @@ updates/deletion, and `traffic-history` from deletion or history rewrite.
 I set GitHub Actions to require full SHA pins and to give the default
 workflow token read access; both were verified by their effect on 2026-11-09
 (#15; see the [settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#actions-and-security)).
-Dependabot targets `release/0.1.0` from the configuration installed on
+Dependabot targets `release/0.2.0` from the configuration installed on
 `main`; activation was verified in #6. The rulesets above were read back
 through the API on 2026-10-29 and 2026-11-09, and their enforcement was
 demonstrated on #172 (#15; [enforcement](REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)). The repository became public on 2026-10-28; the security features enabled for it are recorded, with their

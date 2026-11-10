@@ -39,7 +39,7 @@ host scripts read the Git history. Work on the active release branch:
 ```sh
 git clone https://github.com/danielep71/K-NSFR.git
 cd K-NSFR
-git checkout release/0.1.0
+git checkout release/0.2.0
 ```
 
 Keep the clone clean. A host run refuses a worktree with changes, because its
@@ -91,7 +91,7 @@ blank workbook, compiled, with the self-test run and the workbook closed.
 
 | Route | When to use it | Command or steps |
 | --- | --- | --- |
-| Branch verification | To verify the head of a branch in one command, without touching your clone | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0` |
+| Branch verification | To verify the head of a branch in one command, without touching your clone | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.2.0` |
 | Record the checked-out commit | To record a run of the commit already checked out in a clean clone | `powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1` |
 | Manual | When you do not accept the trust setting, or a script fails | [Running in Excel](../tests/README.md#running-in-excel) |
 
@@ -113,7 +113,7 @@ pull request: a run proves one commit only.
 | --- | --- | --- |
 | `Excel does not allow access to the VBA project` | The trust setting is off | Turn it on as above, or use the manual route. No record was written |
 | `The worktree is not clean` | Changed or untracked files in the clone | Commit, stash or discard them, or clone fresh |
-| `… is not on origin/release/0.1.0 or origin/main` (a warning) | The checked-out commit is not published | The record is still written, but the `host-evidence` gate rejects it: run `git fetch`, then record a commit of those branches |
+| `… is not on origin/main or an origin/release/* branch` (a warning) | The checked-out commit is not published | The record is still written, but the `host-evidence` gate rejects it: run `git fetch`, then record a commit of those branches |
 | `No Click-to-Run Office found` | Excel is not a Microsoft 365 Click-to-Run installation | Use the supported host |
 | `Excel could not be started through COM` | Excel is missing, blocked or still closing | Close every Excel window, wait, and run again |
 | A compile error dialog stays open | The modules do not compile | Close the dialog: the step is recorded as `FAIL` with the reason |
