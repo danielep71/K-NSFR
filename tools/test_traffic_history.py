@@ -413,7 +413,7 @@ class AlertTests(unittest.TestCase):
             item = {"number": 1, "state": "open", "body": issue["body"],
                     "labels": [{"name": "P3"}, {"name": "repository"}],
                     "assignees": [{"login": "danielep71"}],
-                    "milestone": {"title": "v0.1.0 - Repo setup", "state": "open",
+                    "milestone": {"title": "v0.2.0 - Prototype Setup", "state": "open",
                                   "due_on": "2026-12-20T08:00:00Z"}}
             audited = check_issues.issue_from_api(item)
             self.assertEqual(check_issues.audit([audited], {1: "open"}, "danielep71/K-NSFR",

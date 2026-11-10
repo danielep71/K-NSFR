@@ -86,13 +86,13 @@ Clone the repository and work on the active release branch:
 ```sh
 git clone https://github.com/danielep71/K-NSFR.git
 cd K-NSFR
-git checkout release/0.1.0
+git checkout release/0.2.0
 ```
 
 - **Portable checks:** install the [locked tools](tools/README.md#running-the-checks),
   then run `python tools/check.py --ci` on a clean, committed checkout.
 - **Supported host:** with Excel closed, run
-  `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0`.
+  `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.2.0`.
   It builds the neutral harness in a new workbook, runs its self-test and
   writes a host evidence record.
 
@@ -159,11 +159,12 @@ independent numerical validation comes later. Follow the commands in
 
 ## 🗺️ Roadmap
 
-The [v0.1.0 repository setup milestone](https://github.com/danielep71/K-NSFR/milestone/1)
-uses `release/0.1.0` as its active development branch. Task PRs target that
+The repository setup, v0.1.0, was tagged on 2026-11-10 (#22). The
+[v0.2.0 prototype setup milestone](https://github.com/danielep71/K-NSFR/milestone/2)
+uses `release/0.2.0` as its active development branch. Task PRs target that
 branch; I control integration into `main`. The
 [follow-on backlog](docs/BACKLOG.md) separates future calculation work from
-this setup milestone. No release or numerical capability is implied by the
+these setup milestones. No release or numerical capability is implied by the
 branch name.
 
 <a id="license-data-and-security"></a>
