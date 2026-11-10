@@ -55,6 +55,7 @@ reported **NOT RUN** without them.
 | `fixtures` | Python | `check_fixtures.py`: every [numerical fixture](../docs/validation/VALIDATION.md) under `tests/fixtures/` against `fixture-v1.json`, its hand derivation re-derived and its expected result re-evaluated with exact rational arithmetic; it never runs the engine |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
 | `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
+| `template` | PyYAML, markdown-it-py, XlsxWriter | `build_template.py --check`: builds the [workbook template](../docs/SOURCE_CONTROL.md#workbook-template) afresh and compares it byte for byte with `templates/NSFR_Template.xlsx`, which must hold no VBA project or macro-enabled content type |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
@@ -287,6 +288,7 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 | Node.js | 22.23.4 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.2, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
 | PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
+| XlsxWriter | 3.2.9 | `requirements-quality-ci.txt` (the template, tool-tests and mypy gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
 Python and Node.js are pinned to exact patch versions, recorded here only: the

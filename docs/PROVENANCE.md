@@ -85,6 +85,7 @@ recorded in #19.
 | Code of conduct | Authored locally in #147 |
 | Installation guide, release procedure and changelog | Authored locally in #18 and #19 |
 | Tracked-file audit | Authored locally in #20; it lists every tracked file of its candidate with its origin |
+| Workbook template and its generator | Adapted in #13 from my prototype's generator, without its factors, template rows, demo data, expected results or buttons; the template is generated, never edited by hand |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
@@ -112,6 +113,7 @@ are locked. Their licenses are listed in
 | PyYAML | 6.0.3 plus wheel hash | YAML parsing |
 | types-PyYAML | 6.0.12.20260906 plus wheel hash | YAML type stubs |
 | markdown-it-py / mdurl | 4.2.0 plus the hashes of its published files / 0.1.2 plus wheel hash | Markdown parsing and URL handling |
+| XlsxWriter | 3.2.9 plus wheel hash | Workbook template generation |
 
 [Licensing](LICENSING.md#runtime-tool-licenses) gives their licenses and
 upstream sources.
