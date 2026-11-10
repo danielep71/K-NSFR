@@ -27,6 +27,11 @@ compliance.
   three host evidence records and the tag `v0.1.0`; the installation guide
   uses a neutral example path; the `content` gate no longer needs XlsxWriter
   (#193).
+- The template's gaps against contract v1 and the prototype are recorded,
+  with #133, #135 and #137 as owners; ADR-008 allows `On Error GoTo` in tests
+  and examples, as the static checks already did; the cleanup evidence is
+  required of the first host module that changes application settings
+  (#196).
 
 <a id="v010"></a>
 

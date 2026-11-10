@@ -113,7 +113,9 @@ pull request: a run proves one commit only.
 
 ## 🔁 Template and synchronization
 
-`templates/NSFR_Template.xlsx` is the macro-free layout of the workbook (#13).
+`templates/NSFR_Template.xlsx` is the macro-free layout of the workbook (#13):
+my prototype's layout, not yet the input contract
+([gaps](SOURCE_CONTROL.md#template-gaps)).
 The VBA module `NSFR_Host_Sync` (`src/host/`) imports and exports exactly the
 components that `src/manifest.txt` lists, and nothing else: no sheet, cell,
 format, workbook name or unlisted component changes. Build a workbook from the

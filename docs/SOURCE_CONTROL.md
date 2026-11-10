@@ -73,6 +73,24 @@ difference. Change the template only through the generator, then run
 `python tools/build_template.py` and commit both. A macro-enabled workbook
 built from it is never committed.
 
+<a id="template-gaps"></a>
+
+#### Gaps against the contract and the prototype
+
+The template keeps my prototype's layout. It does not yet follow
+[contract v1](contracts/CONTRACTS.md), and I decided on 2026-11-10 (#196)
+that the alignment belongs to the issues that admit the prototype:
+
+| Area | Template | Contract v1 or prototype | Owner |
+| --- | --- | --- | --- |
+| Positions columns | `PositionID`, `Description`, `Category`, `Amount`, `Currency`, `MaturityDate`, `EncumberedUntil`, `BucketOverride`, `FactorOverride`, `Comment` | The contract's [positions](contracts/CONTRACTS.md#positions-table) also need `side`, `item_type`, `maturity_kind`, `classification` (instead of the prototype's category), `encumbered`, `counterparty_type`, `transaction_type` and `source_record`. `FactorOverride` contradicts the rule that a factor comes only from the parameter set | #135 |
+| Run settings | `ReportingDate`, `ReportingCurrency`, `Perimeter`, `ProfileID`, and an unnamed `Version` label at Params!C9 | The contract's [run](contracts/CONTRACTS.md#run-table) has 13 fields; `Perimeter` has no counterpart (the contract uses `basis` and `reporting_entity_id`) | #135 |
+| Bank figures | The `BankCells` sheet | No contract counterpart; the scope of the reconciliation is #133's | #133, #135 |
+| Workbook names | Adds `hdrTests` | Leaves out the prototype's `resSummaryValues`, `c80Values` and `c81Values`, which its host module reads | #137 |
+
+Until then, a workbook built from the template holds the layout only: no
+admitted module reads it.
+
 <a id="regulatory-source-copies"></a>
 
 ### Regulatory source copies

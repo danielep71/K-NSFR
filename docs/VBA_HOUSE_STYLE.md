@@ -135,7 +135,11 @@ signature. Omit sections that are empty.
   other invalid arithmetic with range checks before the operation, and return
   the documented status ([ADR-008](DECISIONS.md#recorded-decisions)).
 - Unexpected runtime errors propagate to the host boundary, where the original
-  error and any cleanup failures are retained. `On Error` appears only there.
+  error and any cleanup failures are retained. Among admitted modules,
+  `On Error` appears only there. Test and example modules may use
+  `On Error GoTo` to record a failure and continue
+  ([ADR-008](DECISIONS.md#recorded-decisions), amended on 2026-11-10);
+  `On Error Resume Next` stays forbidden everywhere.
 - No worksheet-function surface or `CVErr` mapping is approved at this stage.
 - Core/API never use `On Error`, including `On Error Resume Next`. Host
   restore helpers use a narrow handler per setting; each failure is returned
@@ -181,9 +185,11 @@ it.
    failed, the procedure raises `ERR_CLEANUP_FAILED`, never success.
 
 The following is a design sketch, not compiled or executed evidence. The host
-evidence of the first host module that changes Excel state (#13) must
+evidence of the first host module that changes application settings must
 exercise success, primary-error-plus-cleanup-failure and cleanup-only
 failure; the harness (#12) reports a cleanup failure apart from the outcome.
+`NSFR_Host_Sync` (#13) changes no application setting: it changes only the
+VBA project, after a backup copy.
 
 ```vb
 'In a standard module named NSFR_Host_Example
