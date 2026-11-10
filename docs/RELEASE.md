@@ -157,13 +157,13 @@ material came from.
 | --- | --- | --- |
 | Release branch with squash task merges and merge-commit integration | Adopted | Keeps `main` as the integration record (#1) |
 | Rulesets: required check, resolved threads, no bypass, protected tags and branches | Adopted, with 0 approvals | I am the sole maintainer; enforcement observed in #15 |
-| Label catalogue with synchronization and drift checks | Adapted | Imported, then moved to schema 2 for this repository (#83) |
-| Issue forms and issue triage | Adapted | Imported, then extended with start dates, target end dates and milestone due dates (#7, #55, #89, #167) |
+| Label catalogue with synchronization and drift checks | Adapted | A schema 2 catalogue; workflows synchronize it and report drift (#83) |
+| Issue forms and issue triage | Adapted | The forms ask for a start date and a target end date; triage checks them against the milestone due date (#7, #55, #89, #167) |
 | Milestones on issues only | Adapted | A reconciling workflow removes PR milestones (#91) |
 | Portable checks as one required check | Adapted | One entry point, `tools/check.py`, for CI and local runs (#6, #93) |
 | Hash-locked Python tools and SHA-pinned actions | Adopted | Reproducible CI; Dependabot proposes the updates (#6, #85) |
 | CodeQL advanced setup | Adapted | Replaces the default setup to cover Actions, Python and JavaScript (#146) |
-| Traffic history on a protected data branch | Adapted | With a GitHub App token instead of a personal token (#103, #143) |
+| Traffic history on a protected data branch | Adapted | Collected daily with a short-lived GitHub App token (#103, #143) |
 | Byte-for-byte regulatory source copies | Adopted | Convention only; no source copy is stored yet (#95) |
 | VBA static checks | Authored | The VBA rules of ADR-008 (#11) |
 | Candidate-bound host evidence | Authored | Portable checks never prove Excel (#14) |
