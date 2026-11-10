@@ -79,6 +79,11 @@ recorded in #19.
 | Validation rules, fixture checker and neutral fixture | Authored locally in #10; the fixture's data and factors are synthetic and its derivation was worked out by hand |
 | VBA static checker, exceptions file and fixtures | Authored locally in #11 |
 | Neutral VBA test harness and its self-test | Authored locally in #12; neutral, with no NSFR calculation |
+| Host evidence checker, its records and the host scripts | Authored locally in #14 (#157, #158, #174); the records come from my runs on the supported host (#175, #178) |
+| External-link checker and its workflow | Authored locally in #147 |
+| Code of conduct | Authored locally in #147 |
+| Installation guide, release procedure and changelog | Authored locally in #18 and #19 |
+| Tracked-file audit | Authored locally in #20; it lists every tracked file of its candidate with its origin |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
