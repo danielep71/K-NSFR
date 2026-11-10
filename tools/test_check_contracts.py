@@ -100,7 +100,7 @@ class FieldTests(unittest.TestCase):
                          [("NSFR-E010", "classification")])
         self.assertEqual(codes(position(classification="413")), [("NSFR-E002", "classification")])
 
-    def test_duplicates_are_reported_on_each_repeat(self) -> None:
+    def test_a_duplicated_record_id_is_reported_once(self) -> None:
         self.assertEqual(codes(POSITION, POSITION, POSITION),
                          [("NSFR-E003", "record_id")])  # one diagnostic per (code, record, field)
 

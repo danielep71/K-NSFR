@@ -39,8 +39,9 @@ regulatory correctness.
 ## 🔄 Changing a decision
 
 Alternatives and the selected layout are documented in
-[ARCHITECTURE.md](ARCHITECTURE.md). Regulatory versions, interpretation choices,
-numeric/error conventions, workbook schema, and production-readiness approval
-remain assigned follow-on decisions in [BACKLOG.md](BACKLOG.md). Record a new
+[ARCHITECTURE.md](ARCHITECTURE.md). Interpretation choices beyond ADR-009, the
+parameter set (PROD-01), the workbook schema (#13) and production-readiness
+approval remain follow-on decisions; [BACKLOG.md](BACKLOG.md) assigns the
+calculation work. Record a new
 dated decision with its rationale and superseded ID when changing this baseline;
 do not silently rewrite historical decisions.

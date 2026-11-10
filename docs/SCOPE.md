@@ -32,7 +32,7 @@ currency conversion, or missing-data interpretation is implied.
 
 | Profile identifier | Role | Status and admission condition |
 | --- | --- | --- |
-| `eu-crr-standard` | First planned calculation profile for the standard EU CRR NSFR | Selected target only; exact legal version, effective date, applicability, and interpretations require the source register in #8 |
+| `eu-crr-standard` | First planned calculation profile for the standard EU CRR NSFR | Selected target; version 1 is bound to the CRR consolidated version `02013R0575-20260626`, individual basis (ADR-009, [source register](methodology/SOURCE_REGISTER.md)); no executable profile exists |
 | `basel-reference` | Conceptual and educational comparison | Reference-only; no executable mapping or equivalence to the EU profile is claimed |
 
 **Currently supported executable regulatory profiles: none.** These identifiers
@@ -68,13 +68,16 @@ portable CI or an Excel smoke test alone does not satisfy this gate.
 ## 📦 v0.1.0 inclusions and exclusions
 
 The setup milestone defines governance, architecture, source provenance,
-contracts, static checks, neutral test infrastructure, host packaging, and
-candidate-bound evidence through the existing setup issues.
+contracts, static checks, neutral test infrastructure and candidate-bound host
+evidence for the harness through the existing setup issues. Host packaging and
+source synchronization are deferred to v0.2.0 (#13).
 
-It does not introduce regulatory formulas or parameter percentages, calculate
-ASF/RSF or a ratio, certify compliance, ingest production/client data, implement
-bank connectors, create regulatory submissions, automate consolidation or FX,
-build a web service, or publish a release. Neutral scaffold tests must not be
+Outside the non-admitted `prototype/` (ADR-011), it does not introduce
+regulatory formulas or parameter percentages. It does not calculate ASF/RSF or
+a ratio, certify compliance, ingest production/client data, implement bank
+connectors, create regulatory submissions, automate consolidation or FX, or
+build a web service. Its release is the tag of the
+[release procedure](RELEASE.md). Neutral scaffold tests must not be
 described as numerical NSFR validation.
 
 See [architecture](ARCHITECTURE.md), [decisions](DECISIONS.md), and

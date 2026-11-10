@@ -183,8 +183,8 @@ stay until each piece is admitted or replaced by the v0.2.0 issues (#132 to
 | A-01 | No credential, private key or secret assignment in any tracked file | None needed |
 | A-02 | E-mail addresses only in tests: `example.invalid`, `example.org`, `example.com` and the `git@github.com` URL form | Retained: synthetic inputs of the checks' tests |
 | A-03 | Local user paths only in `tools/test_check_host_evidence.py`, as inputs the private-details rule must reject | Retained: the test needs them |
-| A-04 | Other projects are named only in the third-party notices | Retained: [AGENTS.md](../AGENTS.md#what-the-documentation-describes) allows attributions there |
-| A-05 | No assistant or model name | None needed |
+| A-04 | Other projects are named in the third-party notices; the provenance record also linked the upstream repositories of the runtime tools | Notices retained: [AGENTS.md](../AGENTS.md#what-the-documentation-describes) allows attributions there. The upstream links moved to [licensing](LICENSING.md#runtime-tool-licenses) in #21 |
+| A-05 | No assistant or model name in text; `.gitignore` ignores three assistant tools' local state directories by name | Retained: ignore patterns are configuration, not documentation |
 | A-06 | Every `placeholder` is an example value in an issue form | Retained: form syntax, not a dead placeholder |
 | A-07 | No unsupported ownership statement: the only copyright line is in the third-party notices | None needed |
 | A-08 | No binary file; the binary allowlist is empty; workbooks, `test-results/`, `.env` files, keys and keystores are ignored | None needed |

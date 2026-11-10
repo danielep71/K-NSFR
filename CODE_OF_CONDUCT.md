@@ -7,7 +7,7 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
 
 This code applies to everyone who takes part in K-NSFR: in issues, pull
-requests, reviews, discussions and any other space of this repository, and
+requests, reviews, comments and any other space of this repository, and
 when you speak for the project elsewhere.
 
 <a id="expected-behavior"></a>

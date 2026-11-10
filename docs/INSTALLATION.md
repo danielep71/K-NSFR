@@ -113,7 +113,7 @@ pull request: a run proves one commit only.
 | --- | --- | --- |
 | `Excel does not allow access to the VBA project` | The trust setting is off | Turn it on as above, or use the manual route. No record was written |
 | `The worktree is not clean` | Changed or untracked files in the clone | Commit, stash or discard them, or clone fresh |
-| `… is not on origin/release/0.1.0 or origin/main` | The checked-out commit is not published | Run `git fetch`, then check out a commit of those branches: a task-branch commit cannot be recorded |
+| `… is not on origin/release/0.1.0 or origin/main` (a warning) | The checked-out commit is not published | The record is still written, but the `host-evidence` gate rejects it: run `git fetch`, then record a commit of those branches |
 | `No Click-to-Run Office found` | Excel is not a Microsoft 365 Click-to-Run installation | Use the supported host |
 | `Excel could not be started through COM` | Excel is missing, blocked or still closing | Close every Excel window, wait, and run again |
 | A compile error dialog stays open | The modules do not compile | Close the dialog: the step is recorded as `FAIL` with the reason |
@@ -138,7 +138,7 @@ These instructions were followed from fresh clones, with these outcomes:
 | --- | --- | --- | --- |
 | 2026-11-09 | Record the checked-out commit, on the supported host | Fresh clone of `release/0.1.0` at `5231985` | PASS ([record](../tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json), #175) |
 | 2026-11-09 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `dec4ad5` in its own worktree | PASS, recorder exit code 0 ([record](../tests/evidence/dec4ad555db1240f8c2f0361c5de47e36f059528.json), #178) |
-| 2026-11-10 | Portable checks, Linux x86_64 with Python 3.13.17, Node 22.22.0 and Git 2.43.0 | Fresh clone of `release/0.1.0` at `cd2860f` | All 17 gates PASS. The locked tools were installed with `uv pip install --require-hashes` into a virtual environment, from the same lock file |
+| 2026-11-10 | Portable checks, Linux x86_64 with Python 3.13.17, Node 22.22.0 and Git 2.43.0 | Fresh clone of `release/0.1.0` at `cd2860f` | All 17 gates PASS. The locked tools were installed with `uv pip install --require-hashes` into a virtual environment, from the same lock file. Not the reference environment: CI pins Python 3.13.18 and Node 22.23.4 and installs with `pip --only-binary=:all:` |
 
 Not executed:
 

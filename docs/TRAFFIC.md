@@ -15,10 +15,9 @@ there, and opens an issue when traffic stands out (*Traffic alert* below). It
 is repository analytics, not CI: it builds and tests nothing.
 
 The workflow is on `main` since the integration of 2026-11-03 (#107). The
-schedule and manual dispatch described below also require the credential
-setup; until it exists the collect job fails at its *Check the App
-configuration* step. No live collection, push or alert is verified;
-operational validation remains tracked in #16.
+credential setup below is in place, and collection has run daily since
+2026-11-07 (#16); without it, the collect job fails at its *Check the App
+configuration* step. No alert issue had been opened by 2026-11-10.
 
 <a id="schedule"></a>
 

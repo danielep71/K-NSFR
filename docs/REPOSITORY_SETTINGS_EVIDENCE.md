@@ -22,19 +22,22 @@ the [enforcement](#enforcement) section records what was observed.
 
 ## 🧭 Reading the record
 
-- **Verified**: read from the GitHub API on the snapshot date.
-- **My statement**: stated by me and recorded in governance; not read back.
-- **Unverified**: no read-back on the snapshot date. This never means disabled.
+- **Verified**: read from the GitHub API, or observed by its effect, on the
+  date the row gives.
+- **Unverified**: no read-back on the snapshot date. This never means
+  disabled. No row is unverified at present.
 
 No setting was changed to prepare this record. Configuration read-back is not
-an enforcement test; enforcement scenarios are tracked in #15.
+an enforcement test; the [enforcement](#enforcement) section records the
+scenarios demonstrated on #172 (#15).
 
 <a id="general-settings"></a>
 
 ## 🏷️ General settings
 
 Evidence: the [repository API](https://api.github.com/repos/danielep71/K-NSFR),
-read 2026-10-29. Every row is **verified**.
+read 2026-10-29 and again on 2026-11-09 (#15), with the same values unless a
+row says otherwise. Every row is **verified**.
 
 | Setting | Observed value | Interpretation |
 | --- | --- | --- |
@@ -89,7 +92,7 @@ to it (API branch-rules read-back). Traffic collection is described in [traffic 
 | Full-SHA action pins required | Required | **Verified** on 2026-11-09 by its effect: a probe that used `actions/checkout@v4` was refused before its job ran ([enforcement](#enforcement)). The Actions permissions API is still not readable with the access used for this record |
 | Default workflow token | Read-only | **Verified** on 2026-11-09 by its effect: a probe job without declared permissions received `Contents: read`, `Metadata: read` and `Packages: read` ([enforcement](#enforcement)). Each workflow also declares `contents: read` at workflow level, or no permission at all (`Keep milestones issue-only`) |
 | Code scanning setup | Advanced setup from `.github/workflows/codeql.yml`; default setup off since 2026-11-07 (#146) | **Verified** through the workflow's results: on #153, the first attempt of [run 42356390686](https://github.com/danielep71/K-NSFR/actions/runs/42356390686) failed with "CodeQL analyses from advanced configurations cannot be processed when the default setup is enabled"; after I turned the default setup off, the second attempt uploaded the `actions`, `python` and `javascript-typescript` analyses |
-| Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back on 2026-10-28 and 2026-10-29, with each row's source |
+| Security features | See [SECURITY.md](../SECURITY.md#security-features) | Read back between 2026-10-28 and 2026-11-09, with each row's date and source |
 
 <a id="enforcement"></a>
 

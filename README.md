@@ -48,9 +48,9 @@ must be approved before any numerical implementation.
 | --- | --- |
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
 | Calculation | Not implemented; no ASF, RSF or ratio output is available. A benchmark [prototype](prototype/README.md) is stored but not admitted |
-| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; it passed in Excel on 2026-11-09 at `5231985` ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)) |
+| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; it passed in Excel on 2026-11-09 at `5231985` and `dec4ad5` ([host evidence records](tests/evidence/README.md)) |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
-| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; only the neutral harness has run there ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)); no engine or workbook exists yet |
+| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; only the neutral harness has run there ([host evidence records](tests/evidence/README.md)); no engine or workbook exists yet |
 | Data | Synthetic-only policy; no production or client data |
 
 <a id="scope"></a>
@@ -134,7 +134,7 @@ There is no `src/` yet: admitted VBA modules will live in `src/core/`,
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [Release procedure](docs/RELEASE.md) · [Changelog](CHANGELOG.md) | Versions, release candidate, tag, rollback, milestone closure and what each version adds |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
-| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) · [File audit](docs/FILE_AUDIT.md) | MPL-2.0 selection, rights, attributions, provenance inventory and the audit of every tracked file |
+| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) · [File audit](docs/FILE_AUDIT.md) · [Documentation audit](docs/DOC_AUDIT.md) | MPL-2.0 selection, rights, attributions, provenance inventory, and the audits of every tracked file and of the documentation |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
 | [Traffic history](docs/TRAFFIC.md) | Daily traffic collection, its credential and its alert |
 
@@ -144,7 +144,8 @@ There is no `src/` yet: admitted VBA modules will live in `src/core/`,
 
 The required **Repository integrity** check validates committed text, Markdown
 file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
-typing/lint/tests, the VBA static rules, the label catalogue and the
+typing/lint/tests, the input/result contracts and their examples, the
+numerical fixtures, the VBA static rules, the label catalogue and the
 issue-form configuration. Live
 issues are audited separately by the issue triage workflow. The check runs on
 documentation-only and synchronization PRs. It never runs Excel: a run on

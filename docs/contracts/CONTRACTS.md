@@ -115,7 +115,8 @@ A parameter set is versioned configuration, never input data. It carries
 `effective_from`, `review_status` and a list of factors, each with its
 `classification`, `factor` (a decimal from 0 to 1), the register `source_id`
 and the `locator` (article, paragraph and point) it is taken from. No
-parameter set exists in this repository yet: its values are reviewed under
+regulatory parameter set exists in this repository yet; the only one is the
+synthetic set of the neutral fixture FX-0001. Regulatory values are reviewed under
 [PROD-01](../BACKLOG.md#later-calculation-work) and cited through the
 register, as [AGENTS.md](../../AGENTS.md#what-the-documentation-describes)
 requires. The engine rejects a run whose parameter set is unknown, does not
@@ -212,7 +213,7 @@ All data is synthetic ([data policy](../DATA_POLICY.md)).
 | Example | Shows |
 | --- | --- |
 | `valid-basic` | A valid input on both sides, with dated, undated, encumbered and Article 510 positions, and its reconciliation totals |
-| `invalid-positions` | One row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, another currency, past dates, side mismatches, a missing conditional date, a derivative, an extra cell and a duplicate `record_id` |
+| `invalid-positions` | At least one row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, a malformed date, another currency, past dates, side mismatches, a missing and an unexpected conditional date, a derivative, an extra cell and a duplicate `record_id` |
 | `invalid-run-basis` | The consolidated basis, rejected in version 1 |
 | `invalid-run-rows` | A run table with two rows |
 
