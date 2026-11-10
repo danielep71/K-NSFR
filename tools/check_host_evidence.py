@@ -192,7 +192,7 @@ def host_findings(host: Any) -> list[str]:
     if "Microsoft 365" not in host["excel"] or not re.search(r"Version \S+ \(Build [\d.]+",
                                                               host["excel"]):
         findings.append("host: excel must be Microsoft 365 with its version and build, "
-                        "as About Excel shows them")
+                        "as the recorder writes them")
     if host["bitness"] != "64-bit":
         findings.append("host: bitness must be 64-bit, the supported host")
     return findings

@@ -309,9 +309,11 @@ generated, names the generator and says it must not be edited by hand.
   this rule.
 - **Forms:** a `.frm` and its `.frx` are one component, kept side by side in
   `src/host/`. The `.frx` is binary and never edited as text.
-- **Workbooks and macro-enabled files** are generated outputs. No workbook is
-  approved yet. Any retained template needs an exact allowlist path, provenance
-  review, macro-free validation and manifest under #13. Do not add broad exceptions.
+- **Workbooks and macro-enabled files** are generated outputs. The one
+  approved workbook is the macro-free template `templates/NSFR_Template.xlsx`
+  (#13): its exact path is allowlisted, the `template` gate rebuilds it, and
+  `src/manifest.txt` lists the components synchronized into a workbook built
+  from it. Do not add broad exceptions.
 
 <a id="review-and-validation"></a>
 

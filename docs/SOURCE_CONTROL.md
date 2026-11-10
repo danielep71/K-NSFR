@@ -26,14 +26,15 @@ text to LF and checks VBA and Windows-native scripts out as CRLF for the intende
 host. Cross-platform text checks out as LF regardless of core.autocrlf. No custom clean/smudge filter or
 working-tree-encoding conversion is required. Use Git checkout rather than
 assuming a downloaded source archive has the host line endings. Git conversion
-tests are portable evidence; actual Excel export and
-round trip remain #13 work.
+tests are portable evidence; the Excel export and round trip run on the host
+through `tools/host/Test-NSFR-Sync.ps1`.
 
 The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
 Besides configuration, checks and their tests, the repository holds the
-neutral harness, one neutral fixture, host evidence records and the
-non-admitted `prototype/`; `src/` and the template directory are created with
-real deliverables.
+neutral harness, one neutral fixture, host evidence records, the host
+synchronization module and the manifest in `src/`, the workbook template in
+`templates/` and the non-admitted `prototype/`. `src/core/` and `src/api/` are
+created with real deliverables.
 
 <a id="generated-files-and-intentional-binaries"></a>
 
@@ -130,4 +131,5 @@ content check and regression suite on candidate PRs.
 The attributes also classify binary merges, VBA diffs, language reporting and
 archive exclusions. A source archive omits repository control files and GitHub
 automation by design; use a Git clone for the repository validation commands.
-No workbook exception is enabled until an actual K-NSFR template is approved.
+The only workbook exception is the
+[workbook template](#workbook-template), at its exact path.

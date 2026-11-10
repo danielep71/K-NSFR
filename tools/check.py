@@ -23,6 +23,7 @@ SCOPE = ("Repository tooling, labels, forms, committed source, documentation and
 # Python libraries a gate imports, by tool name: (import name, distribution name).
 LIBRARIES: dict[str, tuple[tuple[str, str], ...]] = {
     "pyyaml": (("yaml", "PyYAML"),),
+    "markdown-libraries": (("yaml", "PyYAML"), ("markdown_it", "markdown-it-py")),
     "python-libraries": (("yaml", "PyYAML"), ("markdown_it", "markdown-it-py"), ("xlsxwriter", "XlsxWriter")),
 }
 
@@ -111,7 +112,7 @@ def default_gates() -> list[Gate]:
         Gate("issue-config", "node",
              (python, "tools/check_issues.py", "--check-config")),
         Gate("source-control", "python", (python, "tools/check_source_control.py")),
-        Gate("content", "python-libraries", (python, "tools/check_content.py")),
+        Gate("content", "markdown-libraries", (python, "tools/check_content.py")),
         Gate("contracts", "python", (python, "tools/check_contracts.py")),
         Gate("fixtures", "python", (python, "tools/check_fixtures.py")),
         Gate("vba-static", "python", (python, "tools/check_vba.py")),

@@ -23,7 +23,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 | Data and reconciliation contracts | [#9](https://github.com/danielep71/K-NSFR/issues/9), [contracts](contracts/CONTRACTS.md) | Input, parameter, output, and diagnostic schemas |
 | Independent validation design | [#10](https://github.com/danielep71/K-NSFR/issues/10), [rules](validation/VALIDATION.md) | Fixture provenance, oracle, and acceptance rules |
 | Static checks and neutral harness | [#11](https://github.com/danielep71/K-NSFR/issues/11), [#12](https://github.com/danielep71/K-NSFR/issues/12) | Meaningful failure/pass checks with no NSFR claims |
-| Host evidence, then host packaging and round trip | [#14](https://github.com/danielep71/K-NSFR/issues/14) (delivered), [#13](https://github.com/danielep71/K-NSFR/issues/13) (v0.2.0) | Genuine supported-host execution, then reproducible import and export |
+| Host evidence, then host packaging and round trip | [#14](https://github.com/danielep71/K-NSFR/issues/14) (delivered), [#13](https://github.com/danielep71/K-NSFR/issues/13) (delivered in v0.2.0) | Genuine supported-host execution, then reproducible import and export |
 | Setup certification | [#22](https://github.com/danielep71/K-NSFR/issues/22) | Exact-candidate setup readiness, subject to all milestone dependencies |
 
 <a id="later-calculation-work"></a>

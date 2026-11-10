@@ -23,6 +23,10 @@ compliance.
   listed components after a backup copy; and `Test-NSFR-Sync.ps1`, which runs
   the round trip on the supported host (#13).
 - `release/0.2.0` is the active release branch (#189).
+- The documentation describes the delivered template and synchronization, the
+  three host evidence records and the tag `v0.1.0`; the installation guide
+  uses a neutral example path; the `content` gate no longer needs XlsxWriter
+  (#193).
 
 <a id="v010"></a>
 
@@ -89,7 +93,8 @@ for the tag `v0.1.0`. #22 certifies it, and the
 - Candidate-bound host evidence, recorded by `Record-HostEvidence.ps1` and
   verified for a branch by `Verify-NSFR-Branch.ps1` (#14, #162).
 - The self-test passed on Windows 11 with Microsoft 365 Excel, 64-bit, at
-  `5231985` and `dec4ad5` (#175, #178).
+  `5231985` and `dec4ad5` (#175, #178), and at the release candidate `87d4618`
+  (#186).
 
 <a id="operations"></a>
 

@@ -10,9 +10,10 @@ This guide sets up the two environments of the repository: the portable
 checks and the supported Excel host. Tracking: #18.
 
 > [!IMPORTANT]
-> There is no NSFR engine or workbook to install yet. On the host you can
-> install and run only the [neutral test harness](../tests/README.md). The
-> host template and the source synchronization arrive with #13 in v0.2.0.
+> There is no NSFR engine to install yet. On the host you can install and run
+> the [neutral test harness](../tests/README.md), and build a workbook from the
+> macro-free template with its VBA synchronized from `src/`
+> ([template and synchronization](#template-and-synchronization)).
 
 <a id="environments"></a>
 
@@ -20,7 +21,7 @@ checks and the supported Excel host. Tracking: #18.
 
 | Environment | What runs there | Status |
 | --- | --- | --- |
-| Windows 11, Microsoft 365 desktop Excel, 64-bit | The neutral harness: import, compilation, self-test, cleanup | Supported and tested: two PASS [host evidence records](../tests/evidence/README.md) |
+| Windows 11, Microsoft 365 desktop Excel, 64-bit | The neutral harness: import, compilation, self-test, cleanup | Supported and tested: three PASS [host evidence records](../tests/evidence/README.md) |
 | Linux x86_64 with Python 3.13, Node 22 and Git | The portable checks, `python tools/check.py --ci` | Reference environment of the required Repository integrity check |
 | Windows or macOS with Python and Git | The portable checks with compatible tools | Not the reference: the wheel lock targets Linux x86_64. NOT RUN here |
 | 32-bit Office, older or perpetual Excel, Excel for Mac, Excel on the web, LibreOffice | Nothing | Unsupported; NOT RUN |
@@ -80,8 +81,10 @@ reports **INCOMPLETE**, which is never merge evidence.
   The manual route of the harness does not need it; the source
   synchronization below does, while it runs.
 
-No add-in, COM reference or library is installed, and no workbook is saved:
-every route uses a new blank workbook and closes it without saving.
+No add-in, COM reference or library is installed. The harness routes use a
+new blank workbook and close it without saving; only the
+[template route](#template-and-synchronization) saves a workbook, outside the
+clone.
 
 <a id="install-and-run-the-harness"></a>
 
@@ -124,7 +127,7 @@ template outside the repository:
    clone's folder:
 
    ```text
-   ?NSFR_Host_Sync.SyncImport("C:\Dev\LIQ-NSFR\K-NSFR")
+   ?NSFR_Host_Sync.SyncImport("C:\path\to\K-NSFR")
    ```
 
    It saves a backup copy beside the workbook, imports every other listed
@@ -132,7 +135,7 @@ template outside the repository:
 4. **Debug → Compile VBAProject**, and save.
 
 After editing a listed module in the Visual Basic Editor, write the changes
-back with `?NSFR_Host_Sync.SyncExport("C:\Dev\LIQ-NSFR\K-NSFR")`, then review
+back with `?NSFR_Host_Sync.SyncExport("C:\path\to\K-NSFR")`, then review
 them with `git diff`. A new module is synchronized only once it is listed in
 `src/manifest.txt`. Never commit the `.xlsm` or its backups: `.gitignore`
 excludes them.
@@ -157,7 +160,7 @@ file the export changed and prints a summary.
 | `RESULT FAIL at manifest` | Pass the clone's folder; the manifest names each file as `name path`, and the file must exist |
 | `RESULT FAIL at trust access` | Turn on the trust setting for the run, then off again if you prefer |
 | `RESULT FAIL at backup` | Save the workbook as `.xlsm` first |
-| `RESULT FAIL at import <name>` | The workbook is left half imported: close it without saving and reopen its backup, `<name>.backup-<time>.xlsm` |
+| `RESULT FAIL at import <name>` | The workbook is left half imported: close it without saving and reopen its backup, `<workbook>.backup-<time>.xlsm` |
 | A sheet or workbook module has a listed name | The sync refuses it: rename the module or the manifest entry |
 | An export wrote something unexpected | `git diff` shows it; `git checkout -- <file>` restores the committed source |
 
@@ -194,6 +197,7 @@ These instructions were followed from fresh clones, with these outcomes:
 | --- | --- | --- | --- |
 | 2026-11-09 | Record the checked-out commit, on the supported host | Fresh clone of `release/0.1.0` at `5231985` | PASS ([record](../tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json), #175) |
 | 2026-11-09 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `dec4ad5` in its own worktree | PASS, recorder exit code 0 ([record](../tests/evidence/dec4ad555db1240f8c2f0361c5de47e36f059528.json), #178) |
+| 2026-11-10 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `87d4618`, the v0.1.0 candidate, in its own worktree | PASS ([record](../tests/evidence/87d461818831636be270c42db8d45c835c9d6e6b.json), #186) |
 | 2026-11-10 | Portable checks, Linux x86_64 with Python 3.13.17, Node 22.22.0 and Git 2.43.0 | Fresh clone of `release/0.1.0` at `cd2860f` | All 17 gates PASS. The locked tools were installed with `uv pip install --require-hashes` into a virtual environment, from the same lock file. Not the reference environment: CI pins Python 3.13.18 and Node 22.23.4 and installs with `pip --only-binary=:all:` |
 | 2026-11-10 | Template and synchronization, `Test-NSFR-Sync.ps1`, on the supported host | Clean clone of `feat/13-host-sync` at `cadf916` | PASS on all eight checks: two imports with a backup each, compilation, the harness self-test (`RESULT PASS`), the export, an unchanged worktree after the export, the template's sheets, styles, strings and names in the workbook, and the backups (#13) |
 

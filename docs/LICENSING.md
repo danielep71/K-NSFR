@@ -91,12 +91,12 @@ Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
 
 ### Prototype tool licenses
 
-The tools of the [non-admitted prototype](../prototype/README.md) need the
-following, which CI neither locks nor installs. None is vendored, and the
+The tools of the [non-admitted prototype](../prototype/README.md) also need
+the following, which CI neither locks nor installs. XlsxWriter, which they
+need too, is locked above for the workbook template. None is vendored, and the
 workbook they generate is not committed.
 
 | Tool | License |
 | --- | --- |
-| XlsxWriter | BSD-2-Clause |
 | openpyxl | MIT |
 | LibreOffice | MPL-2.0 |

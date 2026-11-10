@@ -146,8 +146,8 @@ class DefaultGatesTests(unittest.TestCase):
         gates = check.default_gates()
         self.assertEqual(len({g.name for g in gates}), len(gates))
         self.assertEqual({g.tool for g in gates},
-                         {"python", "python-libraries", "node", "ruff", "mypy", "actionlint",
-                          "pyyaml"})
+                         {"python", "python-libraries", "markdown-libraries", "node", "ruff", "mypy",
+                          "actionlint", "pyyaml"})
         for g in gates:
             self.assertTrue(bool(g.command) != (g.probe is not None), g.name)
         self.assertIn("workflow-invariants", {g.name for g in gates})
@@ -158,12 +158,14 @@ class DefaultGatesTests(unittest.TestCase):
 
     def test_each_gate_names_what_it_needs(self) -> None:
         tools = {g.name: g.tool for g in check.default_gates()}
-        # These import PyYAML and markdown-it-py; issue-config runs the Node validator,
-        # and so do the issue tests in tool-tests.
+        # tool-tests and mypy cover every tool, so they need PyYAML, markdown-it-py and
+        # XlsxWriter; content imports only the first two. issue-config runs the Node
+        # validator, and so do the issue tests in tool-tests.
         self.assertEqual(tools["tool-tests"], "python-libraries")
         tool_tests = next(g for g in check.default_gates() if g.name == "tool-tests")
         self.assertEqual(tool_tests.tools(), ("python-libraries", "node"))
-        self.assertEqual(tools["content"], "python-libraries")
+        self.assertEqual(tools["content"], "markdown-libraries")
+        self.assertEqual(tools["template"], "python-libraries")
         self.assertEqual(tools["issue-config"], "node")
         self.assertEqual(tools["workflow-invariants"], "pyyaml")
         mypy = next(g for g in check.default_gates() if g.name == "mypy")

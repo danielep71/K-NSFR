@@ -187,8 +187,9 @@ trim_trailing_whitespace = true
 #------------------------------------------------------------------------------
 # REGULATORY SOURCE COPIES
 #------------------------------------------------------------------------------
-# Byte-for-byte copies with registered hashes (docs/methodology/sources/):
-# editors must not change line endings, final newlines or white space.
+# Byte-for-byte copies with registered hashes (docs/methodology/sources/, which
+# does not exist yet; #95): editors must not change line endings, final
+# newlines or white space.
 [docs/methodology/sources/**]
 charset = unset
 end_of_line = unset

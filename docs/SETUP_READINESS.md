@@ -11,6 +11,10 @@ and what comes next. Tracking: #22. The exact candidate, its runs and my
 review are recorded in #22 and in the release PR, as the
 [release procedure](RELEASE.md#release-candidate) requires.
 
+The report is a snapshot of v0.1.0, tagged on 2026-11-10. It is not updated
+as v0.2.0 progresses: the [changelog](../CHANGELOG.md) records what changed
+since.
+
 > [!IMPORTANT]
 > v0.1.0 is a repository setup. It contains no NSFR calculation, no admitted
 > engine or workbook and no verified regulatory parameter. It certifies the
@@ -51,10 +55,11 @@ review are recorded in #22 and in the release PR, as the
 - **Review:** I am the sole maintainer. The rulesets require no approving
   review, and the automated code review is not an independent approval.
 - **Issue records:**
-  - The 55 issues closed before the start-date rule of 2026-11-09 (#167) have
+  - The 54 issues closed before the start-date rule of 2026-11-09 (#167) have
     no start date. The rule applies to open issues.
   - #1 to #7 were closed on 2026-10-28, before the closure rule of #50. Their
-    evidence links are in their bodies, not in a resolution section.
+    evidence links are in their bodies; only #4 also has a resolution section,
+    from its maintenance audit.
 - **Historical review gaps:** the gaps recorded in #22 on 2026-10-30 and
   2026-11-01 stay as recorded. Some early PRs carry an automated review of an
   earlier head, or an accepted review of the base merge only.
