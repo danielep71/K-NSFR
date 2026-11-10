@@ -7,15 +7,23 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
 
 What each version adds, newest first. The [release procedure](docs/RELEASE.md)
-moves the *Unreleased* entries under a version when it is tagged. No version
-contains an NSFR calculation or claims regulatory compliance.
+moves the *Unreleased* entries under a version when its release candidate is
+selected. No version contains an NSFR calculation or claims regulatory
+compliance.
 
 <a id="unreleased"></a>
 
-## 🚧 Unreleased: 0.1.0, repository setup
+## 🚧 Unreleased
 
-The setup milestone, `v0.1.0 - Repo setup`, on `release/0.1.0`. Not yet
-tagged; #22 certifies it.
+Nothing yet.
+
+<a id="v010"></a>
+
+## 🏷️ 0.1.0, repository setup — 2026-11-10
+
+The setup milestone, `v0.1.0 - Repo setup`, on `release/0.1.0`: the candidate
+for the tag `v0.1.0`. #22 certifies it, and the
+[setup readiness report](docs/SETUP_READINESS.md) summarizes it.
 
 <a id="governance-and-process"></a>
 
@@ -37,6 +45,8 @@ tagged; #22 certifies it.
   with deliberately failing probes (#15, #80, #97).
 - Release and closeout procedure and this changelog (#19); installation guide
   (#18).
+- Audit of every tracked file (#20) and of the documentation and comments
+  (#21), and the setup readiness report (#22).
 
 <a id="checks"></a>
 
