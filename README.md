@@ -134,7 +134,7 @@ There is no `src/` yet: admitted VBA modules will live in `src/core/`,
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
 | [Release procedure](docs/RELEASE.md) · [Changelog](CHANGELOG.md) | Versions, release candidate, tag, rollback, milestone closure and what each version adds |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
-| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights, attributions and provenance inventory |
+| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) · [File audit](docs/FILE_AUDIT.md) | MPL-2.0 selection, rights, attributions, provenance inventory and the audit of every tracked file |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
 | [Traffic history](docs/TRAFFIC.md) | Daily traffic collection, its credential and its alert |
 
