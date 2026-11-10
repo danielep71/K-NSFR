@@ -17,10 +17,9 @@ never host evidence. Only a valid record is.
 
 `tools/check_host_evidence.py` (gate `host-evidence`) validates every record
 in [`tests/evidence/`](../../tests/evidence) against the Git history. A
-record covers the neutral harness. The workbook template and the source
-synchronization (#13) are run by `tools/host/Test-NSFR-Sync.ps1`, which prints
-its outcome and writes no record
-([template and synchronization](../INSTALLATION.md#template-and-synchronization)).
+record there covers the neutral harness. A
+[synchronization record](#synchronization-record), in `tests/evidence/sync/`,
+covers the workbook template and the source synchronization (#13, #195).
 
 <a id="record"></a>
 
@@ -176,6 +175,31 @@ stays open with that blocker.
   - any field outside the record. Do not add machine names, user names or licence details.
 
 With `--candidate <SHA>`, the checker also fails when that commit has no
-record (*missing*), when only other commits have one (*stale*), or when its
-record is not `PASS`. A record proves one commit only: a later commit needs
-its own run.
+harness record (*missing*), when only other commits have one (*stale*), or
+when its record is not `PASS`. A record proves one commit only: a later commit
+needs its own run.
+
+<a id="synchronization-record"></a>
+
+## 🔁 Synchronization record
+
+`tools/host/Test-NSFR-Sync.ps1` runs the
+[template and synchronization](../INSTALLATION.md#template-and-synchronization)
+round trip and writes `tests/evidence/sync/<candidate SHA>.json`, schema
+`k-nsfr-sync-evidence/1`. Its `candidate_sha`, `recorded_on`,
+`worktree_clean` and `host` follow the harness record, and the gate binds and
+rejects them the same way. The other fields:
+
+| Field | Content |
+| --- | --- |
+| `fingerprints` | The SHA-256 of `templates/NSFR_Template.xlsx`, `src/manifest.txt`, every file the manifest lists and `.gitattributes`, over the bytes stored in Git. `python tools/check_host_evidence.py --candidate <SHA> --inventory --sync` prints the expected ones |
+| `checks` | `import_1`, `import_2`, `compile`, `self_test`, `export`, `round_trip`, `layout` and `backup`, each `PASS`, `FAIL` or `NOT_RUN`. The self-test runs exactly when the project compiles |
+| `result` | `PASS` only when every check passed; `FAIL` when one failed; otherwise `NOT_RUN` |
+| `log` | The reports of the two imports, the self-test and the export, and any difference found, one string per line, with local paths replaced by `<local path>`. A passing self-test must print the output documented in `tests/README.md` at the candidate |
+| `reason` | Required unless `PASS` |
+
+The `layout` check passes when the sheets, styles, shared strings and workbook
+names of the workbook are those of its first save, and its sheets (names,
+order and visibility) and workbook names are the template's. The `backup`
+check needs one backup per import. Commit the record as for the harness: in
+a PR that adds only the record.

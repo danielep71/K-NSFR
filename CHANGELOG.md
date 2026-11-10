@@ -32,6 +32,9 @@ compliance.
   and examples, as the static checks already did; the cleanup evidence is
   required of the first host module that changes application settings
   (#196).
+- `Test-NSFR-Sync.ps1` writes a synchronization record, validated by the
+  `host-evidence` gate, and its layout check also compares the sheets and
+  workbook names with the template (#195).
 
 <a id="v010"></a>
 
