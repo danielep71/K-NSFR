@@ -152,8 +152,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Test-NSFR-Sync.ps
 It builds the workbook from the template in a temporary folder, imports twice,
 compiles, runs the harness self-test, exports into the clone, and checks that
 the export changed no byte Git stores, that the sheets, styles, strings and
-workbook names are the template's, and that the backups exist. It restores any
-file the export changed and prints a summary.
+workbook names are the template's, and that each import left a backup. It
+restores any file the export changed, writes the
+[synchronization record](validation/HOST_EVIDENCE.md#synchronization-record)
+`tests/evidence/sync/<SHA>.json`, validates it when Python is available and
+prints a summary. Propose the record in a PR that adds only it.
 
 **Recovery:**
 

@@ -25,6 +25,7 @@ FAILED = ["SUITE HARNESS-SELF-TEST", "H-001 PASS", "H-002 FAIL line 3 differs",
 MODULE = b"Attribute VB_Name = \"Test_Example\"\nOption Explicit\n"
 ATTRIBUTES = b"* text=auto eol=lf\n*.bas text eol=crlf\n"
 TODAY = dt.date(2099, 1, 1)
+TEMPLATE = b"PK\x03\x04 not a real workbook"
 
 
 class HostEvidenceTests(unittest.TestCase):
@@ -299,6 +300,107 @@ class HostEvidenceTests(unittest.TestCase):
             code = he.main(["--root", str(self.root), "--candidate", self.sha, "--inventory"])
         self.assertEqual((code, json.loads(stdout.getvalue())),
                          (0, self.record()["fingerprints"]))
+
+    def sync_record(self) -> dict[str, Any]:
+        """Commit a template and a manifest, then a passing synchronization record."""
+        manifest = b"# manifest\nTest_Example tests/core/Test_Example.bas\n"
+        self.write("templates/NSFR_Template.xlsx", TEMPLATE)
+        self.write("src/manifest.txt", manifest)
+        git("add", "-A", cwd=self.root)
+        git("commit", "-qm", "sync fixture", cwd=self.root)
+        self.sha = git("rev-parse", "HEAD", cwd=self.root).decode().strip()
+        git("update-ref", "refs/remotes/origin/main", self.sha, cwd=self.root)
+        record = self.record()
+        for key in ("steps", "output"):
+            del record[key]
+        record.update(schema=he.SYNC_SCHEMA, checks=dict.fromkeys(he.SYNC_CHECKS, "PASS"),
+                      log=["SyncImport 1", "RESULT PASS", "Self-test", *EXPECTED],
+                      fingerprints={
+                          "templates/NSFR_Template.xlsx": hashlib.sha256(TEMPLATE).hexdigest(),
+                          "src/manifest.txt": hashlib.sha256(manifest).hexdigest(),
+                          "tests/core/Test_Example.bas": hashlib.sha256(MODULE).hexdigest(),
+                          ".gitattributes": hashlib.sha256(ATTRIBUTES).hexdigest()})
+        return record
+
+    def sync_findings(self, record: dict[str, Any]) -> list[str]:
+        self.write(f"tests/evidence/sync/{record['candidate_sha']}.json", json.dumps(record).encode())
+        return he.check(self.root, None, TODAY)[1]
+
+    def assertSyncFinding(self, fragment: str, record: dict[str, Any]) -> None:
+        findings = self.sync_findings(record)
+        self.assertTrue(any(fragment in f for f in findings),
+                        f"no finding containing {fragment!r} in {findings}")
+
+    def test_a_valid_sync_record(self) -> None:
+        record = self.sync_record()
+        self.assertEqual(self.sync_findings(record), [])
+        self.assertEqual(he.check(self.root, None, TODAY)[0], 1)
+
+    def test_a_sync_record_binds_the_template_manifest_and_listed_files(self) -> None:
+        base = self.sync_record()
+        record = copy.deepcopy(base)
+        record["fingerprints"]["templates/NSFR_Template.xlsx"] = "0" * 64
+        self.assertSyncFinding("fingerprints: templates/NSFR_Template.xlsx differs", record)
+        record = copy.deepcopy(base)
+        del record["fingerprints"]["src/manifest.txt"]
+        self.assertSyncFinding("fingerprints: must cover exactly", record)
+
+    def test_sync_checks_and_result_must_agree(self) -> None:
+        base = self.sync_record()
+        record = copy.deepcopy(base)
+        record["checks"]["layout"] = "FAIL"
+        self.assertSyncFinding("result: the checks give FAIL", record)
+        record["result"] = "FAIL"
+        self.assertSyncFinding("reason: required", record)
+        record = copy.deepcopy(base)
+        record["checks"].update(compile="FAIL", self_test="PASS")
+        record.update(result="FAIL", reason="compile error")
+        self.assertSyncFinding("the self-test runs exactly when the project compiles", record)
+        record = copy.deepcopy(base)
+        record["checks"] = {"import": "PASS"}
+        self.assertSyncFinding("checks: must give", record)
+
+    def test_a_passing_sync_log_holds_the_documented_self_test(self) -> None:
+        base = self.sync_record()
+        record = copy.deepcopy(base)
+        record["log"] = ["SyncImport 1", "RESULT PASS"]
+        self.assertSyncFinding("log: a passing self-test must print", record)
+        record = copy.deepcopy(base)
+        record["checks"].update(compile="FAIL", self_test="NOT_RUN")
+        record.update(result="FAIL", reason="compile error", log=["Compile failed"])
+        self.assertEqual(self.sync_findings(record), [])
+
+    def test_a_sync_record_is_bound_to_published_history_and_host(self) -> None:
+        base = self.sync_record()
+        record = copy.deepcopy(base)
+        record["host"]["bitness"] = "32-bit"
+        record["log"].append("BACKUP C:\\Users\\someone\\After.backup.xlsm")
+        findings = self.sync_findings(record)
+        self.assertTrue(any("bitness must be 64-bit" in f for f in findings), findings)
+        self.assertTrue(any("a user folder path" in f for f in findings), findings)
+        record = copy.deepcopy(base)
+        record["schema"] = he.SCHEMA
+        self.assertSyncFinding("schema: must be k-nsfr-sync-evidence/1", record)
+
+    def test_the_sync_inventory_prints_the_expected_fingerprints(self) -> None:
+        record = self.sync_record()
+        with mock.patch("sys.stdout", new_callable=io.StringIO) as stdout:
+            code = he.main(["--root", str(self.root), "--candidate", self.sha, "--inventory",
+                            "--sync"])
+        self.assertEqual((code, json.loads(stdout.getvalue())), (0, record["fingerprints"]))
+
+    def test_the_sync_script_writes_the_record_the_gate_reads(self) -> None:
+        script = (Path(__file__).resolve().parent / "host" / "Test-NSFR-Sync.ps1").read_text(
+            encoding="ascii")
+        self.assertIn(f"$Schema = '{he.SYNC_SCHEMA}'", script)
+        for key in sorted(he.SYNC_KEYS - {"reason"}):
+            self.assertRegex(script, rf"\n\s+{key}\s+=", key)
+        self.assertIn("$record.reason", script)
+        for name in he.SYNC_CHECKS:
+            self.assertRegex(script, rf"\b{name} = 'NOT_RUN'")
+        self.assertIn("tests\\evidence\\sync\\$sha.json", script)
+        self.assertIn("ConvertTo-Json -InputObject $record", script)
+        self.assertIn("New-Object Text.UTF8Encoding $false", script)
 
     def test_the_repository_records_pass(self) -> None:
         root = Path(__file__).resolve().parents[1]

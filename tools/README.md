@@ -54,7 +54,7 @@ reported **NOT RUN** without them.
 | `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
 | `fixtures` | Python | `check_fixtures.py`: every [numerical fixture](../docs/validation/VALIDATION.md) under `tests/fixtures/` against `fixture-v1.json`, its hand derivation re-derived and its expected result re-evaluated with exact rational arithmetic; it never runs the engine |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
-| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
+| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/`, and every [synchronization record](../docs/validation/HOST_EVIDENCE.md#synchronization-record) under `tests/evidence/sync/` with its checks, template, manifest and listed files, bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give, and with `--sync` those of a synchronization record |
 | `template` | PyYAML, markdown-it-py, XlsxWriter | `build_template.py --check`: builds the [workbook template](../docs/SOURCE_CONTROL.md#workbook-template) afresh and compares it byte for byte with `templates/NSFR_Template.xlsx`, which must hold no VBA project or macro-enabled content type |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
@@ -99,7 +99,7 @@ Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
 separate worktree; `host/Test-NSFR-Sync.ps1` runs the [template and
 synchronization](../docs/INSTALLATION.md#template-and-synchronization) round
-trip. They run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
+trip and writes its synchronization record. They run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>
