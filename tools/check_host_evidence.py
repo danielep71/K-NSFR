@@ -8,7 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 A record states what one run on the supported host did with one exact commit
 (docs/validation/HOST_EVIDENCE.md). This checker reads each record and
 rejects one that is not bound to its candidate: an unknown or unreachable
-commit, a dirty worktree, a fingerprint that differs from the commit's files,
+commit, one outside the published main or release history, a dirty worktree, a fingerprint that differs from the commit's files,
 an unsupported host, an inconsistent or non-finite summary, a result that the
 steps do not support, or a machine detail that must not be published. With
 --candidate SHA it also requires a PASS record for that commit, and reports a

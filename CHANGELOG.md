@@ -49,7 +49,8 @@ tagged; #22 certifies it.
   #144, #145).
 - Hash-locked Python tools, SHA-pinned actions and Dependabot updates against
   the release branch (#6, #85).
-- CodeQL advanced setup for Actions, Python and JavaScript (#75, #146).
+- CodeQL default setup (#75), replaced by the advanced setup for Actions,
+  Python and JavaScript (#146).
 - Byte-for-byte convention for future copies of regulatory sources (#95).
 
 <a id="nsfr-foundations"></a>

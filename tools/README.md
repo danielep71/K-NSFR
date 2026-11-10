@@ -44,7 +44,7 @@ reported **NOT RUN** without them.
 
 | Gate | Needs | Evidence |
 | --- | --- | --- |
-| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history and the VBA static checks |
+| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history, external links, host evidence and the VBA static checks |
 | `labels-sync-self-test` | Node | Label synchronization self-tests |
 | `labels-manifest` | Node | Label catalogue validation |
 | `labels-drift-self-test` | Node | Label drift self-tests |
@@ -54,13 +54,13 @@ reported **NOT RUN** without them.
 | `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
 | `fixtures` | Python | `check_fixtures.py`: every [numerical fixture](../docs/validation/VALIDATION.md) under `tests/fixtures/` against `fixture-v1.json`, its hand derivation re-derived and its expected result re-evaluated with exact rational arithmetic; it never runs the engine |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
-| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
+| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
 | `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
-| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency, separate PR/trusted-event permissions and 30-day PR SARIF retention; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
+| `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; a full-history checkout (`fetch-depth: 0`) for the required job; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency, separate PR/trusted-event permissions and 30-day PR SARIF retention; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
 
 On GitHub Actions a gate whose Python libraries are missing runs anyway and
 fails, so the required check never skips one.
@@ -87,11 +87,12 @@ integrated commit. A run on one SHA is not evidence for an unrelated later SHA.
 
 ## 🔎 Validation boundaries
 
-These checks neither compile VBA nor run Excel or an NSFR calculation. The
+These checks neither compile VBA nor run Excel or the NSFR engine; the
+`fixtures` gate re-evaluates each fixture's expected result independently. The
 VBA static checks read source text only (see their
 [limitations](#vba-static-limitations)). The [neutral harness](../tests/README.md)
-(#12) is VBA and runs only in Excel; packaging and actual host evidence remain
-#13 and #14. `host/Record-HostEvidence.ps1` runs the harness self-test in
+is VBA and runs only in Excel; its host evidence records are in
+`tests/evidence/`, and packaging (the workbook template) remains #13. `host/Record-HostEvidence.ps1` runs the harness self-test in
 Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run),
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
 separate worktree; both run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
@@ -167,16 +168,17 @@ reported as `exception-unused`, so the file never keeps a stale exception.
   identifier and is not checked.
 - Rules that need the Excel object model or a compiled project, such as
   `Option Private Module` hiding a procedure or the absence of Excel calls in
-  the core, need the neutral harness (#12) and host evidence (#13, #14).
+  the core, need Excel: they rest on the neutral harness, its host evidence
+  in `tests/evidence/` and packaging (#13).
 
 <a id="continuous-integration"></a>
 
 ## ☁️ Continuous integration
 
-Six workflows run from `.github/workflows/`, all on `main` since the
-integration of 2026-11-03 (#107). Scheduled and issue-event runs use the copy
-on `main`; the Traffic history schedule also requires the setup in
-[traffic history](../docs/TRAFFIC.md). The milestone workflow also runs from
+Eight workflows run from `.github/workflows/`, all on `main`; CodeQL and
+External links reached it with #155 on 2026-11-07. Scheduled and issue-event
+runs use the copy on `main`; the Traffic history schedule uses the credential
+set up in [traffic history](../docs/TRAFFIC.md). The milestone workflow also runs from
 the PR base branch on pull-request events. In them every checkout sets
 `persist-credentials: false`, every action is pinned to a full commit SHA, and
 the default token is read-only. Only label reconciliation, the milestone
@@ -204,8 +206,9 @@ Repository integrity checks out the exact commit under review and verifies that
 `HEAD` is that commit; for a pull request this is GitHub's test merge of the
 head into the base. Its Markdown report is added to the job summary and
 `test-results/` is uploaded as `repository-integrity-<sha>-<run>-<attempt>`,
-retained for 30 days. It downloads only the pinned actions, the locked Python
-wheels and the checksum-verified actionlint archive.
+retained for 30 days. It downloads only the pinned actions (and the exact Python
+and Node.js runtimes they install), the locked Python wheels and the
+checksum-verified actionlint archive.
 
 <a id="external-links"></a>
 
@@ -245,7 +248,7 @@ retries and the URL selection with a fake fetcher, without network access.
 `check_issues.py` applies the [issue rules](../docs/GOVERNANCE.md#issues) to
 every open issue and reports findings; it never changes an issue. It checks the
 assignee configured in the Bug report form, exactly one priority (P1 only with `bug`), an open milestone of the
-active release, a valid ISO start date not after a valid ISO target end date,
+active release or of the next planned one (`ACTIVE_MILESTONES`), a valid ISO start date not after a valid ISO target end date,
 the target end date before the milestone's due date,
 catalogue labels, and the dependency section against the `blocked` label. Pull
 request numbers are loaded so that a dependency section may name one as a

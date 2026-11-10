@@ -51,8 +51,9 @@ severity.
 ## 🎯 Scope
 
 **In scope:** the repository tooling in [tools/](tools/README.md), the GitHub
-Actions workflows and their configuration, and, once added, the VBA source,
-workbook template and tests.
+Actions workflows and their configuration, the neutral VBA test harness and
+fixtures in `tests/`, and, once added, the admitted VBA source and the
+workbook template.
 
 **Out of scope:**
 
@@ -79,10 +80,8 @@ normal deletion commit does not erase previous versions.
 
 ## ⚙️ Automation risk surface
 
-The workflows below are on `main`, except `CodeQL` (#146) and `External
-links` (#147) until I integrate them; meanwhile CodeQL runs on pull requests
-and pushes from the release branch, and the link check only on manual dispatch
-from a branch that has it.
+All the workflows below are on `main`; `CodeQL` (#146) and `External links`
+(#147) reached it with #155 on 2026-11-07.
 Traffic history has collected since 2026-11-07 (#16).
 
 No workflow runs VBA, Excel or an NSFR calculation. The workflows use the
@@ -149,7 +148,7 @@ and must not be assumed.
 | Secret scanning | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning push protection | Enabled | GitHub API read-back, 2026-10-28 |
 | Secret scanning non-provider patterns and validity checks | Disabled | GitHub API read-back, 2026-10-28 |
-| Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 |
+| Dependabot security updates | Enabled | GitHub API read-back, 2026-10-28 and 2026-11-09 (#15) |
 | Dependency graph | On | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Automatic dependency submission | Disabled | **Settings → Advanced Security**, read by me on 2026-11-09 |
 | Dependabot alerts | On | **Settings → Advanced Security**, read by me on 2026-11-09 (#15); the API does not report it with the access used for the other rows |

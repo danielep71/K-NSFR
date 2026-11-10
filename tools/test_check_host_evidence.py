@@ -178,7 +178,7 @@ class HostEvidenceTests(unittest.TestCase):
         record["worktree_clean"] = False
         self.assertFinding("worktree_clean", record)
 
-    def test_fingerprints_must_match_the_checked_out_files(self) -> None:
+    def test_fingerprints_must_match_the_committed_files(self) -> None:
         record = self.record()
         record["fingerprints"][".gitattributes"] = "0" * 64
         self.assertFinding("fingerprints: .gitattributes differs", record)

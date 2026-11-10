@@ -32,8 +32,9 @@ copyright ownership or permission to redistribute.
 | GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `.github/workflows/codeql.yml` authored locally in #146 | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
-| Workbook, regulatory parameters, numerical fixtures | None admitted in the setup baseline | Future source/version, licensing and independent validation required |
-| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, `openpyxl` and LibreOffice, which are not locked |
+| Workbook, regulatory parameters | None admitted | Future source/version, licensing and independent validation required |
+| Numerical fixtures | One neutral synthetic fixture, FX-0001 (#10) | Synthetic data and factors; no regulatory claim |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 
@@ -104,6 +105,7 @@ are locked. Their licenses are listed in
 | --- | --- | --- |
 | GitHub checkout, Python/Node setup, artifact upload actions | Full SHA in each workflow | CI execution |
 | GitHub App token action (`actions/create-github-app-token`) | v3.3.0, commit `64ab729a6294000f5aa4a4bc0b73d1f32bc45510` | Short-lived token for the traffic collection |
+| CodeQL action (`github/codeql-action`, init and analyze) | Full SHA in `codeql.yml` | Code scanning |
 | actionlint | 1.7.12 plus archive SHA-256 in workflow | Workflow validation |
 | Ruff | 0.17.2 plus the hashes of its published files | Python lint and complexity |
 | mypy and runtime dependencies | 2.4.0 (ast-serialize 0.13.1, with the hashes of its published files); exact transitive pins/hashes in lock | Strict typing |
@@ -111,11 +113,6 @@ are locked. Their licenses are listed in
 | types-PyYAML | 6.0.12.20260906 plus wheel hash | YAML type stubs |
 | markdown-it-py / mdurl | 4.2.0 plus the hashes of its published files / 0.1.2 plus wheel hash | Markdown parsing and URL handling |
 
-Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
-[markdown-it-py](https://github.com/executablebooks/markdown-it-py),
-[mdurl](https://github.com/executablebooks/mdurl),
-[typeshed](https://github.com/python/typeshed),
-[Ruff](https://github.com/astral-sh/ruff),
-[mypy](https://github.com/python/mypy), and
-[actionlint](https://github.com/rhysd/actionlint).
+[Licensing](LICENSING.md#runtime-tool-licenses) gives their licenses and
+upstream sources.
 Publication review must assess any future bundled distributions separately.

@@ -114,10 +114,12 @@ Files under the MIT License
 ---------------------------
 
 .github/workflows/pr-milestones.yml
-    Copied unchanged, apart from a license header, from K-FRTB-SA
+    Copied, with a license header added, from K-FRTB-SA
     (https://github.com/danielep71/K-FRTB-SA), file
     .github/workflows/pr-milestones.yml at commit
-    80495bebf4cf300660c2fdf386bee6bbad83eed6.
+    80495bebf4cf300660c2fdf386bee6bbad83eed6. Adapted since: per-pull-request
+    concurrency and a job summary rendered as data (#151), and a check that no
+    milestone remains (#160).
 
 MIT License
 -----------

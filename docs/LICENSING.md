@@ -69,12 +69,21 @@ relicense them.
 | --- | --- |
 | GitHub checkout, Python/Node setup and artifact upload actions | MIT |
 | GitHub App token action (`actions/create-github-app-token`) | MIT |
+| CodeQL action (`github/codeql-action`) | MIT |
 | actionlint | MIT |
 | Ruff | MIT |
 | mypy and its runtime dependencies | Retained in the installed distributions |
 | PyYAML | MIT |
 | types-PyYAML | Apache-2.0 |
 | markdown-it-py and mdurl | MIT |
+
+Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
+[markdown-it-py](https://github.com/executablebooks/markdown-it-py),
+[mdurl](https://github.com/executablebooks/mdurl),
+[typeshed](https://github.com/python/typeshed),
+[Ruff](https://github.com/astral-sh/ruff),
+[mypy](https://github.com/python/mypy) and
+[actionlint](https://github.com/rhysd/actionlint).
 
 <a id="prototype-tool-licenses"></a>
 

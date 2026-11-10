@@ -27,5 +27,6 @@ Before adding a fixture or artifact, inspect its content and metadata, including
 hidden workbook sheets, comments, author fields, external links, embedded
 objects, and cached data. Treat an unexpected real-world match or uncertain
 source as a blocker: keep it outside the repo and ask me for private
-review. Do not reproduce questionable material in an issue or PR. The setup
-baseline contains no calculation fixtures or workbook.
+review. Do not reproduce questionable material in an issue or PR. The repository
+holds no workbook; its only numerical fixture is the neutral synthetic FX-0001,
+and the non-admitted prototype carries a synthetic demo.

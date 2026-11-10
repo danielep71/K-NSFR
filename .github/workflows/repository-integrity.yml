@@ -4,7 +4,7 @@ run-name: Repository integrity — ${{ github.ref_name }} @ ${{ github.sha }}
 # every pull request and push to main and release/**. No path filter, so the
 # job reports on every pull request and can be a required check. Static checks
 # only: tooling, labels and issue forms, committed source, documentation and
-# workflows; no Excel execution or numerical NSFR validation.
+# workflows; no Excel execution and no run of the NSFR engine.
 on:
   push:
     branches: [main, "release/**"]
