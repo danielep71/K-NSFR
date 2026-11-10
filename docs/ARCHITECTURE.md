@@ -92,7 +92,7 @@ real deliverable; the repository holds no empty scaffolding.
 | --- | --- |
 | `src/core/` | Exported pure VBA calculation modules; later production work |
 | `src/api/` | Public validation and result boundary; #9 defines the contracts |
-| `src/host/` | Workbook adapters, isolated from core; #13 |
+| `src/host/` | Workbook adapters, isolated from core; `NSFR_Host_Sync` synchronizes the components that `src/manifest.txt` lists (#13) |
 | `tests/core/`, `tests/api/` | The deterministic [neutral harness](../tests/README.md) and its self-test (#12), then reviewed numerical cases |
 | `tests/host/` | Import, cleanup, and workbook round-trip tests; #13 (v0.2.0) |
 | `tests/fixtures/` | Registered numerical fixtures: synthetic inputs, parameters, independently derived expected results and provenance; #10 |

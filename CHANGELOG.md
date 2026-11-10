@@ -18,6 +18,10 @@ compliance.
 - The macro-free workbook template `templates/NSFR_Template.xlsx`, generated
   reproducibly by `tools/build_template.py` with a hash-locked XlsxWriter, and
   the `template` gate that rebuilds and compares it (#13).
+- The source manifest `src/manifest.txt`, checked by the `vba-static` gate;
+  the host module `NSFR_Host_Sync`, which imports and exports exactly the
+  listed components after a backup copy; and `Test-NSFR-Sync.ps1`, which runs
+  the round trip on the supported host (#13).
 - `release/0.2.0` is the active release branch (#189).
 
 <a id="v010"></a>

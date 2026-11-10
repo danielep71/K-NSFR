@@ -24,6 +24,7 @@ from typing import Any
 
 EXTENSIONS = (".bas", ".cls", ".frm")
 EXCEPTIONS_FILE = "tools/vba-exceptions.json"
+MANIFEST_FILE = "src/manifest.txt"
 # The benchmark prototype is stored as delivered and is not admitted (ADR-011);
 # its VBA is not checked until v0.2.0 moves it into the layout below.
 NOT_ADMITTED = "prototype/"
@@ -467,6 +468,42 @@ def check_files(root: Path, paths: Sequence[str], exceptions_raw: str) -> list[F
     return problems + apply_exceptions(findings, exceptions)
 
 
+def declared_name(raw: bytes) -> str | None:
+    for line in raw.decode("ascii", errors="replace").splitlines()[:20]:
+        match = VB_NAME.match(line)
+        if match:
+            return match.group(1)
+    return None
+
+
+def manifest_findings(root: Path, paths: Sequence[str]) -> list[Finding]:
+    """The manifest lists every admitted VBA file once, under the name the file declares."""
+    manifest = root / MANIFEST_FILE
+    if not manifest.is_file():
+        return [Finding(MANIFEST_FILE, 1, "manifest", "the source manifest is missing")]
+    findings: list[Finding] = []
+    listed: dict[str, int] = {}
+    for number, text in enumerate(manifest.read_text(encoding="ascii").splitlines(), start=1):
+        entry = text.strip()
+        if not entry or entry.startswith("#"):
+            continue
+        fields = entry.split(" ")
+        if len(fields) != 2 or not all(fields):
+            findings.append(Finding(MANIFEST_FILE, number, "manifest", "a line must be 'name path'"))
+            continue
+        name, path = fields
+        if path in listed:
+            findings.append(Finding(MANIFEST_FILE, number, "manifest", f"{path} is listed twice"))
+        listed[path] = number
+        if path not in paths:
+            findings.append(Finding(MANIFEST_FILE, number, "manifest", f"{path} is not an admitted VBA file"))
+        elif declared_name(root.joinpath(path).read_bytes()) != name:
+            findings.append(Finding(MANIFEST_FILE, number, "manifest", f"{path} does not declare {name}"))
+    findings += [Finding(MANIFEST_FILE, 1, "manifest", f"{path} is not listed")
+                 for path in paths if path not in listed]
+    return findings
+
+
 def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0] if __doc__ else None)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -486,6 +523,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"check_vba: {EXCEPTIONS_FILE} is missing", file=sys.stderr)
         return 2
     findings = check_files(root, paths, exceptions_path.read_text(encoding="utf-8"))
+    if not args.paths:
+        # The manifest is checked against every tracked VBA file, so only on a full run.
+        findings += manifest_findings(root, paths)
     for finding in findings:
         print(finding.render())
     note = f"; {skipped} not admitted in {NOT_ADMITTED}, not checked" if skipped else ""

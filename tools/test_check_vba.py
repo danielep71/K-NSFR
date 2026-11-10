@@ -383,5 +383,43 @@ class CommandLineTests(unittest.TestCase):
             self.assertEqual(check_vba.main([]), 0, output.getvalue())
 
 
+
+class ManifestTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "src" / "host").mkdir(parents=True)
+        (self.root / "src" / "host" / "NSFR_Host_A.bas").write_bytes(b'Attribute VB_Name = "NSFR_Host_A"\r\n')
+        (self.root / "src" / "host" / "NSFR_Host_B.bas").write_bytes(b'Attribute VB_Name = "NSFR_Host_B"\r\n')
+        self.paths = ["src/host/NSFR_Host_A.bas", "src/host/NSFR_Host_B.bas"]
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def found(self, manifest: str | None) -> list[str]:
+        if manifest is not None:
+            (self.root / "src" / "manifest.txt").write_text(manifest, encoding="ascii")
+        return [f.message for f in check_vba.manifest_findings(self.root, self.paths)]
+
+    def test_a_complete_manifest_passes(self) -> None:
+        self.assertEqual(self.found("# comment\n\nNSFR_Host_A src/host/NSFR_Host_A.bas\n"
+                                    "NSFR_Host_B src/host/NSFR_Host_B.bas\n"), [])
+
+    def test_a_missing_manifest_is_reported(self) -> None:
+        self.assertEqual(self.found(None), ["the source manifest is missing"])
+
+    def test_an_unlisted_file_and_a_wrong_name_are_reported(self) -> None:
+        self.assertEqual(self.found("NSFR_Host_X src/host/NSFR_Host_A.bas\n"),
+                         ["src/host/NSFR_Host_A.bas does not declare NSFR_Host_X",
+                          "src/host/NSFR_Host_B.bas is not listed"])
+
+    def test_a_bad_line_a_duplicate_and_a_foreign_path_are_reported(self) -> None:
+        found = self.found("NSFR_Host_A src/host/NSFR_Host_A.bas\nNSFR_Host_A src/host/NSFR_Host_A.bas\n"
+                           "NSFR_Host_B src/host/NSFR_Host_B.bas extra\nNSFR_Core_Z src/core/Z.bas\n")
+        self.assertIn("src/host/NSFR_Host_A.bas is listed twice", found)
+        self.assertIn("a line must be 'name path'", found)
+        self.assertIn("src/core/Z.bas is not an admitted VBA file", found)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -96,7 +96,9 @@ is VBA and runs only in Excel; its host evidence records are in
 `tests/evidence/`, and packaging (the workbook template) remains #13. `host/Record-HostEvidence.ps1` runs the harness self-test in
 Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run),
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
-separate worktree; both run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
+separate worktree; `host/Test-NSFR-Sync.ps1` runs the [template and
+synchronization](../docs/INSTALLATION.md#template-and-synchronization) round
+trip. They run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>
@@ -126,7 +128,10 @@ src/core/NSFR_Core_Example.bas:12: [goto] GoTo is allowed only as On Error GoTo
 | `conditional-compilation` (`#If`, `#ElseIf`) | Forbidden | Only on `VBA7` and `Win64` | Forbidden |
 | `compile-constant` (`#Const`) | Forbidden | Forbidden | Forbidden |
 
-A VBA file outside these folders is reported as `vba-location`. The one
+A VBA file outside these folders is reported as `vba-location`. On a full run
+the gate also checks the source manifest `src/manifest.txt` (rule `manifest`):
+it lists every admitted VBA file once, as `name path`, under the name the file
+declares in `Attribute VB_Name`. The one
 exception is `prototype/`: it is not admitted ([ADR-011](../docs/DECISIONS.md#recorded-decisions)),
 so its VBA is not checked and the summary line counts it as not checked. Every
 conditional-compilation branch is checked, so a rule holds in each compile
