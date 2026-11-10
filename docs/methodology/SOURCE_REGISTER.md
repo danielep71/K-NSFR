@@ -124,13 +124,13 @@ decision above.
 | --- | --- | --- | --- | --- |
 | Stable funding requirement and the ratio | S-01 Articles 413, 428b | Result fields for available stable funding, required stable funding and the ratio, with diagnostics (#9) | None | Ratio and zero-denominator cases (#10) |
 | General calculation rules | S-01 Article 428c | Input validation and gross-basis treatment rules in the contracts (#9) | None | Invalid-input cases (#10) |
-| Derivative contracts | S-01 Article 428d | Derivative inputs and netting set identity (#9) | Derivative treatment, cited | Derivative cases (#10) |
-| Netting of secured lending and capital market-driven transactions | S-01 Article 428e | Netting eligibility inputs (#9) | None | Netting boundary cases (#10) |
+| Derivative contracts | S-01 Article 428d | Out of contract v1: rejected with `NSFR-E012` (#9); admission needs its own issue | — | — |
+| Netting of secured lending and capital market-driven transactions | S-01 Article 428e | Out of contract v1: rejected with `NSFR-E012` (#9); admission needs its own issue | — | — |
 | Interdependent assets and liabilities | S-01 Article 428f | Out of v1: the treatment depends on a supervisory decision under that Article (to verify on EUR-Lex) | — | — |
 | Institutional protection schemes, cooperative networks, group treatment | S-01 Articles 428g, 428h | Out of v1 (entity scope) | — | — |
 | Available stable funding and residual maturity of liabilities | S-01 Articles 428i, 428j | Liability classification and residual-maturity inputs (#9) | ASF factors, cited per Articles 428k–428o | ASF classification and maturity boundary cases (#10) |
 | Required stable funding, residual maturity and encumbrance of assets | S-01 Chapter 4 Section 1 (Articles 428p–428q); the exact provisions to confirm on EUR-Lex | Asset classification, residual-maturity and encumbrance inputs (#9) | RSF factors, cited per Articles 428r–428ah | RSF classification, maturity and encumbrance boundary cases (#10) |
-| Required stable funding of short-term transactions with financial customers | S-01 Article 510, as amended by S-03 | Transaction-type, counterparty and residual-maturity inputs (#9) | Article 510 treatment, cited | Article 510 cases (#10) |
+| Required stable funding of short-term transactions with financial customers | S-01 Article 510, as amended by S-03 | Transaction-type, counterparty and residual-maturity inputs (#9) | Article 510 treatment, cited | [Case plan](../validation/VALIDATION.md#case-plan), PROD-02 and PROD-03 |
 | Simplified calculation for small and non-complex institutions | S-01 Articles 428ai–428az | Out of v1 | — | — |
 | Application on a consolidated basis | S-01 Article 428a | Out of v1 (entity scope) | — | — |
 | Reporting layout and items requiring stable funding | S-01 Articles 427–428, Article 428(1)(k) as amended by S-04; R-02 Article 17 and Annex I section 7 | Output naming and ordering only | None | Output layout review (#9) |
@@ -160,8 +160,8 @@ citation; this register states none.
 
 | Item | Status and owner |
 | --- | --- |
-| Supervisory decision under Article 428f, and the exact provisions of Chapter 4 Section 1 on the residual maturity and encumbrance of assets | To verify on EUR-Lex before #9 defines the corresponding inputs. |
-| Indirect effects of S-04's other CRR amendments on the NSFR inputs | Reviewed when #9 defines the inputs that Article 428(1)(k) and the RSF provisions refer to. |
+| Supervisory decision under Article 428f, and the exact provisions of Chapter 4 Section 1 on the residual maturity and encumbrance of assets | To verify on EUR-Lex before PROD-01 sets the parameter set; contract 1.0.0 (#9) carries only the dates. |
+| Indirect effects of S-04's other CRR amendments on the NSFR inputs | Reviewed under PROD-01, for the inputs that Article 428(1)(k) and the RSF provisions refer to. |
 | Inclusion of derivative contracts (Article 428d) and netting (Article 428e) | Deferred from contract version 1 by my decision in #9: such inputs are rejected with `NSFR-E012`; admitting them needs its own issue. |
 | Factor values for ASF and RSF | Captured with citations in the parameter set of [PROD-01](../BACKLOG.md#later-calculation-work), never in this register. |
 | Consolidated basis, group and scheme treatments, simplified calculation | Out of v1; each needs its own scope decision and follow-on issue before admission. |

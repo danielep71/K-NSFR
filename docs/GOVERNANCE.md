@@ -108,8 +108,8 @@ A removal succeeds only after both the PATCH response and an independent GET
 confirm that no milestone remains. Each pull request's events queue separately from the full scans, and its job
 summary lists each pull request and the milestone title it removed.
 
-The read-only Issue triage workflow audits open issues on issue events and
-manual dispatch. I triage findings; the workflow never edits
+The read-only Issue triage workflow audits open issues on issue events,
+milestone events and manual dispatch. I triage findings; the workflow never edits
 issues. Its mechanical P1 check requires bug; confirming a calculation defect
 remains my decision. `python tools/check.py` (gate `issue-config`)
 fails when a catalogue label is not explained exactly once in the tables above,
@@ -192,13 +192,12 @@ job has `issues: write` and `contents: read`, has no environment, receives
 neither, and reads the exact `traffic-history` commit the collection published. It opens at most one alert issue per snapshot date with an
 assignee, priority, open milestone and target date before the milestone due date.
 
-The workflow reached `main` with #107 on 2026-11-03. A restricted
-`analytics` environment and the App credential setup must precede live
-operation; until they exist the collect job fails at its *Check the App
-configuration* step. Follow the
-[operating guide](TRAFFIC.md) for stored-data meaning, setup, renewal and
-recovery. No live collection, history push or alert is verified; #16 tracks
-operational acceptance. The workflow builds and tests nothing.
+The workflow reached `main` with #107 on 2026-11-03. The restricted
+`analytics` environment and the App credential are set up, and collection has
+run daily since 2026-11-07 (#16); without them the collect job fails at its
+*Check the App configuration* step. No alert issue had been opened by
+2026-11-10. Follow the [operating guide](TRAFFIC.md) for stored-data meaning,
+setup, renewal and recovery. The workflow builds and tests nothing.
 
 <a id="branches-and-integration"></a>
 
@@ -243,7 +242,7 @@ validation. Merge the release PR into `main` with a merge commit, preserving
 ancestry. Then open a `main` to `release/0.1.0` PR and merge it with a merge
 commit; resume task merges only when synchronization completes. Never force push
 or delete protected branches. Release tags, publication and version claims
-require their own release procedure (#19).
+follow the [release procedure](RELEASE.md) (#19).
 
 Record exceptions or deferred acceptance criteria in the linked issue and PR,
 including the reason, my decision, affected candidate SHA and follow-up
@@ -325,12 +324,12 @@ allows merge commits; the release ruleset allows squash and merge commits.
 Additional rulesets protect `release/**` from deletion, `v*` tags from
 updates/deletion, and `traffic-history` from deletion or history rewrite.
 I set GitHub Actions to require full SHA pins and to give the default
-workflow token read access; these two settings are my statement, not read
-back (see the [settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#actions-and-security)).
+workflow token read access; both were verified by their effect on 2026-11-09
+(#15; see the [settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#actions-and-security)).
 Dependabot targets `release/0.1.0` from the configuration installed on
 `main`; activation was verified in #6. The rulesets above were read back
-through the API on 2026-10-29; branch-rule enforcement scenarios are tracked
-by #15. The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
+through the API on 2026-10-29 and 2026-11-09, and their enforcement was
+demonstrated on #172 (#15; [enforcement](REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)). The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled
 CodeQL code scanning (default setup: Actions and Python, weekly) on 2026-10-29
 (#75), and replaced the default setup with the `CodeQL` workflow (Actions,
@@ -341,10 +340,12 @@ read-back, with ruleset IDs.
 
 Repository integrity runs on every PR into main and release/**, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
-It checks committed Markdown links/fences, YAML syntax and duplicate keys,
+It runs the 17 gates that [tooling](../tools/README.md#gates-and-reports)
+lists: committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,
-strict Python typing, lint and tests, the VBA static rules, and committed
-blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
+strict Python typing, lint and tests, the label catalogue and issue forms,
+the contracts and numerical fixtures, the VBA static rules, the host evidence
+records, and committed blob whitespace (trailing whitespace outside Markdown and `LICENSE`, final
 newline and blank lines at end of file). Python and Node.js are selected by
 exact patch version, as the [tool versions](../tools/README.md#tool-versions)
 table records. These portable checks do not run Excel

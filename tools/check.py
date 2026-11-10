@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 SCOPE = ("Repository tooling, labels, forms, committed source, documentation and workflows only; "
-         "no Excel execution or numerical NSFR validation.")
+         "no Excel execution and no run of the NSFR engine.")
 
 # Python libraries a gate imports, by tool name: (import name, distribution name).
 LIBRARIES: dict[str, tuple[tuple[str, str], ...]] = {

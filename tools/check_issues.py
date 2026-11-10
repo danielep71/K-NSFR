@@ -428,7 +428,8 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     source.add_argument("--repository", help="owner/name; reads GITHUB_TOKEN")
     source.add_argument("--input", type=Path, help="issues exported as GitHub REST JSON")
     source.add_argument("--check-config", action="store_true",
-                        help="check the issue forms and label catalogue only (offline)")
+                        help="check the label catalogue, issue forms, label guide and Dependabot "
+                             "configuration only (offline; needs Node)")
     parser.add_argument("--repo-name",
                         help="repository used to resolve issue URLs with --input")
     parser.add_argument("--output", type=Path, help="write the findings as JSON")

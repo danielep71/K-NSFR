@@ -6,11 +6,14 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
-These rules govern VBA implementation. The only VBA modules are the
-[neutral test harness](../tests/README.md) and its self-test (#12). The
-`vba-static` gate enforces the mechanical rules
-([VBA static checks](../tools/README.md#vba-static-checks)); host import,
-compilation and execution belong to #13/#14. Current portable CI validates repository tooling only. The public
+These rules govern VBA implementation. The only admitted VBA modules are the
+[neutral test harness](../tests/README.md) and its self-test (#12); the seven
+modules of the non-admitted `prototype/` (ADR-011) are not checked until
+v0.2.0 admits them. The `vba-static` gate enforces the mechanical rules
+([VBA static checks](../tools/README.md#vba-static-checks)); the harness's
+import, compilation and execution on the host are evidenced by #14, and the
+export/import round trip belongs to #13. Portable CI checks VBA source text
+statically; it never compiles or runs it. The public
 boundary and numeric decisions remain in [IMPLEMENTATION.md](IMPLEMENTATION.md).
 
 <a id="naming"></a>
@@ -40,8 +43,9 @@ refer to it.
 | Error number constant | `ERR_` + UPPER_SNAKE_CASE | `ERR_INVALID_INPUT` |
 | Enum type / member | `Nsfr` + noun / short prefix + PascalCase | `NsfrProductType` / `ptRepo` |
 
-The examples show the form of a name only; none of these components exists,
-and no product, quantity or parameter is decided by them.
+Apart from `Test_NSFR_Harness` and the non-admitted prototype's
+`NSFR_API_Functions` and `NSFR_Host_Main`, the examples show the form of a name
+only; no product, quantity or parameter is decided by them.
 
 - Names are English and spelled out. Abbreviations are limited to
   established terms of the documented method, written in full in the
@@ -50,8 +54,8 @@ and no product, quantity or parameter is decided by them.
   or a `Do` loop stepping through positions, counts with. Every other
   variable and parameter names what it holds, also in a short helper
   (`Formatted`, not `s`).
-- API arguments use the terms of the documented method once the
-  methodology (#8) and the contracts (#9) are approved.
+- API arguments use the terms of the [source register](methodology/SOURCE_REGISTER.md)
+  (#8) and the [contracts](contracts/CONTRACTS.md) (#9).
 - VBA names are case-insensitive and the VBE shows one spelling per name
   across the project, so the source files, not the editor, carry the
   convention. The component name (`Attribute VB_Name`) must equal the file
@@ -107,7 +111,7 @@ signature. Omit sections that are empty.
 - Currencies are three-letter ISO 4217 codes held as `String`.
 - Approved weights and other proportions are decimals: `0.05`, never `5`
   meaning 5%.
-- Dates are VBA `Date`. Period representations and units are explicit contract decisions in #9;
+- Dates are VBA `Date`. Period representations and units are the explicit decisions of the [contracts](contracts/CONTRACTS.md) (#9);
   never assume a year fraction or day-count convention.
 - Every numeric input states its valid domain, for example
   `Amount >= 0` or `0 <= Proportion < 1`.
@@ -123,7 +127,7 @@ signature. Omit sections that are empty.
 ### Return values and errors
 
 - The API returns a documented status, diagnostics and no authoritative totals
-  on failure. Stable codes, field paths and error domains are finalized in #9.
+  on failure. Stable codes, field paths and error domains are defined in the [contracts](contracts/CONTRACTS.md) (#9).
 - Expected invalid inputs are explicit validation outcomes. Never substitute
   zeros or partially valid results.
 - Validate, don't trap: core and API detect overflow, division by zero and
@@ -144,7 +148,8 @@ signature. Omit sections that are empty.
 - A `Public` procedure in `src/core/` is internal: `Option Private Module`
   keeps it off the workbook's external surface.
 - The only planned calculation entry point is `NSFR_API_Run` in `src/api/`.
-  Its request/result types and declarations are finalized by #9. A
+  Its request/result types follow the [contracts](contracts/CONTRACTS.md) (#9)
+  and are declared with the first API module. A
   public-declaration inventory arrives with the first real modules.
   Internal helpers are explicitly `Private`; cross-module core procedures may
   be `Public` only inside an `Option Private Module` standard module.
@@ -174,8 +179,9 @@ it.
    caller, also when the primary error is re-raised. When only cleanup
    failed, the procedure raises `ERR_CLEANUP_FAILED`, never success.
 
-The following is a design sketch, not compiled or executed evidence. #14
-must exercise success, primary-error-plus-cleanup-failure and cleanup-only
+The following is a design sketch, not compiled or executed evidence. The host
+evidence of the first host module that changes Excel state (#13) must
+exercise success, primary-error-plus-cleanup-failure and cleanup-only
 failure; the harness (#12) reports a cleanup failure apart from the outcome.
 
 ```vb

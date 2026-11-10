@@ -16,19 +16,23 @@ VBA source is ASCII only, as the
 [VBA house style](VBA_HOUSE_STYLE.md#export-compatibility) requires
 ([ADR-008](DECISIONS.md#recorded-decisions)); Windows-native scripts keep their
 host encoding. Neither is converted: the editor configuration does not force a
-charset, and no Git working-tree-encoding rule is active. #13/#14 must record
-the exact code page and prove source import/export on the intended host.
+charset, and no Git working-tree-encoding rule is active. #13 (v0.2.0) must
+record the exact code page and prove source import/export on the intended
+host; #14 evidenced only the import of the neutral harness.
 
 `.editorconfig` defines editor defaults. `.gitattributes` normalizes repository
 text to LF and checks VBA and Windows-native scripts out as CRLF for the intended
 host. Cross-platform text checks out as LF regardless of core.autocrlf. No custom clean/smudge filter or
 working-tree-encoding conversion is required. Use Git checkout rather than
 assuming a downloaded source archive has the host line endings. Git conversion
-tests are portable evidence; actual Excel import/export remains #13/#14 work.
+tests are portable evidence; actual Excel export and
+round trip remain #13 work.
 
-The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md). The
-repository holds configuration, its checks and their tests; source, fixtures
-and template directories are created with real deliverables.
+The current layout is documented in [ARCHITECTURE.md](ARCHITECTURE.md).
+Besides configuration, checks and their tests, the repository holds the
+neutral harness, one neutral fixture, host evidence records and the
+non-admitted `prototype/`; `src/` and the template directory are created with
+real deliverables.
 
 <a id="generated-files-and-intentional-binaries"></a>
 

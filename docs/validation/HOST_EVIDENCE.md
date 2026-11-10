@@ -31,7 +31,7 @@ fields:
 | Field | Content |
 | --- | --- |
 | `schema` | `k-nsfr-host-evidence/1` |
-| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of `release/0.1.0` or `main`: a task-branch commit disappears with its squash merge |
+| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of a published release branch (now `release/0.1.0`) or of `main`: a task-branch commit disappears with its squash merge |
 | `recorded_on` | The ISO date of the run, from the commit date to today |
 | `worktree_clean` | `true`: `git status --porcelain` printed nothing before the import |
 | `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
@@ -91,7 +91,8 @@ checked out. You need the supported host and Git. Python is optional and
 validates the record at the end.
 
 1. Clone the repository fresh, or check that `git status --porcelain` prints
-   nothing, and check out a commit of `release/0.1.0` or `main`.
+   nothing, and check out a commit of a published release branch (now
+   `release/0.1.0`) or of `main`.
 2. Close Excel, then run from the repository folder:
 
    ```text
@@ -142,7 +143,8 @@ Without the script, follow the [manual route](../../tests/README.md#running-in-e
    `python tools/check_host_evidence.py --candidate <SHA>` if you can.
 
 A failed or interrupted run is recorded too, with `FAIL` or `NOT_RUN` and the
-reason. If no supported host is available, #14 stays open with that blocker.
+reason. If no supported host is available, the issue that needs the evidence
+stays open with that blocker.
 
 <a id="what-the-gate-rejects"></a>
 

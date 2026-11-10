@@ -19,7 +19,7 @@
 
 <br>
 
-[Status](#status) · [Scope](#scope) · [Requirements](#requirements) · [Documentation](#documentation) · [Validation](#validation) · [Roadmap](#roadmap)
+[Status](#status) · [Scope](#scope) · [Requirements](#requirements) · [Quick start](#quick-start) · [Layout](#layout) · [Documentation](#documentation) · [Validation](#validation) · [Roadmap](#roadmap)
 
 </div>
 
@@ -48,9 +48,9 @@ must be approved before any numerical implementation.
 | --- | --- |
 | Repository | Governance, licensing, architecture, source conventions and portable CI are in place |
 | Calculation | Not implemented; no ASF, RSF or ratio output is available. A benchmark [prototype](prototype/README.md) is stored but not admitted |
-| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; it passed in Excel on 2026-11-09 at `5231985` ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)) |
+| Tests | A neutral VBA [test harness](tests/README.md) with its self-test; it passed in Excel on 2026-11-09 at `5231985` and `dec4ad5` ([host evidence records](tests/evidence/README.md)) |
 | Regulatory profiles | None executable or validated; EU CRR standard is a planned target |
-| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; only the neutral harness has run there ([host evidence](tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)); no engine or workbook exists yet |
+| Workbook host | Windows 11 / Microsoft 365 desktop Excel / 64-bit VBA7 is the declared target; only the neutral harness has run there ([host evidence records](tests/evidence/README.md)); no engine or workbook exists yet |
 | Data | Synthetic-only policy; no production or client data |
 
 <a id="scope"></a>
@@ -69,11 +69,50 @@ the backlog as an implementation plan.
 ## 🧰 Requirements
 
 The intended engine host is **Windows 11 with Microsoft 365 desktop Excel,
-VBA7 and 64-bit Office**. That combination has not been tested here. Portable
-repository checks run on Ubuntu 24.04 with Python 3.13 and Node 22; passing
-them does not prove Excel compatibility or regulatory correctness. See
-[implementation conventions](docs/IMPLEMENTATION.md) for the support matrix
-and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
+VBA7 and 64-bit Office**. On that host only the neutral test harness has run,
+with two PASS [host evidence records](tests/evidence/README.md); no engine
+exists to run. Portable repository checks run on Ubuntu 24.04 with Python 3.13
+and Node 22; passing them does not prove Excel compatibility or regulatory
+correctness. See [implementation conventions](docs/IMPLEMENTATION.md#supported-and-tested-environments)
+for the support matrix and [source-control conventions](docs/SOURCE_CONTROL.md)
+for exported modules.
+
+<a id="quick-start"></a>
+
+## 🚀 Quick start
+
+Clone the repository and work on the active release branch:
+
+```sh
+git clone https://github.com/danielep71/K-NSFR.git
+cd K-NSFR
+git checkout release/0.1.0
+```
+
+- **Portable checks:** install the [locked tools](tools/README.md#running-the-checks),
+  then run `python tools/check.py --ci` on a clean, committed checkout.
+- **Supported host:** with Excel closed, run
+  `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0`.
+  It builds the neutral harness in a new workbook, runs its self-test and
+  writes a host evidence record.
+
+The [installation guide](docs/INSTALLATION.md) gives the prerequisites, the
+manual route and troubleshooting.
+
+<a id="layout"></a>
+
+## 🗂️ Layout
+
+| Path | Content |
+| --- | --- |
+| `docs/` | Scope, architecture, conventions, governance and decisions; `contracts/`, `methodology/` and `validation/` hold the contracts, the source register and the validation rules |
+| `tests/` | The neutral VBA harness (`core/`), the numerical fixtures (`fixtures/`) and the host evidence records (`evidence/`) |
+| `tools/` | The portable checks, their tests and the host scripts (`host/`) |
+| `prototype/` | My benchmark prototype, stored as delivered and not admitted (ADR-011) |
+| `.github/` | Workflows, issue forms, the PR template, the Dependabot configuration and the label catalogue with its scripts |
+
+There is no `src/` yet: admitted VBA modules will live in `src/core/`,
+`src/api/` and `src/host/` ([architecture](docs/ARCHITECTURE.md)).
 
 <a id="documentation"></a>
 
@@ -83,6 +122,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | --- | --- |
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
+| [Installation and host setup](docs/INSTALLATION.md) | Portable checks, host prerequisites, the three routes to run the harness, and troubleshooting |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
 | [Regulatory source register](docs/methodology/SOURCE_REGISTER.md) | NSFR sources, their verification, concept mapping and applicability of the planned profile |
 | [Input and result contracts](docs/contracts/CONTRACTS.md) | Field dictionary, parameter and result schemas, diagnostics and synthetic examples |
@@ -92,8 +132,9 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | [NSFR benchmark prototype](prototype/README.md) | My prototype, stored as delivered and not admitted (ADR-011) |
 | [Documentation style](docs/WRITING_STYLE.md) | Consistent glyphs, badges, navigation and evidence wording |
 | [Governance](docs/GOVERNANCE.md) | Issues, labels, branches and integration |
+| [Release procedure](docs/RELEASE.md) · [Changelog](CHANGELOG.md) · [Setup readiness](docs/SETUP_READINESS.md) | Versions, release candidate, tag, rollback, milestone closure, what each version adds, and the v0.1.0 readiness report |
 | [Repository settings](docs/REPOSITORY_SETTINGS.md) · [Settings evidence](docs/REPOSITORY_SETTINGS_EVIDENCE.md) | Non-default settings and their dated read-back |
-| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) | MPL-2.0 selection, rights, attributions and provenance inventory |
+| [License](LICENSE) · [Distribution](docs/LICENSING.md) · [Third-party notices](docs/licenses/THIRD_PARTY_NOTICES.txt) · [Provenance](docs/PROVENANCE.md) · [File audit](docs/FILE_AUDIT.md) · [Documentation audit](docs/DOC_AUDIT.md) | MPL-2.0 selection, rights, attributions, provenance inventory, and the audits of every tracked file and of the documentation |
 | [Synthetic data](docs/DATA_POLICY.md) · [Security](SECURITY.md) | Data boundaries and private vulnerability reporting |
 | [Traffic history](docs/TRAFFIC.md) | Daily traffic collection, its credential and its alert |
 
@@ -103,11 +144,14 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 
 The required **Repository integrity** check validates committed text, Markdown
 file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
-typing/lint/tests, the VBA static rules, the label catalogue and the
+typing/lint/tests, the input/result contracts and their examples, the
+numerical fixtures, the VBA static rules, the label catalogue and the
 issue-form configuration. Live
 issues are audited separately by the issue triage workflow. The check runs on
-documentation-only and synchronization PRs. Actual Excel import/export and
-host evidence are planned under issues #13 and #14;
+documentation-only and synchronization PRs. It never runs Excel: a run on
+the supported host is proved only by a [host evidence record](docs/validation/HOST_EVIDENCE.md),
+bound to its commit and validated by the `host-evidence` gate (#14). The
+workbook template and the export/import round trip come with #13;
 independent numerical validation comes later. Follow the commands in
 [governance](docs/GOVERNANCE.md#local-validation) for portable local checks.
 

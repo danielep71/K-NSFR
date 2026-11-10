@@ -270,12 +270,11 @@ docs/methodology/sources/README.md      text eol=lf
 
 
 #==============================================================================
-# OPTIONAL PER-REPOSITORY ENCODING POLICY
+# PER-REPOSITORY ENCODING POLICY: NOT USED
 #------------------------------------------------------------------------------
-# VBE exports use the Windows system code page. If non-ASCII VBA source is not
-# valid UTF-8 and every supported Git client handles working-tree-encoding,
-# consider enabling these rules after a dedicated round-trip and normalization
-# test. Leave them disabled for pure ASCII source.
+# VBE exports use the Windows system code page. ADR-008 keeps VBA source ASCII
+# only, so these rules stay disabled; revisit them only if that decision
+# changes, after a dedicated round-trip and normalization test.
 #
 #   *.bas  working-tree-encoding=windows-1252
 #   *.cls  working-tree-encoding=windows-1252

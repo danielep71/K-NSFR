@@ -38,7 +38,9 @@ caller request or profile/parameter data. Results must be reproducible for
 identical validated inputs and versioned configuration. No default profile,
 effective date, reporting perimeter, currency basis or missing value is
 inferred. Unknown or unapproved configuration is rejected. Regulatory
-methodology and accepted parameter versions belong to #8 and #9.
+sources belong to the [register](methodology/SOURCE_REGISTER.md) (#8), the
+parameter-set format to the [contracts](contracts/CONTRACTS.md) (#9), and
+accepted parameter values to PROD-01 of the [backlog](BACKLOG.md).
 
 <a id="numbers-validation-and-diagnostics"></a>
 
@@ -65,8 +67,8 @@ checks before the operation and return that status; they hold no `On Error`
 handler, and an unexpected runtime error propagates to the host boundary
 ([ADR-008](DECISIONS.md#recorded-decisions)). Never turn
 an error, blank, or missing value into zero, a plausible NSFR result, or a
-partially successful response. Define diagnostic codes and field paths in
-#9; use stable codes for tests and descriptive text for people. An error
+partially successful response. The [contracts](contracts/CONTRACTS.md) (#9)
+define the diagnostic codes and field paths; use stable codes for tests and descriptive text for people. An error
 result contains no authoritative totals. Host errors remain distinguishable
 from calculation validation. The host restores any Excel state it changed
 even after failure and does not suppress the original diagnostic.
@@ -77,7 +79,7 @@ even after failure and does not suppress the original diagnostic.
 
 | Environment | Declared support | Execution evidence at v0.1.0 setup |
 | --- | --- | --- |
-| Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | Neutral harness self-test PASS on 2026-11-09 at `5231985`: Windows 11 Enterprise 25H2 (OS build 26200.9711), Microsoft 365 Apps build 20430.20180, 64-bit ([host evidence](../tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)). No engine has run |
+| Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | Neutral harness self-test PASS on 2026-11-09 at `5231985` and `dec4ad5`: Windows 11 Enterprise 25H2 (OS build 26200.9711), Microsoft 365 Apps build 20430.20180, 64-bit ([host evidence records](../tests/evidence/README.md)). No engine has run. [Installation](INSTALLATION.md) gives the routes |
 | Ubuntu 24.04, Python 3.13 and Node 22 at the exact patch versions of the [tool versions](../tools/README.md#tool-versions) | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
 | 32-bit Office, older/perpetual Excel, Excel for Mac | Outside initial host profile | NOT RUN; no compatibility claim |
 | Excel web/mobile, LibreOffice, server Excel automation | Unsupported | NOT RUN |
@@ -98,8 +100,9 @@ committed text uses LF, Git checks `.bas`, `.cls` and `.frm` out as CRLF.
 The VBE exports according to the host system code page, which differs between
 hosts, so VBA source is ASCII only and a non-ASCII character is built at run
 time with `ChrW` ([ADR-008](DECISIONS.md#recorded-decisions)). No charset or
-Git working-tree encoding is configured for VBA. #13/#14 verify the
-export/import round trip on the intended host. Never normalize an exported module
+Git working-tree encoding is configured for VBA. #13 (v0.2.0) verifies
+the export/import round trip on the intended host; #14 evidenced the import,
+compilation and run of the neutral harness only. Never normalize an exported module
 with a text editor merely to make a test pass. Keep form binaries (`.frx`)
 paired with their source and admit each through the exact binary allowlist.
 

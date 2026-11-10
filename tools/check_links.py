@@ -7,7 +7,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 Run weekly and on demand by the External links workflow, never by Repository
 integrity, which stays offline (tools/README.md, external links). Each http or
-https URL found in a link or image of a committed Markdown file is fetched
+https URL found in a link, image or HTML href/src of a committed Markdown file is fetched
 once, with GET and redirects followed. Its outcome is:
 
 - verified: a 2xx answer after the redirects;

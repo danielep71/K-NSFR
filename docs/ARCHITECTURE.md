@@ -46,8 +46,10 @@ The host target is a support intention, not a tested compatibility certification
 numeric/error behavior and the detailed supported-versus-tested matrix; the
 portable tooling's runtime is pinned as the
 [tooling guide](../tools/README.md#tool-versions) describes.
-#13 supplies reproducible packaging and source synchronization, and #14 supplies
-genuine host evidence. No worksheet API, Windows API, COM reference, or external
+#14 delivered candidate-bound host evidence: the neutral harness self-test
+passed on the supported host at `5231985` and `dec4ad5`
+([records](../tests/evidence/README.md)). #13, in v0.2.0, supplies the
+workbook template, packaging and the source synchronization round trip. No worksheet API, Windows API, COM reference, or external
 library is needed by the pure calculation core. Any future host dependency must
 be justified and isolated.
 
@@ -71,9 +73,10 @@ from the machine date. Configuration is explicit and unchanged during a run.
 The API will accept validated records, an as-of date, a reporting perimeter,
 and an approved profile/parameter identity; it will return results, diagnostics,
 and input/configuration provenance. #5 recorded the
-[implementation conventions](IMPLEMENTATION.md); exact fields, types,
-precision, tolerances and error codes are deliverables of #9 and #10, not
-finalized here.
+[implementation conventions](IMPLEMENTATION.md); the exact fields, types,
+precision, tolerances and error codes are fixed by the
+[contracts](contracts/CONTRACTS.md) (#9) and the
+[validation rules](validation/VALIDATION.md) (#10).
 Invalid inputs must produce explicit diagnostics, never fabricated zero results.
 The host owns cleanup and restoration of any Excel state it changes, including
 on failure; host failures must remain distinguishable from calculation failures.
@@ -91,13 +94,14 @@ real deliverable; the repository holds no empty scaffolding.
 | `src/api/` | Public validation and result boundary; #9 defines the contracts |
 | `src/host/` | Workbook adapters, isolated from core; #13 |
 | `tests/core/`, `tests/api/` | The deterministic [neutral harness](../tests/README.md) and its self-test (#12), then reviewed numerical cases |
-| `tests/host/` | Import, cleanup, and workbook round-trip tests; #13/#14 |
+| `tests/host/` | Import, cleanup, and workbook round-trip tests; #13 (v0.2.0) |
 | `tests/fixtures/` | Registered numerical fixtures: synthetic inputs, parameters, independently derived expected results and provenance; #10 |
+| `tests/evidence/` | Host evidence records, one per tested commit; #14 |
 | `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
-| `docs/` | Scope, architecture, decisions, governance, and future methodology/evidence guides |
+| `docs/` | Scope, architecture, decisions, governance, installation, release, and the source register and validation guides |
 | `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
-| `docs/validation/` | Numerical fixture rules and their machine-readable schema; #10 |
-| `tools/` | Existing Python governance tools; future checks and sync utilities |
+| `docs/validation/` | Numerical fixture rules and their machine-readable schema (#10); the host evidence record format (#14) |
+| `tools/` | Python repository checks and their tests; `tools/host/` PowerShell scripts that record host evidence; future sync utilities (#13) |
 | `prototype/` | My benchmark prototype, stored as delivered and not admitted ([ADR-011](DECISIONS.md#recorded-decisions)); v0.2.0 moves it into this layout piece by piece |
 | `.github/scripts/` | Existing JavaScript label tools |
 | `.github/workflows/` | CI and repository automation |
@@ -111,8 +115,8 @@ component name and respect host limits; procedure/type names use PascalCase.
 Use lowercase snake_case for Python modules and contract field identifiers,
 lowercase kebab-case for profile and fixture IDs, and the existing uppercase
 convention for top-level documentation files. Stable fixture IDs identify cases
-independently of row order. #9 finalizes the public API field names before
-code is introduced.
+independently of row order. The contracts (#9) fix the field names; the VBA
+request and result types follow them when code is introduced.
 
 Repository text is the future canonical source; generated macro-enabled
 workbooks are not source of truth. [Source-control conventions](SOURCE_CONTROL.md)
@@ -124,8 +128,10 @@ governance tooling in place; do not move tests merely to match the future layout
 
 ## ✅ Validation boundaries
 
-Portable CI checks the label catalogue, the issue-form configuration,
-committed source conventions and the VBA static rules. It does not compile
+Portable CI checks the labels and issue forms, committed bytes, Markdown and
+YAML, the contracts and their examples, the numerical fixtures, the VBA static
+rules, the host evidence records and the workflows
+([gates](../tools/README.md#gates-and-reports)). It does not compile
 VBA, run Excel, or validate regulatory results. The VBA static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different
 evidence and must report their own status. Independent numerical validation is
