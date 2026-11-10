@@ -35,6 +35,7 @@ Private Const TYPE_STD_MODULE As Long = 1       'vbext_ct_StdModule
 Private Const TYPE_CLASS_MODULE As Long = 2     'vbext_ct_ClassModule
 Private Const TYPE_FORM As Long = 3             'vbext_ct_MSForm
 Private Const ERR_SYNC As Long = vbObjectError + 513
+Private Const SPARE_PREFIX As String = "NsfrSyncOld"  'Temporary name of a replaced component
 Private Const RESULT_PASS As String = "RESULT PASS"
 Private Const RESULT_FAIL As String = "RESULT FAIL"
 
@@ -115,7 +116,7 @@ Public Function SyncExport( _
             If Component Is Nothing Then
                 Err.Raise ERR_SYNC, , "the workbook has no component " & Names(i)
             End If
-            Component.Export Paths(i)
+            ExportComponent Component, Paths(i)
             Report = Report & "EXPORTED " & Names(i) & vbCrLf
         Next i
         SyncExport = Report & RESULT_PASS
@@ -215,7 +216,9 @@ Private Function BackupCopy() _
 'UPDATED        2026-11-10
     Dim FullName    As String                   'Name of the saved workbook
     Dim Dot         As Long                     'Position of its extension
+    Dim Stem        As String                   'Path of the copy without its extension
     Dim Target      As String                   'Path of the copy
+    Dim Suffix      As Long                     'Makes the path unique within one second
 
         If Len(ThisWorkbook.Path) = 0 Then
             Err.Raise ERR_SYNC, , "save the workbook as .xlsm before a sync"
@@ -223,8 +226,13 @@ Private Function BackupCopy() _
         FullName = ThisWorkbook.Name
         Dot = InStrRev(FullName, ".")
         If Dot = 0 Then Dot = Len(FullName) + 1
-        Target = ThisWorkbook.Path & "\" & Left$(FullName, Dot - 1) & ".backup-" & _
-            Format$(Now, "yyyymmdd-hhnnss") & Mid$(FullName, Dot)
+        Stem = ThisWorkbook.Path & "\" & Left$(FullName, Dot - 1) & ".backup-" & Format$(Now, "yyyymmdd-hhnnss")
+        Target = Stem & Mid$(FullName, Dot)
+        Suffix = 1
+        Do While Len(Dir$(Target, vbNormal)) > 0
+            Suffix = Suffix + 1
+            Target = Stem & "-" & Suffix & Mid$(FullName, Dot)
+        Loop
         ThisWorkbook.SaveCopyAs Target
         BackupCopy = Target
 End Function
@@ -242,6 +250,7 @@ Private Sub ImportComponent( _
     Dim Components  As Object                   'The project's components
     Dim Existing    As Object                   'The component to replace
     Dim Imported    As Object                   'The component just imported
+    Dim Spare       As Long                     'Number of a free temporary name
 
         Set Components = ThisWorkbook.VBProject.VBComponents
         Set Existing = FindComponent(ComponentName)
@@ -250,13 +259,39 @@ Private Sub ImportComponent( _
                 Err.Raise ERR_SYNC, , ComponentName & " is a sheet or workbook module, which the sync never replaces"
             End If
             'Free the name first: a removed component can linger until the code ends.
-            Existing.Name = ComponentName & "_replaced"
+            'The temporary name is short, because a module name has at most 31 characters.
+            Spare = 1
+            Do While Not FindComponent(SPARE_PREFIX & Spare) Is Nothing
+                Spare = Spare + 1
+            Loop
+            Existing.Name = SPARE_PREFIX & Spare
             Components.Remove Existing
         End If
         Set Imported = Components.Import(SourcePath)
         If StrComp(Imported.Name, ComponentName, vbBinaryCompare) <> 0 Then
             Err.Raise ERR_SYNC, , SourcePath & " declares " & Imported.Name & ", not " & ComponentName
         End If
+End Sub
+
+
+Private Sub ExportComponent( _
+    ByVal Component As Object, _
+    ByVal TargetPath As String)
+'PURPOSE        Export one component over its source file. The VBE refuses an
+'               existing destination, so the export goes to a new file first,
+'               which replaces the source only once it is written.
+'INPUTS         Component: the component. TargetPath: its source file.
+'ERROR POLICY   VBE and file errors propagate; the source stays untouched
+'               until the export has succeeded.
+'STATE OWNERSHIP Writes TargetPath and, briefly, TargetPath & ".export".
+'UPDATED        2026-11-10
+    Dim Fresh       As String                   'The new file
+
+        Fresh = TargetPath & ".export"
+        If Len(Dir$(Fresh, vbNormal)) > 0 Then Kill Fresh
+        Component.Export Fresh
+        Kill TargetPath
+        Name Fresh As TargetPath
 End Sub
 
 
