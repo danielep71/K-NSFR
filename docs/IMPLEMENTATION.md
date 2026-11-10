@@ -100,9 +100,9 @@ committed text uses LF, Git checks `.bas`, `.cls` and `.frm` out as CRLF.
 The VBE exports according to the host system code page, which differs between
 hosts, so VBA source is ASCII only and a non-ASCII character is built at run
 time with `ChrW` ([ADR-008](DECISIONS.md#recorded-decisions)). No charset or
-Git working-tree encoding is configured for VBA. #13 (v0.2.0) verifies
-the export/import round trip on the intended host; #14 evidenced the import,
-compilation and run of the neutral harness only. Never normalize an exported module
+Git working-tree encoding is configured for VBA. The export/import
+round trip passed on the intended host on 2026-11-10 at `cadf916` (#13): an
+export changes no byte Git stores. Never normalize an exported module
 with a text editor merely to make a test pass. Keep form binaries (`.frx`)
 paired with their source and admit each through the exact binary allowlist.
 
