@@ -19,7 +19,7 @@
 
 <br>
 
-[Status](#status) · [Scope](#scope) · [Requirements](#requirements) · [Documentation](#documentation) · [Validation](#validation) · [Roadmap](#roadmap)
+[Status](#status) · [Scope](#scope) · [Requirements](#requirements) · [Quick start](#quick-start) · [Layout](#layout) · [Documentation](#documentation) · [Validation](#validation) · [Roadmap](#roadmap)
 
 </div>
 
@@ -69,11 +69,50 @@ the backlog as an implementation plan.
 ## 🧰 Requirements
 
 The intended engine host is **Windows 11 with Microsoft 365 desktop Excel,
-VBA7 and 64-bit Office**. That combination has not been tested here. Portable
-repository checks run on Ubuntu 24.04 with Python 3.13 and Node 22; passing
-them does not prove Excel compatibility or regulatory correctness. See
-[implementation conventions](docs/IMPLEMENTATION.md) for the support matrix
-and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
+VBA7 and 64-bit Office**. On that host only the neutral test harness has run,
+with two PASS [host evidence records](tests/evidence/README.md); no engine
+exists to run. Portable repository checks run on Ubuntu 24.04 with Python 3.13
+and Node 22; passing them does not prove Excel compatibility or regulatory
+correctness. See [implementation conventions](docs/IMPLEMENTATION.md#supported-and-tested-environments)
+for the support matrix and [source-control conventions](docs/SOURCE_CONTROL.md)
+for exported modules.
+
+<a id="quick-start"></a>
+
+## 🚀 Quick start
+
+Clone the repository and work on the active release branch:
+
+```sh
+git clone https://github.com/danielep71/K-NSFR.git
+cd K-NSFR
+git checkout release/0.1.0
+```
+
+- **Portable checks:** install the [locked tools](tools/README.md#running-the-checks),
+  then run `python tools/check.py --ci` on a clean, committed checkout.
+- **Supported host:** with Excel closed, run
+  `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0`.
+  It builds the neutral harness in a new workbook, runs its self-test and
+  writes a host evidence record.
+
+The [installation guide](docs/INSTALLATION.md) gives the prerequisites, the
+manual route and troubleshooting.
+
+<a id="layout"></a>
+
+## 🗂️ Layout
+
+| Path | Content |
+| --- | --- |
+| `docs/` | Scope, architecture, conventions, governance and decisions; `contracts/`, `methodology/` and `validation/` hold the contracts, the source register and the validation rules |
+| `tests/` | The neutral VBA harness (`core/`), the numerical fixtures (`fixtures/`) and the host evidence records (`evidence/`) |
+| `tools/` | The portable checks, their tests and the host scripts (`host/`) |
+| `prototype/` | My benchmark prototype, stored as delivered and not admitted (ADR-011) |
+| `.github/` | Workflows, issue forms, the PR template, the Dependabot configuration and the label catalogue with its scripts |
+
+There is no `src/` yet: admitted VBA modules will live in `src/core/`,
+`src/api/` and `src/host/` ([architecture](docs/ARCHITECTURE.md)).
 
 <a id="documentation"></a>
 
@@ -83,6 +122,7 @@ and [source-control conventions](docs/SOURCE_CONTROL.md) for exported modules.
 | --- | --- |
 | [Scope](docs/SCOPE.md) · [Architecture](docs/ARCHITECTURE.md) | Users, profiles, boundaries and planned layout |
 | [Implementation conventions](docs/IMPLEMENTATION.md) · [Source control](docs/SOURCE_CONTROL.md) | API, numeric, host, encoding and generated-file rules |
+| [Installation and host setup](docs/INSTALLATION.md) | Portable checks, host prerequisites, the three routes to run the harness, and troubleshooting |
 | [Decision log](docs/DECISIONS.md) · [Backlog](docs/BACKLOG.md) | Selected decisions and later calculation work |
 | [Regulatory source register](docs/methodology/SOURCE_REGISTER.md) | NSFR sources, their verification, concept mapping and applicability of the planned profile |
 | [Input and result contracts](docs/contracts/CONTRACTS.md) | Field dictionary, parameter and result schemas, diagnostics and synthetic examples |
@@ -106,8 +146,10 @@ file and explicit-anchor links, fences, YAML and workflow syntax, strict Python
 typing/lint/tests, the VBA static rules, the label catalogue and the
 issue-form configuration. Live
 issues are audited separately by the issue triage workflow. The check runs on
-documentation-only and synchronization PRs. Actual Excel import/export and
-host evidence are planned under issues #13 and #14;
+documentation-only and synchronization PRs. It never runs Excel: a run on
+the supported host is proved only by a [host evidence record](docs/validation/HOST_EVIDENCE.md),
+bound to its commit and validated by the `host-evidence` gate (#14). The
+workbook template and the export/import round trip come with #13;
 independent numerical validation comes later. Follow the commands in
 [governance](docs/GOVERNANCE.md#local-validation) for portable local checks.
 
