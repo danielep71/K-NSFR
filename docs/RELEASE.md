@@ -24,7 +24,7 @@ milestone, and nothing here authorizes one.
 | Version | Milestone | What it may claim |
 | --- | --- | --- |
 | 0.1.0 | `v0.1.0 - Repo setup` | The repository setup. No ASF, RSF or ratio exists |
-| 0.2.0 | `v0.2.0 - Prototype Setup` | The prototype brought into line with the contracts, the source register and Excel evidence. Numerical claims only where admitted fixtures pass on the host |
+| 0.2.0 | `v0.2.0 - Prototype setup` | The prototype brought into line with the contracts, the source register and Excel evidence. Numerical claims only where admitted fixtures pass on the host |
 | Later 0.x | One milestone each | Engine work from the [backlog](BACKLOG.md); a numerical claim needs its fixtures and host evidence |
 | 1.0.0 | Not planned | My decision after PROD-04 of the backlog; even then, not a regulatory certification |
 

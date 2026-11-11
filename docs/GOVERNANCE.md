@@ -23,7 +23,7 @@ the issue's Planning section (`- Start date: …` and `- Target end date: …`) 
 in the issue form's fields. The target end date must be earlier than the milestone's due
 date, so every milestone carries a due date; triage reads the calendar date of
 the milestone's `due_on` and reports a milestone without one rather than
-guessing it. The active milestone is `v0.2.0 - Prototype Setup`; v0.1.0 was
+guessing it. The active milestone is `v0.2.0 - Prototype setup`; v0.1.0 was
 tagged on 2026-11-10 (#22). Issues for the next release may already be planned
 in its milestone, `v0.3.0`, once I create it and before its release branch
 exists; triage accepts exactly these two (`ACTIVE_MILESTONES` in

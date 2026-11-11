@@ -35,6 +35,8 @@ compliance.
 - `Test-NSFR-Sync.ps1` writes a synchronization record, validated by the
   `host-evidence` gate, and its layout check also compares the sheets and
   workbook names with the template (#195).
+- The documents name the milestone by its new title, `v0.2.0 - Prototype
+  setup` (#199).
 
 <a id="v010"></a>
 
