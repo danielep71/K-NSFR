@@ -106,7 +106,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_due_date_is_read_from_rest_milestones(self) -> None:
         for due_on, expected in (("2026-11-30T08:00:00Z", "2026-11-30"), (None, None)):
-            milestone = {"title": "v0.2.0 - Prototype Setup", "state": "open", "due_on": due_on}
+            milestone = {"title": "v0.2.0 - Prototype setup", "state": "open", "due_on": due_on}
             item = {"number": 7, "state": "open", "labels": [], "assignees": [], "body": READY,
                     "milestone": milestone}
             with self.subTest(due_on=due_on):
