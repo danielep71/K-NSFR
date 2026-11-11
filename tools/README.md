@@ -6,6 +6,9 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
+The portable checks, their gates and reports, the workflows, the host scripts
+and the pinned tool versions.
+
 <a id="running-the-checks"></a>
 
 ## ▶️ Running the checks
@@ -99,7 +102,10 @@ Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
 separate worktree; `host/Test-NSFR-Sync.ps1` runs the [template and
 synchronization](../docs/INSTALLATION.md#template-and-synchronization) round
-trip and writes its synchronization record. They run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
+trip and writes its synchronization record. They run on the supported host
+only, never in CI.
+
+Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>
@@ -293,7 +299,7 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 | Python | 3.13.18 | `actions/setup-python` in the workflows, except *Keep milestones issue-only*, whose single inline step runs the runner's `python3`; `pyproject.toml` targets the 3.13 series |
 | Node.js | 22.23.4 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.2, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
-| PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
+| PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, template and mypy gates; workflow-invariants needs PyYAML only) |
 | XlsxWriter | 3.2.9 | `requirements-quality-ci.txt` (the template, tool-tests and mypy gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
@@ -326,9 +332,11 @@ Actionlint has its own pinned version/checksum in the workflow.
 Europe/Rome, for the pinned GitHub Actions and for the Python requirements in
 `/tools`. The two are grouped separately, as `github-actions` and
 `python-tools`, and target the active release branch with the `ci` and `P3`
-labels and danielep71 as assignee. Python updates wait 14 days after an upstream
+labels, assigned to me. Python updates wait 14 days after an upstream
 release. Each update is a pull request that I review before merge
 (for example #41, reviewed in #42); a Python update must still pass the hash and
 provenance review above. Dependabot reads the configuration from `main`, so a
-change takes effect once it is integrated there. When a new release branch
-opens, update both `target-branch` values. Milestones stay on issues only.
+change takes effect once it is there. When a new release branch opens, update
+both `target-branch` values on the new branch and, by a dedicated PR, on
+`main`, as the [release procedure](../docs/RELEASE.md#next-release-branch)
+describes; #204 did so for `release/0.2.0`. Milestones stay on issues only.

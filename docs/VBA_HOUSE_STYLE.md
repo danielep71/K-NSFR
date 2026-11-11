@@ -13,7 +13,7 @@ modules of the non-admitted `prototype/` (ADR-011) are not checked until
 v0.2.0 admits them. The `vba-static` gate enforces the mechanical rules
 ([VBA static checks](../tools/README.md#vba-static-checks)); the harness's
 import, compilation and execution on the host are evidenced by #14, and the
-export/import round trip belongs to #13. Portable CI checks VBA source text
+export/import round trip was delivered by #13, with its host evidence in #195. Portable CI checks VBA source text
 statically; it never compiles or runs it. The public
 boundary and numeric decisions remain in [IMPLEMENTATION.md](IMPLEMENTATION.md).
 
@@ -135,9 +135,9 @@ signature. Omit sections that are empty.
   other invalid arithmetic with range checks before the operation, and return
   the documented status ([ADR-008](DECISIONS.md#recorded-decisions)).
 - Unexpected runtime errors propagate to the host boundary, where the original
-  error and any cleanup failures are retained. Among admitted modules,
-  `On Error` appears only there. Test and example modules may use
-  `On Error GoTo` to record a failure and continue
+  error and any cleanup failures are retained. Among admitted core, API and
+  host modules, `On Error` appears only there. Test and example modules may
+  also use `On Error GoTo` to record a failure and continue
   ([ADR-008](DECISIONS.md#recorded-decisions), amended on 2026-11-10);
   `On Error Resume Next` stays forbidden everywhere.
 - No worksheet-function surface or `CVErr` mapping is approved at this stage.

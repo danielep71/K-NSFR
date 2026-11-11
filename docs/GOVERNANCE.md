@@ -15,7 +15,7 @@ one `labels` list (schema version 2), with no profile or domain overlays.
 ## 🏷️ Issues
 
 Use the Bug report, Enhancement or Documentation form. Each issue is assigned
-to danielep71, has exactly one priority, a valid `YYYY-MM-DD` start date and
+to me (danielep71), has exactly one priority, a valid `YYYY-MM-DD` start date and
 target end date in Europe/Rome, and belongs to an open milestone for the active
 release selected during triage. The start date is the day the work starts or
 is planned to start, and it is not after the target end date. Both appear in
@@ -162,13 +162,15 @@ record that SHA alongside the PR head. Push runs test the integrated commit.
 ## ⚙️ Repository configuration
 
 The label manifest, synchronization and drift workflows are versioned in this
-repository. Issue forms and triage tooling target K-NSFR.
+repository, with the issue forms and the triage tooling.
 
 Repository integrity runs the local checks above on pull requests and pushes
 into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
 updates to the hash-locked Python tools in `tools/` to `release/0.2.0` weekly on Mondays at
-05:00 Europe/Rome, with ci/P3 labels and danielep71 assigned.
-Dependabot reads this configuration from `main`. The Actions entry's
+05:00 Europe/Rome, with the ci and P3 labels and me assigned.
+Dependabot reads this configuration from `main`, so a new target takes effect
+only once it reaches `main`: #204 brought `release/0.2.0` there on 2026-11-11
+(#202). The Actions entry's
 activation is evidenced in #6. The Python entry reached `main` with #107 on
 2026-11-03, when Dependabot read the configuration and built the `/tools`
 dependency graph; its first Python update, #109, was integrated into `main` by
@@ -329,7 +331,7 @@ I set GitHub Actions to require full SHA pins and to give the default
 workflow token read access; both were verified by their effect on 2026-11-09
 (#15; see the [settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#actions-and-security)).
 Dependabot targets `release/0.2.0` from the configuration installed on
-`main`; activation was verified in #6. The rulesets above were read back
+`main` by #204; activation was verified in #6. The rulesets above were read back
 through the API on 2026-10-29 and 2026-11-09, and their enforcement was
 demonstrated on #172 (#15; [enforcement](REPOSITORY_SETTINGS_EVIDENCE.md#enforcement)). The repository became public on 2026-10-28; the security features enabled for it are recorded, with their
 sources, in [SECURITY.md](../SECURITY.md#security-features). I enabled

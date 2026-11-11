@@ -117,7 +117,7 @@ above is the only check that blocks a merge.
 
 ## ♻️ Reuse and maintenance
 
-- Keep repository names, usernames, URLs, issue numbers and rule IDs out of this
+- Keep repository names, usernames, repository URLs, issue numbers and rule IDs out of this
   file. The navigation line and stage badge at the top follow this repository's
   [documentation style](WRITING_STYLE.md#page-structure); replace them when reusing the file.
 - Verify the destination's actual default and inherited policies before copying a value.

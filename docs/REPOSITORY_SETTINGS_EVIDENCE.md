@@ -96,7 +96,7 @@ to it (API branch-rules read-back). Traffic collection is described in [traffic 
 
 <a id="enforcement"></a>
 
-## 🧪 Enforcement
+## ✅ Enforcement
 
 Demonstrated on **2026-11-09** (#15) with the task PR #172. Its first commit,
 `b30bd997aab72a0b452d4785bef3b76e73a66975`, was deliberately failing:

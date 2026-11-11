@@ -18,7 +18,7 @@ The prototype recalculates the EU CRR NSFR from positions and reconciles it
 with a bank's C 80.00, C 81.00 and C 84.00 figures. Its
 [specification](docs/methodology/PROTOTYPE.md) describes the calculation, the
 reconciliation, the evidence and its departures from the recorded conventions.
-The milestone v0.2.0 - Prototype Setup brings it into line piece by piece,
+The milestone v0.2.0 - Prototype setup brings it into line piece by piece,
 each piece under its own issue.
 
 <a id="contents"></a>
@@ -28,7 +28,7 @@ each piece under its own issue.
 | Path | Holds |
 | --- | --- |
 | `src/core/`, `src/api/`, `src/host/` | The seven VBA modules of the prototype |
-| `tools/build_template.py` | Generates the macro-free workbook `templates/NSFR_Template.xlsx`, which is ignored and never committed |
+| `tools/build_template.py` | Generates the macro-free workbook `prototype/templates/NSFR_Template.xlsx`, which is ignored and never committed |
 | `templates/README.md` | Keeps the output directory, which the generator does not create |
 | `tools/lo_regression.py` | Headless regression of the VBA in LibreOffice |
 | `tests/derivations/prototype/` | Transcribed regulatory tables, the synthetic demo, demo bank figures, expected values and the independent Python reference |
@@ -45,15 +45,16 @@ commands from here, for example `python tools/build_template.py`.
   every other file.
 - The VBA static checks skip this directory, and only this directory
   (`NOT_ADMITTED` in `tools/check_vba.py`, with a test). Ruff and mypy check
-  `tools/` only, and the contract and fixture checks read only
-  `docs/contracts/` and `tests/fixtures/`, so the prototype's Python and data
+  `tools/` only, and the contract and fixture checks read only their own
+  files under `docs/` and `tests/fixtures/`, so the prototype's Python and data
   are outside them too.
-- Its dependencies (`xlsxwriter`, `openpyxl`, LibreOffice) are not locked or
-  installed by CI; their licenses are listed in
+- Of its dependencies, `openpyxl` and LibreOffice are not locked or installed
+  by CI; `xlsxwriter` is locked for the root workbook template. Their licenses
+  are listed in
   [licensing](../docs/LICENSING.md#prototype-tool-licenses).
 - Only the relative links of the specification were changed, so that they
-  resolve from this directory, and `templates/README.md` was added so that
-  the output directory exists; every other file is byte for byte as
+  resolve from this directory; this README was added, and `templates/README.md`
+  so that the output directory exists; every other file is byte for byte as
   delivered, apart from Git's line-end normalization of the `.bas` files.
 
 <a id="known-defects"></a>

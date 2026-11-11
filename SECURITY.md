@@ -2,7 +2,7 @@
 
 # 🔒 Security policy
 
-**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Data policy](docs/DATA_POLICY.md)
+**K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Governance](docs/GOVERNANCE.md)
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
 
@@ -10,7 +10,8 @@
 
 ## 📌 Supported versions
 
-No version of K-NSFR has been released. The active release branch named in
+Version 0.1.0, tagged `v0.1.0` on 2026-11-10, is the repository setup release;
+it contains no calculation engine. The active release branch named in
 [governance](docs/GOVERNANCE.md#branches-and-integration) and `main` are
 supported on a best-effort basis. Reports must identify a full commit SHA.
 Modified copies are unsupported unless the problem reproduces in this

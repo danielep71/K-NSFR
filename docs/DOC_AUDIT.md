@@ -20,8 +20,8 @@ The audit is a snapshot of one candidate. It does not certify later commits.
 - **Candidate:** `release/0.1.0` at `b0a3ca73a109a9fbba8b45ee8d06f6e2360d0a3f`,
   audited on 2026-11-10. The files were read at
   `70550f3dbdb1a56bf124c4da19143ad40133c381`, the head of #183, whose content
-  equals the candidate apart from three lines of `docs/FILE_AUDIT.md`; I
-  reread those lines at the candidate.
+  equals the candidate apart from four passages of `docs/FILE_AUDIT.md`; I
+  reread those passages at the candidate.
 - **Reading:** each file in full, in three groups: governance and policy
   documents; design, contract and validation documents; workflows, tools,
   configuration and VBA comments. Every statement was checked against the

@@ -96,7 +96,7 @@ blank workbook, compiled, with the self-test run and the workbook closed.
 | Route | When to use it | Command or steps |
 | --- | --- | --- |
 | Branch verification | To verify the head of a branch in one command, without touching your clone | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.2.0` |
-| Record the checked-out commit | To record a run of the commit already checked out in a clean clone | `powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1` |
+| Record the checked-out commit | To record a run of the commit already checked out in a clean clone | `powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1` |
 | Manual | When you do not accept the trust setting, or a script fails | [Running in Excel](../tests/README.md#running-in-excel) |
 
 Close Excel first and run the commands from the clone's folder.
@@ -146,12 +146,13 @@ excludes them.
 clean clone with Excel closed:
 
 ```text
-powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Test-NSFR-Sync.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\host\Test-NSFR-Sync.ps1
 ```
 
 It builds the workbook from the template in a temporary folder, imports twice,
 compiles, runs the harness self-test, exports into the clone, and checks that
-the export changed no byte Git stores, that the sheets, styles, strings and
+the export changed no byte Git stores, that the sheets, styles, shared
+strings and workbook names equal those of its first save and its sheets and
 workbook names are the template's, and that each import left a backup. It
 restores any file the export changed, writes the
 [synchronization record](validation/HOST_EVIDENCE.md#synchronization-record)
@@ -186,7 +187,7 @@ prints a summary. Propose the record in a PR that adds only it.
 | `Result: FAIL` or `NOT_RUN` | A step failed or did not run | Read `reason` in the record and `run.log` in the bundle |
 | `Python not found` | Python is not on `PATH` | Nothing: the pull request validates the record |
 | The script does not start | The execution policy blocks scripts | Run it as shown, with `-ExecutionPolicy Bypass` on the command line; this changes no machine setting |
-| `Get-FileHash` differs from a fingerprint | The Windows checkout holds CR LF, Git stores LF | Expected: compare with `python tools/check_host_evidence.py --candidate <SHA> --inventory` |
+| `Get-FileHash` differs from a fingerprint | The Windows checkout holds CR LF, Git stores LF | Expected: compare with `python tools/check_host_evidence.py --candidate <SHA> --inventory` (add `--sync` for a synchronization record) |
 
 If a script stops in a way this table does not cover, run the manual route.
 Record the failure as a `FAIL` or `NOT_RUN` record with its reason, as
@@ -196,7 +197,8 @@ Record the failure as a `FAIL` or `NOT_RUN` record with its reason, as
 
 ## ✅ Executed outcomes
 
-These instructions were followed from fresh clones, with these outcomes:
+These instructions, as they stood on each date, were followed from fresh or
+clean clones, with these outcomes:
 
 | Date | Route | Clean checkout | Outcome |
 | --- | --- | --- | --- |
@@ -204,11 +206,13 @@ These instructions were followed from fresh clones, with these outcomes:
 | 2026-11-09 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `dec4ad5` in its own worktree | PASS, recorder exit code 0 ([record](../tests/evidence/dec4ad555db1240f8c2f0361c5de47e36f059528.json), #178) |
 | 2026-11-10 | Branch verification `-Branch release/0.1.0`, on the supported host | Fresh clone, verified at `87d4618`, the v0.1.0 candidate, in its own worktree | PASS ([record](../tests/evidence/87d461818831636be270c42db8d45c835c9d6e6b.json), #186) |
 | 2026-11-10 | Portable checks, Linux x86_64 with Python 3.13.17, Node 22.22.0 and Git 2.43.0 | Fresh clone of `release/0.1.0` at `cd2860f` | All 17 gates PASS. The locked tools were installed with `uv pip install --require-hashes` into a virtual environment, from the same lock file. Not the reference environment: CI pins Python 3.13.18 and Node 22.23.4 and installs with `pip --only-binary=:all:` |
-| 2026-11-10 | Template and synchronization, `Test-NSFR-Sync.ps1`, on the supported host | Clean clone of `feat/13-host-sync` at `cadf916` | PASS on all eight checks: two imports with a backup each, compilation, the harness self-test (`RESULT PASS`), the export, an unchanged worktree after the export, the template's sheets, styles, strings and names in the workbook, and the backups (#13) |
+| 2026-11-10 | Template and synchronization, `Test-NSFR-Sync.ps1`, on the supported host | Clean clone of `feat/13-host-sync` at `cadf916` | PASS on all eight checks of the script as it then was: two imports, compilation, the harness self-test (`RESULT PASS`), the export, an unchanged worktree after the export, sheets, styles, strings and names identical to the workbook's first save, and at least one backup (#13). No record: a task-branch commit, run before the script wrote one (#195) |
 
 Not executed:
 
 - the manual routes of the harness and of the synchronization, step by step;
+- the current `Record-HostEvidence.ps1` (changed by #190) and the
+  record-writing `Test-NSFR-Sync.ps1` (#198), on `release/0.2.0` (#195);
 - the scripts' `-Hidden`, `-Force` and `-Keep` options;
 - the portable checks on Windows or macOS;
 - any host other than the one above.

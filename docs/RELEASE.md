@@ -55,10 +55,14 @@ integration, with its full SHA.
 4. **Host evidence:** run
    `tools/host/Verify-NSFR-Branch.ps1 -Branch release/X.Y.Z` on the
    supported host ([installation](INSTALLATION.md#install-and-run-the-harness)),
-   and propose its record in a task PR. That PR adds only
-   `tests/evidence/<candidate SHA>.json`, so the fingerprints of the candidate
-   and of its head are identical: I accept the record of the candidate for
-   the head. Any other change makes a new candidate.
+   and propose its record in a task PR. When the release contains the
+   workbook template, also run `tools/host/Test-NSFR-Sync.ps1` at the
+   candidate ([synchronization record](validation/HOST_EVIDENCE.md#synchronization-record))
+   and propose its record in the same PR. That PR adds only
+   `tests/evidence/<candidate SHA>.json` and, when required,
+   `tests/evidence/sync/<candidate SHA>.json`, so the fingerprints of the
+   candidate and of its head are identical: I accept the records of the
+   candidate for the head. Any other change makes a new candidate.
 5. **Review:** I review the diff from the last version to the candidate and
    record that review and the evidence in the release PR.
 
@@ -98,8 +102,13 @@ then change the active branch where it is named, in one task PR into the new
 branch:
 
 - [governance](GOVERNANCE.md), [contributing](../CONTRIBUTING.md), the
-  [installation guide](INSTALLATION.md), the README and the PR template;
-- the Dependabot `target-branch` in `.github/dependabot.yml`;
+  [installation guide](INSTALLATION.md), [host evidence](validation/HOST_EVIDENCE.md),
+  the README and the PR template;
+- the example branch in `tools/host/Verify-NSFR-Branch.ps1`;
+- the Dependabot `target-branch` in `.github/dependabot.yml`. Dependabot reads
+  its configuration from `main`, so make the same change in a PR into `main`
+  that changes only those lines, merge it by a merge commit as a recorded
+  exception, and synchronize `main` back into the new branch (#202);
 - `ACTIVE_MILESTONES` in `tools/check_issues.py`, when the closed milestone
   leaves it.
 
@@ -148,7 +157,7 @@ request.
 ## 🧭 Setup practices
 
 The practices of the setup milestone, and whether they were adopted as is,
-adapted or deferred. [Provenance](PROVENANCE.md) and the
+adapted, authored or not adopted. [Provenance](PROVENANCE.md) and the
 [third-party notices](licenses/THIRD_PARTY_NOTICES.txt) record where imported
 material came from.
 
@@ -166,7 +175,7 @@ material came from.
 | Byte-for-byte regulatory source copies | Adopted | Convention only; no source copy is stored yet (#95) |
 | VBA static checks | Authored | The VBA rules of ADR-008 (#11) |
 | Candidate-bound host evidence | Authored | Portable checks never prove Excel (#14) |
-| Workbook template and source synchronization | Authored | Deferred from v0.1.0 and delivered in v0.2.0; its layout is the prototype's (#13) |
+| Workbook template and source synchronization | Authored | Deferred from v0.1.0 and delivered in v0.2.0; its layout is the prototype's (#13); its host evidence is pending (#195) |
 | Release tag and GitHub release | Authored | This procedure; `v0.1.0` was tagged on 2026-11-10 (#22); a GitHub release is optional, and none is published |
 | Required approving reviews, required commit signing, Discussions | Not adopted | A sole maintainer cannot give an independent approval; no ruleset requires signed commits; Discussions are off ([settings evidence](REPOSITORY_SETTINGS_EVIDENCE.md#general-settings)) |
 | Public visibility | Adopted on 2026-10-28 | Post-publication review in #19 |

@@ -6,6 +6,8 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
+What data this repository may hold, and how to check it before committing.
+
 <a id="allowed-data"></a>
 
 ## ✅ Allowed data
@@ -28,5 +30,6 @@ hidden workbook sheets, comments, author fields, external links, embedded
 objects, and cached data. Treat an unexpected real-world match or uncertain
 source as a blocker: keep it outside the repo and ask me for private
 review. Do not reproduce questionable material in an issue or PR. The repository
-holds no workbook; its only numerical fixture is the neutral synthetic FX-0001,
+holds one workbook, the macro-free template `templates/NSFR_Template.xlsx`,
+with layout only and no data; its only numerical fixture is the neutral synthetic FX-0001,
 and the non-admitted prototype carries a synthetic demo.

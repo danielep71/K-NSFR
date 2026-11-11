@@ -6,15 +6,19 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
-This backlog separates existing setup work from later numerical implementation.
-All links refer to K-NSFR. Production work items below are planning records, not
+This backlog separates the delivered setup work from later numerical
+implementation. All links refer to K-NSFR. Production work items below are planning records, not
 created GitHub issues, scheduled commitments, or implemented features.
 
 <a id="existing-setup-delivery"></a>
 
-## 🧩 Existing setup delivery
+## 🧩 Delivered setup work
 
-| Work | Existing issue | Deliverable required before calculation work |
+Every issue in this table is closed: v0.1.0 delivered them, apart from #13,
+which v0.2.0 delivered. The milestone `v0.2.0 - Prototype setup` now brings
+the [prototype](../prototype/README.md) into line before the calculation work.
+
+| Work | Issue | Deliverable required before calculation work |
 | --- | --- | --- |
 | Licensing and synthetic-data policy | [#3](https://github.com/danielep71/K-NSFR/issues/3) | Approved ownership/distribution and data boundaries |
 | Text and generated-file conventions | [#4](https://github.com/danielep71/K-NSFR/issues/4) | Canonical source handling |
@@ -23,7 +27,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 | Data and reconciliation contracts | [#9](https://github.com/danielep71/K-NSFR/issues/9), [contracts](contracts/CONTRACTS.md) | Input, parameter, output, and diagnostic schemas |
 | Independent validation design | [#10](https://github.com/danielep71/K-NSFR/issues/10), [rules](validation/VALIDATION.md) | Fixture provenance, oracle, and acceptance rules |
 | Static checks and neutral harness | [#11](https://github.com/danielep71/K-NSFR/issues/11), [#12](https://github.com/danielep71/K-NSFR/issues/12) | Meaningful failure/pass checks with no NSFR claims |
-| Host evidence, then host packaging and round trip | [#14](https://github.com/danielep71/K-NSFR/issues/14) (delivered), [#13](https://github.com/danielep71/K-NSFR/issues/13) (delivered in v0.2.0) | Genuine supported-host execution, then reproducible import and export |
+| Host evidence, then host packaging and round trip | [#14](https://github.com/danielep71/K-NSFR/issues/14) (delivered), [#13](https://github.com/danielep71/K-NSFR/issues/13) (delivered in v0.2.0; host evidence pending in [#195](https://github.com/danielep71/K-NSFR/issues/195)) | Genuine supported-host execution, then reproducible import and export |
 | Setup certification | [#22](https://github.com/danielep71/K-NSFR/issues/22) | Exact-candidate setup readiness, subject to all milestone dependencies |
 
 <a id="later-calculation-work"></a>
@@ -31,7 +35,7 @@ created GitHub issues, scheduled commitments, or implemented features.
 ## 🚀 Later calculation work
 
 I am accountable for this backlog. Before starting each item, create a scoped
-issue with priority, milestone, target end date, dependencies, acceptance
+issue with priority, milestone, start date, target end date, dependencies, acceptance
 criteria, and evidence requirements. No production dates are assigned here.
 
 | ID | Scope | Prerequisites | Acceptance gate |

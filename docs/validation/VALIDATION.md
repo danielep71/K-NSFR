@@ -229,7 +229,7 @@ already cover contract-stage validation.
 | Parameters | A classification without a factor | `NSFR-E015` | Planned: PROD-02 |
 | Zero denominator | No RSF position, or only zero RSF factors | `ok`, no ratio, `NSFR-W001` | Planned: PROD-03 |
 | Zero numerator | No ASF position | Ratio `0.000000` | Planned: PROD-03 |
-| Maturity boundary | Maturity date equal to the as-of date; the day before | Accepted; `NSFR-E008` | Accepted case planned: PROD-02; rejection covered by the contract examples |
+| Maturity boundary | Maturity date equal to the as-of date; the day before | Accepted; `NSFR-E008` | Accepted case planned: PROD-02; rejection of an earlier date covered by the contract examples, the day-before boundary planned: PROD-02 |
 | Maturity boundary | Residual maturity on each band boundary of the parameter set, and one day either side | The band of each side | Planned: PROD-02 |
 | Encumbrance boundary | End date equal to the as-of date, on each band boundary and one day either side | The band of each side | Planned: PROD-02 |
 | Classification | An article of the other side; a paragraph or point key | `NSFR-E010`; the matching rule | `NSFR-E010` covered by the contract examples; matching planned: PROD-02 |

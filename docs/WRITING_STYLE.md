@@ -6,7 +6,7 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
-This is the presentation pattern for future K-NSFR Markdown. Keep the subject
+This is the presentation pattern for K-NSFR Markdown. Keep the subject
 matter precise: a polished document must never imply an implemented engine,
 validated profile, Excel run, public release or production suitability before
 the linked evidence exists.

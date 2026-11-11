@@ -29,22 +29,22 @@ without a separate decision. Attributions are recorded only here and in
 [THIRD_PARTY_NOTICES.txt](licenses/THIRD_PARTY_NOTICES.txt), which lists every
 file copied or adapted from another project with its source, revision,
 adaptations and license, and the license text and copyright of any file under
-a license other than MPL-2.0. Such a file keeps that license and its notice. The licensing and policy setup is complete in issue #3. Record the remaining
-ownership and attribution evidence for publication under issue #19.
+a license other than MPL-2.0. Such a file keeps that license and its notice. The licensing and policy setup
+was completed in issue #3, and the ownership and attribution evidence for
+publication is recorded in #19.
 
 <a id="publication-gate"></a>
 
 ## 🚦 Publication gate
 
-Publication gate: review every tracked file and accessible history, issue/PR
-content, Actions logs and artifacts for secrets and client, employer, proprietary
-or personal material. Confirm rights and notices for the imported governance
-source, and remove or resolve any questionable content before changing visibility.
-The repository was made public on 2026-10-28, before this review; on my
-decision the review was then run as a post-publication review and is
-recorded in #19. Its follow-up items #68, #69 and #70 are closed.
-After publication, review public issue reporting and repository controls for
-that visibility. Record the candidate commit and review evidence in issue #19.
+The gate before a visibility change was a review of every tracked file and
+accessible history, issue/PR content, Actions logs and artifacts for secrets
+and client, employer, proprietary or personal material, with the rights and
+notices of the imported governance source confirmed. The repository was made
+public on 2026-10-28, before this review; on my decision the review was then
+run as a post-publication review, together with the review of public issue
+reporting and repository controls, and is recorded in #19. Its follow-up
+items #68, #69 and #70 are closed.
 
 <a id="future-dependencies"></a>
 
@@ -93,7 +93,7 @@ Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
 
 The tools of the [non-admitted prototype](../prototype/README.md) also need
 the following, which CI neither locks nor installs. XlsxWriter, which they
-need too, is locked above for the workbook template. None is vendored, and the
+also need, is listed above: CI locks it for the workbook template. None is vendored, and the
 workbook they generate is not committed.
 
 | Tool | License |
