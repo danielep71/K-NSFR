@@ -16,10 +16,10 @@ portable checks never run Excel, so a green Repository integrity check is
 never host evidence. Only a valid record is.
 
 `tools/check_host_evidence.py` (gate `host-evidence`) validates every record
-in [`tests/evidence/`](../../tests/evidence) against the Git history. The
-source synchronization round trip and the host template belong to #13 in
-v0.2.0. Until then, the [manual route](../../tests/README.md#running-in-excel)
-is the only way to build the host project.
+in [`tests/evidence/`](../../tests/evidence) against the Git history. A
+record there covers the neutral harness. A
+[synchronization record](#synchronization-record), in `tests/evidence/sync/`,
+covers the workbook template and the source synchronization (#13, #195).
 
 <a id="record"></a>
 
@@ -31,11 +31,11 @@ fields:
 | Field | Content |
 | --- | --- |
 | `schema` | `k-nsfr-host-evidence/1` |
-| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of a published release branch (now `release/0.1.0`) or of `main`: a task-branch commit disappears with its squash merge |
+| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of a published release branch (now `release/0.2.0`) or of `main`: a task-branch commit disappears with its squash merge |
 | `recorded_on` | The ISO date of the run, from the commit date to today |
 | `worktree_clean` | `true`: `git status --porcelain` printed nothing before the import |
 | `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
-| `host.excel` | The Microsoft 365 product line with `Version … (Build …)`, as **File → Account → About Excel** shows it |
+| `host.excel` | The Microsoft 365 product and its channel, then `Version … (Build … Click-to-Run)`: the scripts record the version Excel reports through COM, such as `16.0`, and the build of the installation, which **File → Account → About Excel** also shows |
 | `host.bitness` | `64-bit` |
 | `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, over the bytes stored in Git (LF). A Windows checkout holds the VBA source with CRLF, so `Get-FileHash` on it gives another value: `python tools/check_host_evidence.py --candidate <SHA> --inventory` prints the expected ones |
 | `steps` | `import`, `compile`, `run` and `cleanup`, each `PASS`, `FAIL` or `NOT_RUN` |
@@ -53,7 +53,7 @@ Example of a passing record. The SHA and fingerprints are placeholders:
   "worktree_clean": true,
   "host": {
     "os": "Windows 11 Pro 24H2, OS build 26100.2314",
-    "excel": "Microsoft 365 Apps for enterprise, Version 2410 (Build 18129.20158 Click-to-Run)",
+    "excel": "Microsoft 365 Apps (O365ProPlusRetail), Version 16.0 (Build 18129.20158 Click-to-Run)",
     "bitness": "64-bit"
   },
   "fingerprints": {
@@ -75,7 +75,7 @@ Example of a passing record. The SHA and fingerprints are placeholders:
 any clone of the repository on the supported host:
 
 ```text
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.2.0
 ```
 
 It fetches the branch, checks its head out in a separate Git worktree beside
@@ -92,7 +92,7 @@ validates the record at the end.
 
 1. Clone the repository fresh, or check that `git status --porcelain` prints
    nothing, and check out a commit of a published release branch (now
-   `release/0.1.0`) or of `main`.
+   `release/0.2.0`) or of `main`.
 2. Close Excel, then run from the repository folder:
 
    ```text
@@ -175,6 +175,31 @@ stays open with that blocker.
   - any field outside the record. Do not add machine names, user names or licence details.
 
 With `--candidate <SHA>`, the checker also fails when that commit has no
-record (*missing*), when only other commits have one (*stale*), or when its
-record is not `PASS`. A record proves one commit only: a later commit needs
-its own run.
+harness record (*missing*), when only other commits have one (*stale*), or
+when its record is not `PASS`. A record proves one commit only: a later commit
+needs its own run.
+
+<a id="synchronization-record"></a>
+
+## 🔁 Synchronization record
+
+`tools/host/Test-NSFR-Sync.ps1` runs the
+[template and synchronization](../INSTALLATION.md#template-and-synchronization)
+round trip and writes `tests/evidence/sync/<candidate SHA>.json`, schema
+`k-nsfr-sync-evidence/1`. Its `candidate_sha`, `recorded_on`,
+`worktree_clean` and `host` follow the harness record, and the gate binds and
+rejects them the same way. The other fields:
+
+| Field | Content |
+| --- | --- |
+| `fingerprints` | The SHA-256 of `templates/NSFR_Template.xlsx`, `src/manifest.txt`, every file the manifest lists and `.gitattributes`, over the bytes stored in Git. `python tools/check_host_evidence.py --candidate <SHA> --inventory --sync` prints the expected ones |
+| `checks` | `import_1`, `import_2`, `compile`, `self_test`, `export`, `round_trip`, `layout` and `backup`, each `PASS`, `FAIL` or `NOT_RUN`. The self-test runs exactly when the project compiles |
+| `result` | `PASS` only when every check passed; `FAIL` when one failed; otherwise `NOT_RUN` |
+| `log` | The reports of the two imports, the self-test and the export, and any difference found, one string per line, with local paths replaced by `<local path>`. A passing self-test must print the output documented in `tests/README.md` at the candidate |
+| `reason` | Required unless `PASS` |
+
+The `layout` check passes when the sheets, styles, shared strings and workbook
+names of the workbook are those of its first save, and its sheets (names,
+order and visibility) and workbook names are the template's. The `backup`
+check needs one backup per import. Commit the record as for the harness: in
+a PR that adds only the record.

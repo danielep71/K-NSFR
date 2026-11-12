@@ -76,25 +76,27 @@ relicense them.
 | PyYAML | MIT |
 | types-PyYAML | Apache-2.0 |
 | markdown-it-py and mdurl | MIT |
+| XlsxWriter | BSD-2-Clause |
 
 Upstream package sources: [PyYAML](https://github.com/yaml/pyyaml),
 [markdown-it-py](https://github.com/executablebooks/markdown-it-py),
 [mdurl](https://github.com/executablebooks/mdurl),
 [typeshed](https://github.com/python/typeshed),
 [Ruff](https://github.com/astral-sh/ruff),
-[mypy](https://github.com/python/mypy) and
-[actionlint](https://github.com/rhysd/actionlint).
+[mypy](https://github.com/python/mypy),
+[actionlint](https://github.com/rhysd/actionlint) and
+[XlsxWriter](https://github.com/jmcnamara/XlsxWriter).
 
 <a id="prototype-tool-licenses"></a>
 
 ### Prototype tool licenses
 
-The tools of the [non-admitted prototype](../prototype/README.md) need the
-following, which CI neither locks nor installs. None is vendored, and the
+The tools of the [non-admitted prototype](../prototype/README.md) also need
+the following, which CI neither locks nor installs. XlsxWriter, which they
+need too, is locked above for the workbook template. None is vendored, and the
 workbook they generate is not committed.
 
 | Tool | License |
 | --- | --- |
-| XlsxWriter | BSD-2-Clause |
 | openpyxl | MIT |
 | LibreOffice | MPL-2.0 |

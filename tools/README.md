@@ -44,7 +44,7 @@ reported **NOT RUN** without them.
 
 | Gate | Needs | Evidence |
 | --- | --- | --- |
-| `tool-tests` | PyYAML, markdown-it-py, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history, external links, host evidence and the VBA static checks |
+| `tool-tests` | PyYAML, markdown-it-py, XlsxWriter, Node | Positive and negative fixtures for the runner, source control, content, contracts, numerical fixtures, issues, workflow invariants, traffic history, external links, host evidence, the VBA static checks and the workbook template |
 | `labels-sync-self-test` | Node | Label synchronization self-tests |
 | `labels-manifest` | Node | Label catalogue validation |
 | `labels-drift-self-test` | Node | Label drift self-tests |
@@ -54,10 +54,11 @@ reported **NOT RUN** without them.
 | `contracts` | Python | `check_contracts.py`: every field and diagnostic of [the contracts](../docs/contracts/CONTRACTS.md) documented once and matching `nsfr-contract-v1.json`, and every synthetic example giving its `expected.json` |
 | `fixtures` | Python | `check_fixtures.py`: every [numerical fixture](../docs/validation/VALIDATION.md) under `tests/fixtures/` against `fixture-v1.json`, its hand derivation re-derived and its expected result re-evaluated with exact rational arithmetic; it never runs the engine |
 | `vba-static` | Python | `check_vba.py`: the [VBA static rules](#vba-static-checks) on every tracked `.bas`, `.cls` and `.frm` file, with reviewed exceptions from `vba-exceptions.json` |
-| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/` bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give |
+| `host-evidence` | Python | `check_host_evidence.py`: every [host evidence record](../docs/validation/HOST_EVIDENCE.md) under `tests/evidence/`, and every [synchronization record](../docs/validation/HOST_EVIDENCE.md#synchronization-record) under `tests/evidence/sync/` with its checks, template, manifest and listed files, bound to its candidate commit (ancestor of the checked commit and of a published `origin/main` or `origin/release/*` branch, clean worktree, file fingerprints at the commit), the supported host, steps and result that agree, the exact documented self-test output for a PASS run, finite and consistent counts, and no private machine details. With `--candidate <SHA>` it also requires a PASS record for that commit; with `--inventory` as well, it prints the fingerprints such a record must give, and with `--sync` those of a synchronization record |
+| `template` | PyYAML, markdown-it-py, XlsxWriter | `build_template.py --check`: builds the [workbook template](../docs/SOURCE_CONTROL.md#workbook-template) afresh and compares it byte for byte with `templates/NSFR_Template.xlsx`, which must hold no VBA project or macro-enabled content type |
 | `ruff` | Ruff | Import/error rules and complexity ceiling 15 |
 | `ruff-complexity-probe` | Ruff | Complexity 15 passes and 16 fails |
-| `mypy` | mypy, PyYAML, markdown-it-py | Strict typing for every Python tool and test |
+| `mypy` | mypy, PyYAML, markdown-it-py, XlsxWriter | Strict typing for every Python tool and test |
 | `mypy-strict-probe` | mypy | An unannotated function is rejected |
 | `actionlint` | actionlint | Workflow syntax and expressions |
 | `workflow-invariants` | PyYAML | `check_workflows.py`: full-SHA action pins and `persist-credentials: false`; declared, read-only workflow permissions and a timeout on every job; write access only for the listed jobs; the required check's job, conditions and branch filters against governance and the rulesets; a full-history checkout (`fetch-depth: 0`) for the required job; the required check's concurrency (only a pull request's superseded run is cancelled); exact Python and Node.js versions equal to the [tool versions](#tool-versions) table; the label-reconcile condition and permissions; issue triage on milestone events; the milestone workflow's events, per-pull-request concurrency, condition, permissions and single inline script; the external link check's schedule-and-dispatch-only triggers; the CodeQL workflow's languages, queries, result categories, single action commit, triggers, concurrency, separate PR/trusted-event permissions and 30-day PR SARIF retention; the traffic workflow's App token (only *Administration: read* on this repository, the key in the token step only, the token in the fetch step only, a preflight that sees only whether the key is set) and the alert job's checkout of the published history commit; Dependabot coverage of `/` and `/tools` with exactly `P3` and no milestone |
@@ -92,10 +93,13 @@ These checks neither compile VBA nor run Excel or the NSFR engine; the
 VBA static checks read source text only (see their
 [limitations](#vba-static-limitations)). The [neutral harness](../tests/README.md)
 is VBA and runs only in Excel; its host evidence records are in
-`tests/evidence/`, and packaging (the workbook template) remains #13. `host/Record-HostEvidence.ps1` runs the harness self-test in
+`tests/evidence/`. The workbook template is checked by the `template` gate;
+its synchronization round trip runs only in Excel. `host/Record-HostEvidence.ps1` runs the harness self-test in
 Excel and writes its [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run),
 and `host/Verify-NSFR-Branch.ps1` does it for the head of a branch in a
-separate worktree; both run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
+separate worktree; `host/Test-NSFR-Sync.ps1` runs the [template and
+synchronization](../docs/INSTALLATION.md#template-and-synchronization) round
+trip and writes its synchronization record. They run on the supported host only, never in CI. Live issue triage is read-only and separate from offline CI;
 passing forms tests does not prove every live issue satisfies governance.
 
 <a id="vba-static-checks"></a>
@@ -125,7 +129,10 @@ src/core/NSFR_Core_Example.bas:12: [goto] GoTo is allowed only as On Error GoTo
 | `conditional-compilation` (`#If`, `#ElseIf`) | Forbidden | Only on `VBA7` and `Win64` | Forbidden |
 | `compile-constant` (`#Const`) | Forbidden | Forbidden | Forbidden |
 
-A VBA file outside these folders is reported as `vba-location`. The one
+A VBA file outside these folders is reported as `vba-location`. On a full run
+the gate also checks the source manifest `src/manifest.txt` (rule `manifest`):
+it lists every admitted VBA file once, as `name path`, under the name the file
+declares in `Attribute VB_Name`. The one
 exception is `prototype/`: it is not admitted ([ADR-011](../docs/DECISIONS.md#recorded-decisions)),
 so its VBA is not checked and the summary line counts it as not checked. Every
 conditional-compilation branch is checked, so a rule holds in each compile
@@ -169,7 +176,7 @@ reported as `exception-unused`, so the file never keeps a stale exception.
 - Rules that need the Excel object model or a compiled project, such as
   `Option Private Module` hiding a procedure or the absence of Excel calls in
   the core, need Excel: they rest on the neutral harness, its host evidence
-  in `tests/evidence/` and packaging (#13).
+  in `tests/evidence/` and the synchronization round trip (#13).
 
 <a id="continuous-integration"></a>
 
@@ -287,6 +294,7 @@ run. The rules are tested by `test_check_issues.py` in the tool-tests gate, and
 | Node.js | 22.23.4 | `actions/setup-node` in the workflows |
 | Ruff, mypy | 0.17.2, 2.4.0 | `requirements-quality-ci.txt`, hash-locked and installed on CPython 3.13 / Linux x86_64 |
 | PyYAML, markdown-it-py | 6.0.3, 4.2.0 | `requirements-quality-ci.txt` (the tool-tests, content, mypy and workflow-invariants gates) |
+| XlsxWriter | 3.2.9 | `requirements-quality-ci.txt` (the template, tool-tests and mypy gates) |
 | actionlint | 1.7.12 | `ACTIONLINT_VERSION` and its SHA-256 in `repository-integrity.yml` |
 
 Python and Node.js are pinned to exact patch versions, recorded here only: the

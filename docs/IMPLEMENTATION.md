@@ -77,9 +77,9 @@ even after failure and does not suppress the original diagnostic.
 
 ## 💻 Supported and tested environments
 
-| Environment | Declared support | Execution evidence at v0.1.0 setup |
+| Environment | Declared support | Execution evidence |
 | --- | --- | --- |
-| Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | Neutral harness self-test PASS on 2026-11-09 at `5231985` and `dec4ad5`: Windows 11 Enterprise 25H2 (OS build 26200.9711), Microsoft 365 Apps build 20430.20180, 64-bit ([host evidence records](../tests/evidence/README.md)). No engine has run. [Installation](INSTALLATION.md) gives the routes |
+| Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit Office | Initial intended host only | Neutral harness self-test PASS in three records, on 2026-11-09 and 2026-11-10: Windows 11 Enterprise 25H2 (OS build 26200.9711), Microsoft 365 Apps build 20430.20180, 64-bit ([host evidence records](../tests/evidence/README.md)). No engine has run. [Installation](INSTALLATION.md) gives the routes |
 | Ubuntu 24.04, Python 3.13 and Node 22 at the exact patch versions of the [tool versions](../tools/README.md#tool-versions) | Portable repository checks | Repository integrity runs on candidate PRs; not an Excel or numerical test |
 | 32-bit Office, older/perpetual Excel, Excel for Mac | Outside initial host profile | NOT RUN; no compatibility claim |
 | Excel web/mobile, LibreOffice, server Excel automation | Unsupported | NOT RUN |
@@ -100,9 +100,9 @@ committed text uses LF, Git checks `.bas`, `.cls` and `.frm` out as CRLF.
 The VBE exports according to the host system code page, which differs between
 hosts, so VBA source is ASCII only and a non-ASCII character is built at run
 time with `ChrW` ([ADR-008](DECISIONS.md#recorded-decisions)). No charset or
-Git working-tree encoding is configured for VBA. #13 (v0.2.0) verifies
-the export/import round trip on the intended host; #14 evidenced the import,
-compilation and run of the neutral harness only. Never normalize an exported module
+Git working-tree encoding is configured for VBA. The export/import
+round trip passed on the intended host on 2026-11-10 at `cadf916` (#13): an
+export changes no byte Git stores. Never normalize an exported module
 with a text editor merely to make a test pass. Keep form binaries (`.frx`)
 paired with their source and admit each through the exact binary allowlist.
 

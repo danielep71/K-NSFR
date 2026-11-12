@@ -13,6 +13,12 @@ an unsupported host, an inconsistent or non-finite summary, a result that the
 steps do not support, or a machine detail that must not be published. With
 --candidate SHA it also requires a PASS record for that commit, and reports a
 missing or stale one. Read-only; it never runs Excel.
+
+The records of the synchronization round trip, in tests/evidence/sync/, are
+bound the same way: to a published commit, the supported host and the
+fingerprints of the template, the manifest and the files it lists, with
+checks and a result that agree and the documented self-test output in a
+passing log.
 """
 
 from __future__ import annotations
@@ -41,6 +47,16 @@ KEYS = {"schema", "candidate_sha", "recorded_on", "worktree_clean", "host", "fin
         "steps", "result", "output", "reason"}
 REQUIRED = KEYS - {"output", "reason"}
 HOST_KEYS = {"os", "excel", "bitness"}
+
+SYNC_EVIDENCE = EVIDENCE / "sync"
+SYNC_SCHEMA = "k-nsfr-sync-evidence/1"
+TEMPLATE = "templates/NSFR_Template.xlsx"
+MANIFEST = "src/manifest.txt"
+SYNC_CHECKS = ("import_1", "import_2", "compile", "self_test", "export", "round_trip",
+               "layout", "backup")
+SYNC_KEYS = {"schema", "candidate_sha", "recorded_on", "worktree_clean", "host",
+             "fingerprints", "checks", "result", "log", "reason"}
+SYNC_REQUIRED = SYNC_KEYS - {"reason"}
 
 SHA = re.compile(r"^[0-9a-f]{40}$")
 WINDOWS_DETAILS = re.compile(r"\b\d{2}H\d\b.*\bOS build \d+\.\d+\b")
@@ -84,6 +100,19 @@ def expected_fingerprints(sha: str, root: Path) -> dict[str, str]:
     modules = [n for n in names if n.startswith(HARNESS_DIR) and n.endswith(VBA_SUFFIXES)]
     return {name: hashlib.sha256(git("cat-file", "blob", f"{sha}:{name}", root=root)).hexdigest()
             for name in [*modules, *[n for n in CONFIG if n in names]]}
+
+
+def expected_sync_fingerprints(sha: str, root: Path) -> dict[str, str]:
+    """The template, the manifest and every file it lists, as stored in Git."""
+    names = set(git("ls-tree", "-r", "--name-only", sha, root=root).decode().split())
+    if MANIFEST not in names:
+        return {}
+    listed = [line.split()[1] for line in git("show", f"{sha}:{MANIFEST}", root=root)
+              .decode().splitlines() if line.strip() and not line.startswith("#")
+              and len(line.split()) == 2]
+    files = [TEMPLATE, MANIFEST, *listed, *CONFIG]
+    return {name: hashlib.sha256(git("cat-file", "blob", f"{sha}:{name}", root=root)).hexdigest()
+            for name in files if name in names}
 
 
 def expected_output(sha: str, root: Path) -> list[str] | None:
@@ -192,7 +221,7 @@ def host_findings(host: Any) -> list[str]:
     if "Microsoft 365" not in host["excel"] or not re.search(r"Version \S+ \(Build [\d.]+",
                                                               host["excel"]):
         findings.append("host: excel must be Microsoft 365 with its version and build, "
-                        "as About Excel shows them")
+                        "as the recorder writes them")
     if host["bitness"] != "64-bit":
         findings.append("host: bitness must be 64-bit, the supported host")
     return findings
@@ -239,42 +268,111 @@ def candidate_findings(record: Mapping[str, Any], name: str, root: Path,
     return findings, sha
 
 
-def record_findings(path: Path, root: Path, today: dt.date) -> list[str]:
+def load(path: Path) -> tuple[dict[str, Any] | None, list[str]]:
     try:
         record = json.loads(path.read_text(encoding="utf-8"))
     except (ValueError, UnicodeDecodeError) as error:
-        return [f"not valid UTF-8 JSON: {error}"]
+        return None, [f"not valid UTF-8 JSON: {error}"]
     if not isinstance(record, dict):
-        return ["must be a JSON object"]
+        return None, ["must be a JSON object"]
+    return record, []
+
+
+def envelope_findings(record: Mapping[str, Any], keys: set[str], required: set[str],
+                      schema: str) -> list[str]:
+    """Fields, schema, clean worktree, host and private details: common to both records."""
     findings = []
-    if set(record) - KEYS:
-        findings.append(f"unknown fields {sorted(set(record) - KEYS)}")
-    if REQUIRED - set(record):
-        return findings + [f"missing fields {sorted(REQUIRED - set(record))}"]
-    if record["schema"] != SCHEMA:
-        findings.append(f"schema: must be {SCHEMA}")
+    if set(record) - keys:
+        findings.append(f"unknown fields {sorted(set(record) - keys)}")
+    if required - set(record):
+        return findings + [f"missing fields {sorted(required - set(record))}"]
+    if record["schema"] != schema:
+        findings.append(f"schema: must be {schema}")
     if record["worktree_clean"] is not True:
         findings.append("worktree_clean: the modules must come from a clean checkout")
     for text in strings(record):
         for pattern, label in PRIVATE:
             if pattern.search(text):
                 findings.append(f"contains {label}; remove machine and personal details")
-    findings += host_findings(record["host"]) + step_findings(record)
+    return findings + host_findings(record["host"])
+
+
+def fingerprint_findings(fingerprints: Any, expected: Mapping[str, str], sha: str) -> list[str]:
+    if not isinstance(fingerprints, Mapping) or set(fingerprints) != set(expected):
+        return [f"fingerprints: must cover exactly {sorted(expected)}"]
+    findings = []
+    for name, digest in sorted(fingerprints.items()):
+        if not isinstance(digest, str) or not SHA256.match(digest.lower()):
+            findings.append(f"fingerprints: {name} is not a SHA-256")
+        elif digest.lower() != expected[name]:
+            findings.append(f"fingerprints: {name} differs from the file at {sha[:12]}")
+    return findings
+
+
+def record_findings(path: Path, root: Path, today: dt.date) -> list[str]:
+    record, findings = load(path)
+    if record is None:
+        return findings
+    findings = envelope_findings(record, KEYS, REQUIRED, SCHEMA)
+    if REQUIRED - set(record):
+        return findings
+    findings += step_findings(record)
     more, sha = candidate_findings(record, path.name, root, today)
     findings += more
     if sha is None:
         return findings
-    fingerprints = record["fingerprints"]
-    expected = expected_fingerprints(sha, root)
-    if not isinstance(fingerprints, Mapping) or set(fingerprints) != set(expected):
-        findings.append(f"fingerprints: must cover exactly {sorted(expected)}")
-    else:
-        for name, digest in sorted(fingerprints.items()):
-            if not isinstance(digest, str) or not SHA256.match(digest.lower()):
-                findings.append(f"fingerprints: {name} is not a SHA-256")
-            elif digest.lower() != expected[name]:
-                findings.append(f"fingerprints: {name} differs from the file at {sha[:12]}")
+    findings += fingerprint_findings(record["fingerprints"], expected_fingerprints(sha, root), sha)
     return findings + output_findings(record, expected_output(sha, root))
+
+
+def check_findings(record: Mapping[str, Any]) -> list[str]:
+    checks = record.get("checks")
+    if not isinstance(checks, Mapping) or set(checks) != set(SYNC_CHECKS) or any(
+            checks[c] not in (PASS, FAIL, NOT_RUN) for c in SYNC_CHECKS):
+        return [f"checks: must give {', '.join(SYNC_CHECKS)}, each PASS, FAIL or NOT_RUN"]
+    findings = []
+    if (checks["compile"] == PASS) == (checks["self_test"] == NOT_RUN):
+        findings.append("checks: the self-test runs exactly when the project compiles")
+    values = set(checks.values())
+    result = PASS if values == {PASS} else FAIL if FAIL in values else NOT_RUN
+    if record.get("result") != result:
+        findings.append(f"result: the checks give {result}, the record says {record.get('result')}")
+    if result != PASS and not str(record.get("reason", "")).strip():
+        findings.append("reason: required when a check failed or did not run")
+    return findings
+
+
+def log_findings(record: Mapping[str, Any], expected: list[str] | None) -> list[str]:
+    log = record.get("log")
+    if not isinstance(log, list) or not all(isinstance(s, str) for s in log):
+        return ["log: the run's log is required, one string per line"]
+    checks = record.get("checks")
+    if not isinstance(checks, Mapping) or checks.get("self_test") != PASS:
+        return []
+    if expected is None:
+        return [f"log: no documented self-test output in {EXPECTED_SOURCE} at the candidate"]
+    if not any(log[i:i + len(expected)] == expected for i in range(len(log))):
+        return [f"log: a passing self-test must print the output documented in {EXPECTED_SOURCE}"]
+    return []
+
+
+def sync_record_findings(path: Path, root: Path, today: dt.date) -> list[str]:
+    record, findings = load(path)
+    if record is None:
+        return findings
+    findings = envelope_findings(record, SYNC_KEYS, SYNC_REQUIRED, SYNC_SCHEMA)
+    if SYNC_REQUIRED - set(record):
+        return findings
+    findings += check_findings(record)
+    more, sha = candidate_findings(record, path.name, root, today)
+    findings += more
+    if sha is None:
+        return findings
+    expected = expected_sync_fingerprints(sha, root)
+    if not expected:
+        return findings + [f"candidate_sha: {sha[:12]} has no {MANIFEST}"]
+    findings += fingerprint_findings(record["fingerprints"], expected, sha)
+    return findings + log_findings(record, expected_output(sha, root))
 
 
 def check(root: Path, candidate: str | None = None,
@@ -282,8 +380,11 @@ def check(root: Path, candidate: str | None = None,
     """The number of records and every finding; with a candidate, its own as well."""
     today = today or dt.date.today()
     paths = sorted((root / EVIDENCE).glob("*.json"))
+    sync_paths = sorted((root / SYNC_EVIDENCE).glob("*.json"))
     findings = [f"{path.relative_to(root).as_posix()}: {finding}"
                 for path in paths for finding in record_findings(path, root, today)]
+    findings += [f"{path.relative_to(root).as_posix()}: {finding}"
+                 for path in sync_paths for finding in sync_record_findings(path, root, today)]
     if candidate is not None:
         own = root / EVIDENCE / f"{candidate}.json"
         if not own.exists():
@@ -296,7 +397,7 @@ def check(root: Path, candidate: str | None = None,
                 result = None
             if result != PASS:
                 findings.append(f"candidate {candidate}: its host evidence is not PASS")
-    return len(paths), findings
+    return len(paths) + len(sync_paths), findings
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -305,11 +406,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--candidate", help="also require a PASS record for this full SHA")
     parser.add_argument("--inventory", action="store_true",
                         help="print the fingerprints that a record of --candidate must give")
+    parser.add_argument("--sync", action="store_true",
+                        help="with --inventory, those of a synchronization record")
     args = parser.parse_args(argv)
     if args.inventory:
         if not args.candidate:
             parser.error("--inventory needs --candidate")
-        print(json.dumps(expected_fingerprints(args.candidate, args.root), indent=2))
+        inventory = expected_sync_fingerprints if args.sync else expected_fingerprints
+        print(json.dumps(inventory(args.candidate, args.root), indent=2))
         return 0
     count, findings = check(args.root, args.candidate)
     for finding in findings:

@@ -52,8 +52,8 @@ severity.
 
 **In scope:** the repository tooling in [tools/](tools/README.md), the GitHub
 Actions workflows and their configuration, the neutral VBA test harness and
-fixtures in `tests/`, and, once added, the admitted VBA source and the
-workbook template.
+fixtures in `tests/`, the admitted VBA source in `src/` and the workbook
+template.
 
 **Out of scope:**
 

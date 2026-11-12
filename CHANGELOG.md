@@ -15,7 +15,28 @@ compliance.
 
 ## 🚧 Unreleased
 
-Nothing yet.
+- The macro-free workbook template `templates/NSFR_Template.xlsx`, generated
+  reproducibly by `tools/build_template.py` with a hash-locked XlsxWriter, and
+  the `template` gate that rebuilds and compares it (#13).
+- The source manifest `src/manifest.txt`, checked by the `vba-static` gate;
+  the host module `NSFR_Host_Sync`, which imports and exports exactly the
+  listed components after a backup copy; and `Test-NSFR-Sync.ps1`, which runs
+  the round trip on the supported host (#13).
+- `release/0.2.0` is the active release branch (#189).
+- The documentation describes the delivered template and synchronization, the
+  three host evidence records and the tag `v0.1.0`; the installation guide
+  uses a neutral example path; the `content` gate no longer needs XlsxWriter
+  (#193).
+- The template's gaps against contract v1 and the prototype are recorded,
+  with #133, #135 and #137 as owners; ADR-008 allows `On Error GoTo` in tests
+  and examples, as the static checks already did; the cleanup evidence is
+  required of the first host module that changes application settings
+  (#196).
+- `Test-NSFR-Sync.ps1` writes a synchronization record, validated by the
+  `host-evidence` gate, and its layout check also compares the sheets and
+  workbook names with the template (#195).
+- The documents name the milestone by its new title, `v0.2.0 - Prototype
+  setup` (#199).
 
 <a id="v010"></a>
 
@@ -82,7 +103,8 @@ for the tag `v0.1.0`. #22 certifies it, and the
 - Candidate-bound host evidence, recorded by `Record-HostEvidence.ps1` and
   verified for a branch by `Verify-NSFR-Branch.ps1` (#14, #162).
 - The self-test passed on Windows 11 with Microsoft 365 Excel, 64-bit, at
-  `5231985` and `dec4ad5` (#175, #178).
+  `5231985` and `dec4ad5` (#175, #178), and at the release candidate `87d4618`
+  (#186).
 
 <a id="operations"></a>
 

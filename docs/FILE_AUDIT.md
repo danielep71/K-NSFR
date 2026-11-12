@@ -11,7 +11,8 @@ origin and license, and why it stays. It records what the audit looked for,
 what it found and how each finding was settled. Tracking: #20.
 
 The audit is a snapshot. A later commit needs its own review; this record is
-not updated file by file.
+not updated file by file. Files added after its candidate, among them the
+first approved binary, the workbook template (#13), are outside it.
 
 <a id="candidate-and-method"></a>
 

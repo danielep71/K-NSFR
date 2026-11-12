@@ -13,7 +13,7 @@
 Read [scope](docs/SCOPE.md), [architecture](docs/ARCHITECTURE.md) and
 [governance](docs/GOVERNANCE.md). The editorial and assistant rules for every
 change are in [AGENTS.md](AGENTS.md). The project is setup-only: no calculation
-engine or workbook is available. Use synthetic data only, as the
+engine is available, and the workbook template holds only the layout. Use synthetic data only, as the
 [data policy](docs/DATA_POLICY.md) defines, and retain source notices.
 Follow the [code of conduct](CODE_OF_CONDUCT.md), and report abuse as it
 describes. Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
@@ -27,13 +27,13 @@ describes. Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
    Triage confirms the priority and sets an open active milestone; the start
    date must not be after the target end date, and the target end date must
    fall before that milestone's due date.
-2. Branch from `release/0.1.0`; keep one coherent issue or correction per PR.
+2. Branch from `release/0.2.0`; keep one coherent issue or correction per PR.
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),
    [VBA house style](docs/VBA_HOUSE_STYLE.md) and
    [documentation style](docs/WRITING_STYLE.md).
 4. Install the [portable toolchain](tools/README.md#running-the-checks), commit
    the candidate and run `python tools/check.py --ci` from a clean checkout.
-5. Open the PR against `release/0.1.0`. Record the exact head, tested merge SHA,
+5. Open the PR against `release/0.2.0`. Record the exact head, tested merge SHA,
    check run, results, risks and deferred criteria. Mark unavailable host tests
    **NOT RUN** with their follow-up issue, and state what was not validated.
 6. Resolve findings and refresh evidence after changes; record review evidence
@@ -66,7 +66,9 @@ commits follow the same form with the PR number in the subject, as
 Use clear names, explicit contracts and meaningful failure fixtures. Explain
 what changes for a caller or maintainer. Review docs and comments alongside code.
 Do not add generated workbooks, client data, secrets or speculative scaffolding.
+The one approved binary is the workbook template, which `tools/build_template.py`
+generates and the `template` gate checks.
 A passing portable check does not establish regulatory correctness or Excel
 compatibility. The [installation guide](docs/INSTALLATION.md) sets up the
-portable checks and the supported host; on the host only the neutral harness
-can be installed until #13 delivers the workbook template.
+portable checks, the supported host, the neutral harness and the template with
+its source synchronization.

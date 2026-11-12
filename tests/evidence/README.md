@@ -7,7 +7,9 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../../README.md#status)
 
 This folder holds one JSON record per tested commit, named
-`<candidate SHA>.json`. [Host evidence](../../docs/validation/HOST_EVIDENCE.md)
+`<candidate SHA>.json`, and `sync/` holds the
+[synchronization records](../../docs/validation/HOST_EVIDENCE.md#synchronization-record)
+of the template round trip. [Host evidence](../../docs/validation/HOST_EVIDENCE.md)
 defines the record and how to make one; the `host-evidence` gate validates
 every record here against the Git history.
 

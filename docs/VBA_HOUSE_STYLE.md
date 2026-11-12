@@ -7,7 +7,8 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 These rules govern VBA implementation. The only admitted VBA modules are the
-[neutral test harness](../tests/README.md) and its self-test (#12); the seven
+[neutral test harness](../tests/README.md) and its self-test (#12) and the
+source synchronization `NSFR_Host_Sync` (#13); the seven
 modules of the non-admitted `prototype/` (ADR-011) are not checked until
 v0.2.0 admits them. The `vba-static` gate enforces the mechanical rules
 ([VBA static checks](../tools/README.md#vba-static-checks)); the harness's
@@ -134,7 +135,11 @@ signature. Omit sections that are empty.
   other invalid arithmetic with range checks before the operation, and return
   the documented status ([ADR-008](DECISIONS.md#recorded-decisions)).
 - Unexpected runtime errors propagate to the host boundary, where the original
-  error and any cleanup failures are retained. `On Error` appears only there.
+  error and any cleanup failures are retained. Among admitted modules,
+  `On Error` appears only there. Test and example modules may use
+  `On Error GoTo` to record a failure and continue
+  ([ADR-008](DECISIONS.md#recorded-decisions), amended on 2026-11-10);
+  `On Error Resume Next` stays forbidden everywhere.
 - No worksheet-function surface or `CVErr` mapping is approved at this stage.
 - Core/API never use `On Error`, including `On Error Resume Next`. Host
   restore helpers use a narrow handler per setting; each failure is returned
@@ -180,9 +185,11 @@ it.
    failed, the procedure raises `ERR_CLEANUP_FAILED`, never success.
 
 The following is a design sketch, not compiled or executed evidence. The host
-evidence of the first host module that changes Excel state (#13) must
+evidence of the first host module that changes application settings must
 exercise success, primary-error-plus-cleanup-failure and cleanup-only
 failure; the harness (#12) reports a cleanup failure apart from the outcome.
+`NSFR_Host_Sync` (#13) changes no application setting: it changes only the
+VBA project, after a backup copy.
 
 ```vb
 'In a standard module named NSFR_Host_Example
@@ -308,9 +315,11 @@ generated, names the generator and says it must not be edited by hand.
   this rule.
 - **Forms:** a `.frm` and its `.frx` are one component, kept side by side in
   `src/host/`. The `.frx` is binary and never edited as text.
-- **Workbooks and macro-enabled files** are generated outputs. No workbook is
-  approved yet. Any retained template needs an exact allowlist path, provenance
-  review, macro-free validation and manifest under #13. Do not add broad exceptions.
+- **Workbooks and macro-enabled files** are generated outputs. The one
+  approved workbook is the macro-free template `templates/NSFR_Template.xlsx`
+  (#13): its exact path is allowlisted, the `template` gate rebuilds it, and
+  `src/manifest.txt` lists the components synchronized into a workbook built
+  from it. Do not add broad exceptions.
 
 <a id="review-and-validation"></a>
 

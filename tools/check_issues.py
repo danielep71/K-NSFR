@@ -36,7 +36,7 @@ TABLE_LABEL = re.compile(r"^\|\s*`([^`]+)`\s*\|")
 API = "https://api.github.com"
 # The milestones an open issue may belong to: the active release and the next planned one.
 # Update the list when a release branch becomes active or a further release is planned.
-ACTIVE_MILESTONES = ("v0.1.0", "v0.2.0")
+ACTIVE_MILESTONES = ("v0.2.0", "v0.3.0")
 
 
 @dataclass(frozen=True)

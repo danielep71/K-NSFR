@@ -26,7 +26,7 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 .PARAMETER Branch
-    The branch to verify, for example release/0.1.0 or main.
+    The branch to verify, for example release/0.2.0 or main.
 
 .PARAMETER Force
     Replace the bundle folder of an earlier run of the same commit.
@@ -35,7 +35,7 @@
     Hide the Excel window during the run.
 
 .EXAMPLE
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.1.0
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\host\Verify-NSFR-Branch.ps1 -Branch release/0.2.0
 #>
 [CmdletBinding()]
 param(

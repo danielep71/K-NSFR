@@ -128,7 +128,9 @@ Windows 11, Microsoft 365 desktop Excel, 64-bit.
 writes the [host evidence record](../docs/validation/HOST_EVIDENCE.md#recording-a-run);
 `tools/host/Verify-NSFR-Branch.ps1 -Branch <branch>` does the same for the
 head of a branch, in a separate worktree, in one command.
-Until #13 provides a host template, the manual route is:
+The manual route, with a new blank workbook, is below; the
+[template and synchronization](../docs/INSTALLATION.md#template-and-synchronization)
+route builds the workbook from the template instead:
 
 1. Check out the commit to test and note its full SHA.
 2. Open a new blank workbook and the Visual Basic Editor (Alt+F11).

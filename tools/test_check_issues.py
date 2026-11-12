@@ -23,7 +23,7 @@ READY = PLANNING + "## Dependencies and blocking status\n\n**Ready to start**: n
 
 
 def issue(number: int, *labels: str, state: str = "open", body: str = READY,
-          assignees: tuple[str, ...] = ("triage-person",), milestone: str | None = "v0.1.0",
+          assignees: tuple[str, ...] = ("triage-person",), milestone: str | None = "v0.2.0",
           milestone_state: str = "open", milestone_due: str | None = "2026-11-30") -> Issue:
     return Issue(number, state, labels or ("P3",), assignees, milestone, body, milestone_state, milestone_due)
 
@@ -50,16 +50,17 @@ class MetadataTests(unittest.TestCase):
         self.assertEqual(rules([issue(1, "P2", "P3")]), [(1, "priority")])
         self.assertEqual(rules([issue(1, milestone=None)]), [(1, "milestone")])
         self.assertEqual(rules([issue(1, milestone_state="closed")]), [(1, "milestone")])
-        self.assertEqual(rules([issue(1, milestone="v0.3.0 - Other")]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone="v0.1.0 - Repo setup")]), [(1, "milestone")])
+        self.assertEqual(rules([issue(1, milestone="v0.4.0 - Other")]), [(1, "milestone")])
         self.assertEqual(rules([issue(1, milestone="v0.10.0 - Lookalike")]), [(1, "milestone")])
 
     def test_the_next_planned_milestone_is_accepted(self) -> None:
-        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Prototype Setup")]), [])
-        self.assertEqual(rules([issue(1, milestone="v0.2.0 - Prototype Setup", milestone_state="closed")]),
+        self.assertEqual(rules([issue(1, milestone="v0.3.0 - Next")]), [])
+        self.assertEqual(rules([issue(1, milestone="v0.3.0 - Next", milestone_state="closed")]),
                          [(1, "milestone")])
-        found = check_issues.audit([issue(1, milestone="v0.3.0 - Later")], {1: "open"}, REPOSITORY,
+        found = check_issues.audit([issue(1, milestone="v0.4.0 - Later")], {1: "open"}, REPOSITORY,
                                    assignee="triage-person")
-        self.assertIn("one of v0.1.0, v0.2.0", found[0].message)
+        self.assertIn("one of v0.2.0, v0.3.0", found[0].message)
 
     def test_a_start_date_is_required_and_not_after_the_target(self) -> None:
         for date in ("2026-02-30", "2026-10-1", "soon"):
@@ -105,7 +106,7 @@ class MetadataTests(unittest.TestCase):
 
     def test_due_date_is_read_from_rest_milestones(self) -> None:
         for due_on, expected in (("2026-11-30T08:00:00Z", "2026-11-30"), (None, None)):
-            milestone = {"title": "v0.1.0 - Repo setup", "state": "open", "due_on": due_on}
+            milestone = {"title": "v0.2.0 - Prototype setup", "state": "open", "due_on": due_on}
             item = {"number": 7, "state": "open", "labels": [], "assignees": [], "body": READY,
                     "milestone": milestone}
             with self.subTest(due_on=due_on):

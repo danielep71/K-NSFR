@@ -70,7 +70,8 @@ portable CI or an Excel smoke test alone does not satisfy this gate.
 The setup milestone defines governance, architecture, source provenance,
 contracts, static checks, neutral test infrastructure and candidate-bound host
 evidence for the harness through the existing setup issues. Host packaging and
-source synchronization are deferred to v0.2.0 (#13).
+source synchronization were deferred to v0.2.0 (#13), which delivered them on
+2026-11-10.
 
 Outside the non-admitted `prototype/` (ADR-011), it does not introduce
 regulatory formulas or parameter percentages. It does not calculate ASF/RSF or

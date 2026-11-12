@@ -129,11 +129,13 @@ try {
         throw 'The worktree is not clean: commit, stash or discard the changes, or use a fresh clone.'
     }
     $published = $false
-    foreach ($ref in @('origin/release/0.1.0', 'origin/main')) {
-        if (Test-GitAncestor $sha $ref) { $published = $true }
+    # Every published release branch, as the host-evidence gate accepts, and main.
+    $refs = @(Invoke-Git @('for-each-ref', '--format=%(refname:short)', 'refs/remotes/origin/release/')) + @('origin/main')
+    foreach ($ref in $refs) {
+        if ($ref -and (Test-GitAncestor $sha $ref)) { $published = $true }
     }
     if (-not $published) {
-        Write-Warning ("$sha is not on origin/release/0.1.0 or origin/main: the record can be " +
+        Write-Warning ("$sha is not on origin/main or an origin/release/* branch: the record can be " +
                        'bound only to a commit of those branches (git fetch, then check one out).')
     }
 

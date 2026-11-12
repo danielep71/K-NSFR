@@ -32,9 +32,9 @@ copyright ownership or permission to redistribute.
 | GitHub Actions workflows and Dependabot configuration | Imported (see the third-party notices), adapted to local checks; `.github/workflows/codeql.yml` authored locally in #146 | License per file in the third-party notices; actions use SHA-pinned upstream components, so inventory each action's license and notice before redistributing bundled code |
 | README and GOVERNANCE.md | Initial baseline, then rewritten for K-NSFR | Repository history records changes; I confirm notices if external distribution is proposed |
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
-| Workbook, regulatory parameters | None admitted | Future source/version, licensing and independent validation required |
+| Workbook engine, regulatory parameters | None admitted; the workbook template holds only the layout (below) | Future source/version, licensing and independent validation required |
 | Numerical fixtures | One neutral synthetic fixture, FX-0001 (#10) | Synthetic data and factors; no regulatory claim |
-| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, `openpyxl` and LibreOffice, which are not locked |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 
@@ -85,6 +85,8 @@ recorded in #19.
 | Code of conduct | Authored locally in #147 |
 | Installation guide, release procedure and changelog | Authored locally in #18 and #19 |
 | Tracked-file audit | Authored locally in #20; it lists every tracked file of its candidate with its origin |
+| Workbook template and its generator | Adapted in #13 from my prototype's generator, without its factors, template rows, demo data, expected results or buttons; the template is generated, never edited by hand |
+| Source manifest, `NSFR_Host_Sync` and the round-trip script | Authored locally in #13 |
 | Check runner and runner tests | Adapted from the immutable source in the third-party notices; current gates cover only delivered capabilities |
 | Contributor/tooling instructions and numeric rationale | Authored for the current setup; sketches remain unexecuted |
 | VBA house style | Adapted with local module, API, numeric and maturity decisions; no host capability imported by implication |
@@ -112,6 +114,7 @@ are locked. Their licenses are listed in
 | PyYAML | 6.0.3 plus wheel hash | YAML parsing |
 | types-PyYAML | 6.0.12.20260906 plus wheel hash | YAML type stubs |
 | markdown-it-py / mdurl | 4.2.0 plus the hashes of its published files / 0.1.2 plus wheel hash | Markdown parsing and URL handling |
+| XlsxWriter | 3.2.9 plus wheel hash | Workbook template generation |
 
 [Licensing](LICENSING.md#runtime-tool-licenses) gives their licenses and
 upstream sources.
