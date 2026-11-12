@@ -4,7 +4,7 @@
 
 **K-NSFR** · [Overview](README.md) · [Documentation](README.md#documentation) · [Governance](docs/GOVERNANCE.md)
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](README.md#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=flat-square)](README.md#status)
 
 What each version adds, newest first. The [release procedure](docs/RELEASE.md)
 moves the *Unreleased* entries under a version when its release candidate is
@@ -46,6 +46,7 @@ compliance.
 - Ruff 0.17.3, mypy 2.4.1 and XlsxWriter 3.3.1. XlsxWriter 3.3 rounds row
   heights to Excel's 0.25-point grid, so the regenerated template differs
   from the previous one in row heights only (#207).
+- The page badges show the stage *Prototype setup* (#209).
 
 <a id="v010"></a>
 

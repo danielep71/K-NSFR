@@ -4,7 +4,7 @@
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=flat-square)](../README.md#status)
 
 Repository source is canonical. Cross-platform text uses UTF-8 without a BOM,
 LF in committed text, and exactly one final newline with no blank line at the end
