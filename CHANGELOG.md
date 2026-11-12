@@ -43,6 +43,9 @@ compliance.
   template, say that the round trip has no host evidence record yet, and
   claim only the test coverage that exists; a release with the template needs
   a synchronization record; abuse is reported through GitHub (#201).
+- Ruff 0.17.3, mypy 2.4.1 and XlsxWriter 3.3.1. XlsxWriter 3.3 rounds row
+  heights to Excel's 0.25-point grid, so the regenerated template differs
+  from the previous one in row heights only (#207).
 
 <a id="v010"></a>
 
