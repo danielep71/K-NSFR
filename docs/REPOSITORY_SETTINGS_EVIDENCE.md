@@ -51,7 +51,7 @@ row says otherwise. Every row is **verified**.
 | Web commit sign-off | Not required | Separate from reviews and commit signing. |
 | Legacy downloads flag | Disabled | API metadata; not a restriction on source downloads. |
 | Pages / homepage | No Pages site; no homepage | No website is published. |
-| Description / topics / license | Read 2026-11-05: the About description and the ten topics listed in [repository identity](WRITING_STYLE.md#repository-identity); MPL-2.0 detected | Set by me for #17. |
+| Description / topics / license | Read 2026-11-05 and, for the description, again on 2026-11-12: the About description and the ten topics listed in [repository identity](WRITING_STYLE.md#repository-identity); MPL-2.0 detected | Set by me for #17; the description's stage changed to Prototype setup on 2026-11-12 (#211). |
 | Social preview | Read 2026-11-05 from the repository page (`og:image`): a custom image (JPEG, 1774 × 887) | Set by me for #17; [provenance](PROVENANCE.md) records its origin. It is not stored in the repository. |
 | Forking | Allowed | Anyone can fork a public repository. |
 
