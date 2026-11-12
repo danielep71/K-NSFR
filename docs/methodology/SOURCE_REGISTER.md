@@ -130,7 +130,7 @@ decision above.
 | Institutional protection schemes, cooperative networks, group treatment | S-01 Articles 428g, 428h | Out of v1 (entity scope) | — | — |
 | Available stable funding and residual maturity of liabilities | S-01 Articles 428i, 428j | Liability classification and residual-maturity inputs (#9) | ASF factors, cited per Articles 428k–428o | ASF classification and maturity boundary cases (#10) |
 | Required stable funding, residual maturity and encumbrance of assets | S-01 Chapter 4 Section 1 (Articles 428p–428q); the exact provisions to confirm on EUR-Lex | Asset classification, residual-maturity and encumbrance inputs (#9) | RSF factors, cited per Articles 428r–428ah | RSF classification, maturity and encumbrance boundary cases (#10) |
-| Required stable funding of short-term transactions with financial customers | S-01 Article 510, as amended by S-03 | Transaction-type, counterparty and residual-maturity inputs (#9) | Article 510 treatment, cited | [Case plan](../validation/VALIDATION.md#case-plan), PROD-02 and PROD-03 |
+| Required stable funding of short-term transactions with financial customers | S-01 Article 510, as amended by S-03 | Transaction-type, counterparty and residual-maturity inputs (#9) | Article 510 treatment, cited | Contract example `valid-basic`; cases planned under PROD-02 and PROD-03 |
 | Simplified calculation for small and non-complex institutions | S-01 Articles 428ai–428az | Out of v1 | — | — |
 | Application on a consolidated basis | S-01 Article 428a | Out of v1 (entity scope) | — | — |
 | Reporting layout and items requiring stable funding | S-01 Articles 427–428, Article 428(1)(k) as amended by S-04; R-02 Article 17 and Annex I section 7 | Output naming and ordering only | None | Output layout review (#9) |

@@ -37,6 +37,12 @@ compliance.
   workbook names with the template (#195).
 - The documents name the milestone by its new title, `v0.2.0 - Prototype
   setup` (#199).
+- Dependabot on `main` targets `release/0.2.0` (#202), and the release
+  procedure says how a new target reaches `main`.
+- The documents record v0.1.0 as released, account for the committed
+  template, say that the round trip has no host evidence record yet, and
+  claim only the test coverage that exists; a release with the template needs
+  a synchronization record; abuse is reported through GitHub (#201).
 
 <a id="v010"></a>
 
@@ -55,7 +61,7 @@ for the tag `v0.1.0`. #22 certifies it, and the
 - Scope, the EU CRR standard profile as the first planned target, and the
   core/API/host architecture (#2, #27); decisions ADR-001 to ADR-011.
 - Licensing under MPL-2.0, provenance, synthetic-data and security policies
-  (#3, #30, #32); the repository is public since 2026-10-28, with private
+  (#3, #30, #32); the repository has been public since 2026-10-28, with private
   vulnerability reporting (#68, #69, #71).
 - Commit messages, review evidence and issue closure (#50, #54); editorial and
   assistant rules in `AGENTS.md` (#99); a code of conduct (#147).

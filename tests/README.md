@@ -11,11 +11,12 @@ summary. It is neutral: it implements no NSFR calculation and its self-test
 asserts nothing about one. Tracking: #12.
 
 > [!NOTE]
-> The harness was imported, compiled and run in Excel on 2026-11-09 at
-> `5231985`, with the self-test result `RESULT PASS`
-> ([host evidence](evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json); #12, #14).
-> The portable checks read its source only (`vba-static`). A run on one commit
-> is no evidence for another, so a change to the harness needs a new run.
+> The harness was imported, compiled and run in Excel, with the self-test
+> result `RESULT PASS`, first on 2026-11-09 at `5231985` and last on
+> 2026-11-10 at `87d4618`, the v0.1.0 candidate
+> ([host evidence records](evidence/README.md); #12, #14). The portable checks
+> read its source only (`vba-static`). A run on one commit is no evidence for
+> another, so a change to the harness or to `.gitattributes` needs a new run.
 
 <a id="layout"></a>
 

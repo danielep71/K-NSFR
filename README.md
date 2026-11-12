@@ -56,9 +56,9 @@ must be approved before any numerical implementation.
 
 <a id="scope"></a>
 
-## 🧭 Scope
+## 🎯 Scope
 
-The setup milestone establishes the process and evidence needed to build a
+The setup milestones establish the process and evidence needed to build a
 deterministic calculation core, a typed API and a narrow Excel host adapter.
 Future work must trace methodology and parameters to applicable sources,
 separately validate numerical cases and record actual host execution. Read the
@@ -154,8 +154,9 @@ issues are audited separately by the issue triage workflow. The check runs on
 documentation-only and synchronization PRs. It never runs Excel: a run on
 the supported host is proved only by a [host evidence record](docs/validation/HOST_EVIDENCE.md),
 bound to its commit and validated by the `host-evidence` gate (#14). The
-synchronization round trip is run by `tools/host/Test-NSFR-Sync.ps1` (#13);
-independent numerical validation comes later. Follow the commands in
+synchronization round trip is run by `tools/host/Test-NSFR-Sync.ps1` (#13),
+which writes a synchronization record validated by the same gate; none is
+recorded yet (#195). Independent numerical validation comes later. Follow the commands in
 [governance](docs/GOVERNANCE.md#local-validation) for portable local checks.
 
 <a id="roadmap"></a>
