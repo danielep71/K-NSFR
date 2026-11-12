@@ -108,7 +108,10 @@ branch:
 - the Dependabot `target-branch` in `.github/dependabot.yml`. Dependabot reads
   its configuration from `main`, so make the same change in a PR into `main`
   that changes only those lines, merge it by a merge commit as a recorded
-  exception, and synchronize `main` back into the new branch (#202);
+  exception, and synchronize `main` back into the new branch. The release
+  ruleset requires an up-to-date head, which `main` is not, so the
+  synchronization PR comes from a branch that starts at `main` and merges the
+  new branch in (#202, #208);
 - `ACTIVE_MILESTONES` in `tools/check_issues.py`, when the closed milestone
   leaves it.
 
