@@ -4,7 +4,7 @@
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=flat-square)](../README.md#status)
 
 This is the scope decision for [issue #2](https://github.com/danielep71/K-NSFR/issues/2),
 dated 2026-10-28. It defines planned capabilities, not implemented calculations.

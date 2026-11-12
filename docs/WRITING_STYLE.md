@@ -4,7 +4,7 @@
 
 **K-NSFR** · [Overview](../README.md) · [Documentation](../README.md#documentation) · [Governance](GOVERNANCE.md)
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=flat-square)](../README.md#status)
 
 This is the presentation pattern for K-NSFR Markdown. Keep the subject
 matter precise: a polished document must never imply an implemented engine,

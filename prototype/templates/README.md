@@ -4,7 +4,7 @@
 
 **K-NSFR** · [Overview](../../README.md) · [Documentation](../../README.md#documentation) · [Governance](../../docs/GOVERNANCE.md)
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../../README.md#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=flat-square)](../../README.md#status)
 
 `python tools/build_template.py`, run from `prototype/`, writes
 `NSFR_Template.xlsx` into this directory, and `tools/lo_regression.py` reads it

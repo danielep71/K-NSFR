@@ -12,7 +12,7 @@
 
 <br>
 
-[![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=for-the-badge)](#status)
+[![Stage](https://img.shields.io/badge/Stage-Prototype_setup-BF8700?style=for-the-badge)](#status)
 [![Target](https://img.shields.io/badge/Target-Excel_VBA_64--bit-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)](#requirements)
 [![Platform](https://img.shields.io/badge/Platform-Windows_11-0078D6?style=for-the-badge)](#requirements)
 [![License](https://img.shields.io/badge/License-MPL_2.0-2ea44f?style=for-the-badge)](LICENSE)
