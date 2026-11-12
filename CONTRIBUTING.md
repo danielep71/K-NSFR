@@ -64,7 +64,7 @@ commits follow the same form with the PR number in the subject, as
 ## ✅ Review expectations
 
 Use clear names, explicit contracts and meaningful failure fixtures. Explain
-what changes for a caller or maintainer. Review docs and comments alongside code.
+what changes for a caller or for whoever maintains the code. Review docs and comments alongside code.
 Do not add generated workbooks, client data, secrets or speculative scaffolding.
 The one approved binary is the workbook template, which `tools/build_template.py`
 generates and the `template` gate checks.

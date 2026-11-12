@@ -6,6 +6,9 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
+Why the reference engine targets desktop Excel/VBA, how its source is laid
+out, and what each kind of check proves.
+
 <a id="evidence-and-selection"></a>
 
 ## 🔎 Evidence and selection
@@ -36,7 +39,7 @@ regulatory implementation or an automatic test oracle.
 
 | Surface | Declared target | Execution evidence |
 | --- | --- | --- |
-| Reference engine and workbook adapter | Windows 11; Microsoft 365 desktop Excel; VBA7; 64-bit Office | Not yet built, so NOT RUN. The neutral harness has run on this host ([host evidence](../tests/evidence/523198552eee8296b1dfa4e72344c2a8e5d55cfd.json)) |
+| Reference engine and workbook adapter | Windows 11; Microsoft 365 desktop Excel; VBA7; 64-bit Office | Not yet built, so NOT RUN. The neutral harness has run on this host ([host evidence records](../tests/evidence/README.md)) |
 | Portable repository checks | Ubuntu 24.04 runner; Python 3.13; Node 22 explicitly selected | Existing workflow configuration; results must be attached to each candidate |
 | 32-bit Office, perpetual Excel versions, Excel for Mac | Not supported in the initial profile | No compatibility claim |
 | Excel web/mobile, LibreOffice, server-side Excel automation | Not supported | Cannot substitute for the selected host |
@@ -95,11 +98,11 @@ real deliverable; the repository holds no empty scaffolding.
 | `src/host/` | Workbook adapters, isolated from core; `NSFR_Host_Sync` synchronizes the components that `src/manifest.txt` lists (#13) |
 | `tests/core/`, `tests/api/` | The deterministic [neutral harness](../tests/README.md) and its self-test (#12), then reviewed numerical cases |
 | `tests/fixtures/` | Registered numerical fixtures: synthetic inputs, parameters, independently derived expected results and provenance; #10 |
-| `tests/evidence/` | Host evidence records, one per tested commit; #14 |
+| `tests/evidence/` | Host evidence records, one per tested commit (#14); synchronization records in `sync/` (#195) |
 | `examples/modules/` | Example modules that call the API with synthetic data; only once the API exists |
 | `docs/` | Scope, architecture, decisions, governance, installation, release, and the source register and validation guides |
 | `docs/contracts/` | Input, parameter and result contracts with their machine-readable schema and synthetic examples; #9 |
-| `docs/validation/` | Numerical fixture rules and their machine-readable schema (#10); the host evidence record format (#14) |
+| `docs/validation/` | Numerical fixture rules and their machine-readable schema (#10); the host evidence and synchronization record formats (#14, #195) |
 | `tools/` | Python repository checks and their tests; `tools/host/` PowerShell scripts that record host evidence and test the synchronization round trip (#13) |
 | `prototype/` | My benchmark prototype, stored as delivered and not admitted ([ADR-011](DECISIONS.md#recorded-decisions)); v0.2.0 moves it into this layout piece by piece |
 | `.github/scripts/` | Existing JavaScript label tools |
@@ -129,8 +132,8 @@ governance tooling in place; do not move tests merely to match the future layout
 
 Portable CI checks the labels and issue forms, committed bytes, Markdown and
 YAML, the contracts and their examples, the numerical fixtures, the VBA static
-rules and the manifest, the host evidence records, the workbook template and
-the workflows
+rules and the manifest, the host evidence records, the workbook template, the
+tools' own tests, lint and typing, and the workflows
 ([gates](../tools/README.md#gates-and-reports)). It does not compile
 VBA, run Excel, or validate regulatory results. The VBA static checks (#11),
 neutral harness tests (#12), and actual host tests (#14) provide different

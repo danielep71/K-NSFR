@@ -7,8 +7,9 @@
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
 This is the implementation contract for the planned K-NSFR Excel/VBA reference
-engine. The repository is in setup: there is no numerical engine, workbook or
-validated regulatory profile. [Architecture](ARCHITECTURE.md) selected VBA;
+engine. The repository is in setup: there is no numerical engine, engine
+workbook or validated regulatory profile; only a macro-free layout template
+exists (#13). [Architecture](ARCHITECTURE.md) selected VBA;
 Python and JavaScript remain repository tooling, not parallel NSFR engines.
 These conventions constrain later code without asserting a regulatory formula.
 
@@ -88,7 +89,8 @@ A declared target does not become tested merely because portable CI passes.
 A [host evidence record](validation/HOST_EVIDENCE.md) (#14) binds the exact
 candidate commit, the Windows and Excel builds, the bitness, the fingerprints
 of the imported files and the observed outcome; follow-up host variants need
-their own record. #13 owns packaging and a reproducible source-to-workbook process.
+their own record. #13 delivered the template and the source-to-workbook synchronization; #195
+records their host evidence.
 
 <a id="vba-source-and-environment"></a>
 
@@ -101,8 +103,10 @@ The VBE exports according to the host system code page, which differs between
 hosts, so VBA source is ASCII only and a non-ASCII character is built at run
 time with `ChrW` ([ADR-008](DECISIONS.md#recorded-decisions)). No charset or
 Git working-tree encoding is configured for VBA. The export/import
-round trip passed on the intended host on 2026-11-10 at `cadf916` (#13): an
-export changes no byte Git stores. Never normalize an exported module
+round trip passed once on the intended host on 2026-11-10 at `cadf916`, a
+task-branch commit of #13: an export changed no byte Git stores. That run has
+no host evidence record; #195 records the round trip at a commit of the
+release branch. Never normalize an exported module
 with a text editor merely to make a test pass. Keep form binaries (`.frx`)
 paired with their source and admit each through the exact binary allowlist.
 
@@ -118,8 +122,10 @@ do not require blanket macro enablement.
 Prohibit `On Error`, unstructured jumps, `CallByName`, `Application.Run`,
 `Evaluate` and dynamic procedure names in core and API. A narrow
 `On Error GoTo` handler is permitted at a host resource/Excel-state boundary
-to restore state, emit a diagnostic and exit;
-do not use `GoTo` for ordinary branching. Use explicit argument types,
+to restore state, emit a diagnostic and exit. Test and example modules may
+use `On Error GoTo` to record a failure, and `On Error Resume Next` is
+forbidden everywhere ([ADR-008](DECISIONS.md#recorded-decisions)). Do not use
+`GoTo` for ordinary branching. Use explicit argument types,
 qualified calls, and no implicit coercion from Excel cells. Avoid active
 workbook, selection or active sheet as an input; pass the workbook and ranges
 explicitly. The `vba-static` gate enforces the feasible source rules
@@ -132,7 +138,9 @@ explicitly. The `vba-static` gate enforces the feasible source rules
 
 Python governance utilities use explicit arguments and typed, deterministic
 checks; JavaScript label tools retain their manifest-driven behavior. They
-remain separate from regulatory calculations. Tooling files use UTF-8/LF and
+remain separate from regulatory calculations. Python and JavaScript tooling
+files use UTF-8/LF; the PowerShell host scripts check out as CRLF
+([source control](SOURCE_CONTROL.md)). Tooling follows
 the existing naming rules in [ARCHITECTURE.md](ARCHITECTURE.md). VBA-specific
 module and conditional-compilation rules are inapplicable to Python/JavaScript,
 because neither is selected as a calculation engine. No new runtime or

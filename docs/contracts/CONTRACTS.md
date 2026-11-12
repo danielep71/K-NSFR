@@ -116,7 +116,8 @@ A parameter set is versioned configuration, never input data. It carries
 `classification`, `factor` (a decimal from 0 to 1), the register `source_id`
 and the `locator` (article, paragraph and point) it is taken from. No
 regulatory parameter set exists in this repository yet; the only one is the
-synthetic set of the neutral fixture FX-0001. Regulatory values are reviewed under
+synthetic set of the neutral fixture FX-0001 (the non-admitted prototype's
+transcribed tables are not one; ADR-011). Regulatory values are reviewed under
 [PROD-01](../BACKLOG.md#later-calculation-work) and cited through the
 register, as [AGENTS.md](../../AGENTS.md#what-the-documentation-describes)
 requires. The engine rejects a run whose parameter set is unknown, does not
@@ -136,7 +137,9 @@ A result has `status` `ok` or `rejected`, echoes the run identity
   `ratio`, plus the reconciliation below;
 - `diagnostics`, possibly empty.
 
-A `rejected` result carries no total and no ratio. When required stable
+A contract-stage rejection carries no fingerprint; an engine-stage rejection
+carries the input fingerprint. A `rejected` result carries no total and no
+ratio. When required stable
 funding is zero, the ratio is not reported and `NSFR-W001` explains why. The
 [validation rules](../validation/VALIDATION.md#arithmetic-scale-and-rounding)
 fix the reported scales: both totals with eight decimals, and the ratio as a
@@ -213,7 +216,7 @@ All data is synthetic ([data policy](../DATA_POLICY.md)).
 | Example | Shows |
 | --- | --- |
 | `valid-basic` | A valid input on both sides, with dated, undated, encumbered and S-01 Article 510 positions, and its reconciliation totals |
-| `invalid-positions` | At least one row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, a malformed date, another currency, past dates, side mismatches, a missing and an unexpected conditional date, a derivative, an extra cell and a duplicate `record_id` |
+| `invalid-positions` | At least one row per contract error: missing, malformed, non-finite, negative, over-precise and over-limit amounts, a malformed date, another currency, a past maturity date, side mismatches, a missing and an unexpected conditional date, a derivative, an extra cell and a duplicate `record_id` |
 | `invalid-run-basis` | The consolidated basis, rejected in version 1 |
 | `invalid-run-rows` | A run table with two rows |
 

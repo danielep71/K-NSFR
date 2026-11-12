@@ -34,7 +34,7 @@ copyright ownership or permission to redistribute.
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook engine, regulatory parameters | None admitted; the workbook template holds only the layout (below) | Future source/version, licensing and independent validation required |
 | Numerical fixtures | One neutral synthetic fixture, FX-0001 (#10) | Synthetic data and factors; no regulatory claim |
-| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `README.md` and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 
@@ -53,12 +53,14 @@ version and SHA-256 recorded beside it.
 
 ## 🔍 Confidentiality review
 
-A repository-tree review at this candidate found no workbook, client data,
-credentials or proprietary template in tracked paths. The tracked text and
+At the review baseline above, a repository-tree review found no workbook,
+client data, credentials or proprietary template in tracked paths. The
+macro-free workbook template added later in #13 is generated, holds layout
+only and is the one approved binary. The tracked text and
 issue descriptions use synthetic planning examples. This is a scoped inspection,
 not a claim about untracked local files, inaccessible prior private material,
 or every historical blob. If questionable content is found, report privately
-under SECURITY.md without copying it into issue evidence.
+under [SECURITY.md](../SECURITY.md) without copying it into issue evidence.
 
 <a id="maintenance-inventory"></a>
 
@@ -80,7 +82,7 @@ recorded in #19.
 | Validation rules, fixture checker and neutral fixture | Authored locally in #10; the fixture's data and factors are synthetic and its derivation was worked out by hand |
 | VBA static checker, exceptions file and fixtures | Authored locally in #11 |
 | Neutral VBA test harness and its self-test | Authored locally in #12; neutral, with no NSFR calculation |
-| Host evidence checker, its records and the host scripts | Authored locally in #14 (#157, #158, #174); the records come from my runs on the supported host (#175, #178) |
+| Host evidence checker, its records and the host scripts | Authored locally in #14 (#157, #158, #174); the records come from my runs on the supported host (#175, #178, #186) |
 | External-link checker and its workflow | Authored locally in #147 |
 | Code of conduct | Authored locally in #147 |
 | Installation guide, release procedure and changelog | Authored locally in #18 and #19 |

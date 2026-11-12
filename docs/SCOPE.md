@@ -71,14 +71,14 @@ The setup milestone defines governance, architecture, source provenance,
 contracts, static checks, neutral test infrastructure and candidate-bound host
 evidence for the harness through the existing setup issues. Host packaging and
 source synchronization were deferred to v0.2.0 (#13), which delivered them on
-2026-11-10.
+2026-11-10; their host evidence is pending (#195).
 
 Outside the non-admitted `prototype/` (ADR-011), it does not introduce
 regulatory formulas or parameter percentages. It does not calculate ASF/RSF or
 a ratio, certify compliance, ingest production/client data, implement bank
 connectors, create regulatory submissions, automate consolidation or FX, or
-build a web service. Its release is the tag of the
-[release procedure](RELEASE.md). Neutral scaffold tests must not be
+build a web service. It was released as the tag `v0.1.0` on 2026-11-10 (#22),
+under the [release procedure](RELEASE.md). Neutral scaffold tests must not be
 described as numerical NSFR validation.
 
 See [architecture](ARCHITECTURE.md), [decisions](DECISIONS.md), and

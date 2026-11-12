@@ -31,11 +31,11 @@ fields:
 | Field | Content |
 | --- | --- |
 | `schema` | `k-nsfr-host-evidence/1` |
-| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of a published release branch (now `release/0.2.0`) or of `main`: a task-branch commit disappears with its squash merge |
+| `candidate_sha` | The full 40-character SHA of the tested commit. It must be a commit of a published release branch (`origin/release/*`; the active one is `release/0.2.0`) or of `main`: a task-branch commit disappears with its squash merge |
 | `recorded_on` | The ISO date of the run, from the commit date to today |
 | `worktree_clean` | `true`: `git status --porcelain` printed nothing before the import |
 | `host.os` | The Windows edition, version and OS build, starting with `Windows 11`, for example `Windows 11 Pro 24H2, OS build 26100.2314` (**Settings → System → About**) |
-| `host.excel` | The Microsoft 365 product and its channel, then `Version … (Build … Click-to-Run)`: the scripts record the version Excel reports through COM, such as `16.0`, and the build of the installation, which **File → Account → About Excel** also shows |
+| `host.excel` | The Microsoft 365 product and its product release IDs, then `Version … (Build … Click-to-Run)`: the scripts record the version Excel reports through COM, such as `16.0`, and the build of the installation, which **File → Account → About Excel** also shows |
 | `host.bitness` | `64-bit` |
 | `fingerprints` | The SHA-256 of every module imported from `tests/core/` and of `.gitattributes`, over the bytes stored in Git (LF). A Windows checkout holds the VBA source with CRLF, so `Get-FileHash` on it gives another value: `python tools/check_host_evidence.py --candidate <SHA> --inventory` prints the expected ones |
 | `steps` | `import`, `compile`, `run` and `cleanup`, each `PASS`, `FAIL` or `NOT_RUN` |
@@ -91,16 +91,16 @@ checked out. You need the supported host and Git. Python is optional and
 validates the record at the end.
 
 1. Clone the repository fresh, or check that `git status --porcelain` prints
-   nothing, and check out a commit of a published release branch (now
-   `release/0.2.0`) or of `main`.
+   nothing, and check out a commit of a published release branch (the active
+   one is `release/0.2.0`) or of `main`.
 2. Close Excel, then run from the repository folder:
 
    ```text
-   powershell -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1
+   powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools\host\Record-HostEvidence.ps1
    ```
 
 3. Propose the record that it writes, `tests/evidence/<SHA>.json`, in a pull
-   request.
+   request that adds only the record.
 
 The script:
 
@@ -172,7 +172,7 @@ stays open with that blocker.
   - a `RESULT` line that contradicts the counts.
 - **Private details:**
   - user folder paths, network share paths, e-mail addresses and IP addresses;
-  - any field outside the record. Do not add machine names, user names or licence details.
+  - any field outside the record. Do not add machine names, user names or license details.
 
 With `--candidate <SHA>`, the checker also fails when that commit has no
 harness record (*missing*), when only other commits have one (*stale*), or

@@ -6,6 +6,10 @@
 
 [![Stage](https://img.shields.io/badge/Stage-Repository_setup-BF8700?style=flat-square)](../README.md#status)
 
+The decisions that shape this project, each with its rationale and
+consequence. A later decision supersedes an earlier one explicitly; none is
+rewritten silently.
+
 <a id="baseline-decision"></a>
 
 ## 📌 Baseline decision
@@ -28,7 +32,7 @@ regulatory correctness.
 | ADR-004 | Separate core, API, and host with one-way dependencies | Determinism and independent testing take precedence over worksheet convenience; no hidden host inputs in calculations |
 | ADR-005 | Keep exported source canonical and data synthetic | #4 defines text conventions, #13 packaging; real data and operational deployment require separate approval and controls |
 | ADR-006 | Distinguish planned support, portable checks, host execution, and numerical validation | A green repository workflow cannot be cited as proof of Excel or NSFR correctness |
-| ADR-007 | Prefer explicit decimal scale for monetary inputs; Currency/Decimal remain provisional pending #9/#10 range, rounding and coercion tests | Do not implement numerical logic before those tests; supersede the preference if domain limits require another representation |
+| ADR-007 | Prefer explicit decimal scale for monetary inputs; Currency/Decimal remain provisional pending #9/#10 range, rounding and coercion tests | Do not implement numerical logic before those tests; supersede the preference if domain limits require another representation. Superseded in part by ADR-010 |
 | ADR-008 | VBA source is ASCII only; standard modules carry the `NSFR_Core_`, `NSFR_API_` or `NSFR_Host_` prefix, and classes, forms, sheets, tests and examples follow the [house-style naming table](VBA_HOUSE_STYLE.md#naming); core and API validate before an operation instead of trapping errors, and among admitted modules `On Error` appears only at the host boundary; tests and examples may use `On Error GoTo` to report a failure. Decided on 2026-11-05 in #118, after the baseline; amended on 2026-11-10 in #196 to allow handlers in tests and examples, as the static checks do | One rule each in the house style, implementation conventions, architecture and source-control documents; revisit if host round-trip evidence (#13/#14) or the static checks (#11) require otherwise |
 | ADR-009 | Version 1 of `eu-crr-standard` is bound to the CRR consolidated version `02013R0575-20260626` and to a single institution on an individual basis; consolidation, group and scheme treatments and the simplified calculation are outside it. Decided on 2026-11-05 in #8, after the baseline | The [source register](methodology/SOURCE_REGISTER.md) records the sources and their verification; a later legal version or a wider entity scope needs a new register version and a new decision |
 | ADR-010 | Results are exact decimal arithmetic: weighted amounts are never rounded, the ASF and RSF totals are reported with eight decimals, and the ratio is reported as a decimal with six decimals, rounded half-even once from the exact quotient; fixtures compare results exactly, and a tolerance is an exception I approve per fixture. The engine holds amounts, weighted amounts, totals and the ratio in VBA `Decimal`, because the contract's largest amount exceeds the `Currency` range; this supersedes the `Currency` preference of ADR-007. Decided on 2026-11-05 in #10, after the baseline | The [validation rules](validation/VALIDATION.md#arithmetic-scale-and-rounding) record the scales, the [numeric range](validation/VALIDATION.md#numeric-range) and the comparison; an input beyond the `Decimal` range is rejected with a diagnostic added by PROD-03 |
@@ -40,7 +44,7 @@ regulatory correctness.
 
 Alternatives and the selected layout are documented in
 [ARCHITECTURE.md](ARCHITECTURE.md). Interpretation choices beyond ADR-009, the
-parameter set (PROD-01), the workbook schema (#13) and production-readiness
+parameter set (PROD-01), the workbook schema (#135, #137) and production-readiness
 approval remain follow-on decisions; [BACKLOG.md](BACKLOG.md) assigns the
 calculation work. Record a new
 dated decision with its rationale and superseded ID when changing this baseline;

@@ -14,7 +14,7 @@ branch, so the history outlives that window. It also writes badge files
 there, and opens an issue when traffic stands out (*Traffic alert* below). It
 is repository analytics, not CI: it builds and tests nothing.
 
-The workflow is on `main` since the integration of 2026-11-03 (#107). The
+The workflow has been on `main` since its integration on 2026-11-03 (#107). The
 credential setup below is in place, and collection has run daily since
 2026-11-07 (#16); without it, the collect job fails at its *Check the App
 configuration* step. No alert issue had been opened by 2026-11-10.
