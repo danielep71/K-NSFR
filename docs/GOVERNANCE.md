@@ -169,7 +169,7 @@ into main and release/**. Dependabot proposes grouped GitHub Actions updates and
 updates to the hash-locked Python tools in `tools/` to `release/0.2.0` weekly on Mondays at
 05:00 Europe/Rome, with the ci and P3 labels and me assigned.
 Dependabot reads this configuration from `main`, so a new target takes effect
-only once it reaches `main`: #204 brought `release/0.2.0` there on 2026-11-11
+only once it reaches `main`: #204 brought `release/0.2.0` there on 2026-11-12
 (#202). The Actions entry's
 activation is evidenced in #6. The Python entry reached `main` with #107 on
 2026-11-03, when Dependabot read the configuration and built the `/tools`
