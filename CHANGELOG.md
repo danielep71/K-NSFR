@@ -51,6 +51,9 @@ compliance.
 - Repository integrity runs on every pull request, whatever its base, so a PR
   stacked on another task branch gets the required check; pushes still run it
   on `main` and `release/**` only (#213).
+- An unchanged synchronization PR, whose head is the integration merge
+  commit, names the integration's final-head review instead of needing a new
+  one (#214).
 
 <a id="v010"></a>
 

@@ -76,7 +76,9 @@ integration, with its full SHA.
    decision. Merge it with a merge commit when the required check passes on
    the current head.
 2. Synchronize `main` back into the release branch with an empty-diff PR
-   merged by a merge commit.
+   whose head is the integration merge commit, merged by a merge commit. It
+   needs no new automated review: its record names the integration's
+   final-head review ([governance](GOVERNANCE.md#review)).
 3. Tag the integration merge commit on `main`:
 
    ```sh

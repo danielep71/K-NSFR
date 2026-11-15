@@ -277,10 +277,14 @@ is edited in place, so a link to it later describes another commit.
 The bot does not review PRs authored by bots such as Dependabot. For those, my
 review of the final diff and head SHA is the only review; do not claim
 automated coverage that did not run. A `main` to release-branch
-synchronization PR whose diff is empty changes no file: it needs the required
-check only. Confirm that `git diff` between the two branches is empty and
-record that and the check result in the PR. A synchronization PR that changes
-any file is reviewed like any other PR. If review fails or is unavailable,
+synchronization PR needs no new automated review when its head is the
+integration merge commit, its diff against the release branch is empty, and
+the integration's final-head review covered the same tree. Confirm that
+`git diff` between the two branches is empty, and record that, the required
+check's result and the review that covers the tree: the integration PR and
+its reviewed head. The required check still runs. A synchronization PR that
+changes any file, or whose head is another commit, such as a branch that
+merges the release branch in (#208), is reviewed like any other PR (#214). If review fails or is unavailable,
 leave the PR open and record the blocker.
 
 <a id="closing-issues"></a>
