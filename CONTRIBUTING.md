@@ -31,8 +31,12 @@ describes. Report vulnerabilities privately under [SECURITY.md](SECURITY.md).
 3. Follow [source conventions](docs/SOURCE_CONTROL.md),
    [VBA house style](docs/VBA_HOUSE_STYLE.md) and
    [documentation style](docs/WRITING_STYLE.md).
-4. Install the [portable toolchain](tools/README.md#running-the-checks), commit
-   the candidate and run `python tools/check.py --ci` from a clean checkout.
+4. Install the [portable toolchain](tools/README.md#running-the-checks). While
+   you iterate, run the tests of the files you change, with Ruff and mypy on
+   them, or the checker that covers a changed document. The required check
+   runs every gate on the PR. Run `python tools/check.py --ci` from a clean
+   checkout yourself after resolving a conflict in code, and before a release
+   tag ([local validation](docs/GOVERNANCE.md#local-validation)).
 5. Open the PR against `release/0.2.0`. Record the exact head, tested merge SHA,
    check run, results, risks and deferred criteria. Mark unavailable host tests
    **NOT RUN** with their follow-up issue, and state what was not validated.

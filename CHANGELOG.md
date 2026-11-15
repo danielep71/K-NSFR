@@ -54,6 +54,9 @@ compliance.
 - An unchanged synchronization PR, whose head is the integration merge
   commit, names the integration's final-head review instead of needing a new
   one (#214).
+- While iterating, contributors run the checks of the changed files; the
+  full check runs locally after a conflict resolved in code and before a
+  release tag, and in the required check on every PR (#217).
 
 <a id="v010"></a>
 

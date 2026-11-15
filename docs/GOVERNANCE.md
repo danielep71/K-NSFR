@@ -146,8 +146,15 @@ dependencies, start date or target end date field, or when blank issues are enab
 
 ## ✅ Local validation
 
-Install the [portable toolchain](../tools/README.md#running-the-checks), then
-run all gates from a clean, committed checkout:
+Install the [portable toolchain](../tools/README.md#running-the-checks). While
+you iterate, run what covers the files you change: their tests
+(`python tools/test_<name>.py`), `ruff check` and `mypy` on them, or the
+checker of a changed document, such as `python tools/check_content.py`. The
+required Repository integrity check runs every gate on the PR and gates the
+merge, so a red run costs at most one more round (#217).
+
+Run all gates from a clean, committed checkout after resolving a conflict in
+code (not in documentation), and before a release tag:
 
 ```sh
 python tools/check.py --ci
