@@ -35,12 +35,13 @@ check as NOT RUN and explain it.
 
 Record the review as text; the code-review summary comment is edited in place,
 so a link to it later shows another commit. For a bot-authored PR, record my
-review of the final head and that automated review did not run. An
-empty-diff synchronization PR needs the required check only: record the empty
-diff instead. See [governance](https://github.com/danielep71/K-NSFR/blob/release/0.2.0/docs/GOVERNANCE.md#review).
+review of the final head and that automated review did not run. A
+synchronization PR whose head is the integration merge commit, with an empty
+diff, needs no new automated review: record the empty diff and the
+integration PR whose final-head review covered the same tree. See [governance](https://github.com/danielep71/K-NSFR/blob/release/0.2.0/docs/GOVERNANCE.md#review).
 
 - Final PR head (full SHA):
-- Review type (automated and my review / my review only for a bot-authored PR / not required: empty-diff synchronization):
+- Review type (automated and my review / my review only for a bot-authored PR / covered by the integration's review: unchanged synchronization):
 - Reviewed commit SHA and result (no findings, or each finding and how it was settled):
 
 <a id="scope-and-risk"></a>
