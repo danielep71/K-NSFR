@@ -164,8 +164,8 @@ record that SHA alongside the PR head. Push runs test the integrated commit.
 The label manifest, synchronization and drift workflows are versioned in this
 repository, with the issue forms and the triage tooling.
 
-Repository integrity runs the local checks above on pull requests and pushes
-into main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
+Repository integrity runs the local checks above on every pull request,
+whatever its base, and on pushes to main and release/**. Dependabot proposes grouped GitHub Actions updates and grouped
 updates to the hash-locked Python tools in `tools/` to `release/0.2.0` weekly on Mondays at
 05:00 Europe/Rome, with the ci and P3 labels and me assigned.
 Dependabot reads this configuration from `main`, so a new target takes effect
@@ -342,8 +342,10 @@ deliberate differences from GitHub's defaults, and the
 [settings evidence record](REPOSITORY_SETTINGS_EVIDENCE.md) holds their dated
 read-back, with ruleset IDs.
 
-Repository integrity runs on every PR into main and release/**, including
+Repository integrity runs on every PR, whatever its base, including
 documentation-only and ancestry-only synchronization PRs, without a path filter.
+It runs on pushes only to main and release/**: a push to a task branch would
+repeat its PR's run of the same head (#213).
 It runs the 18 gates that [tooling](../tools/README.md#gates-and-reports)
 lists: committed Markdown links/fences, YAML syntax and duplicate keys,
 workflow syntax/expressions with a checksum-verified actionlint binary,

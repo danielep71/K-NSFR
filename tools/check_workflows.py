@@ -233,12 +233,16 @@ def integrity_findings(workflows: Mapping[str, Workflow], governance: str,
             if key in job:
                 findings.append(f"{file}: required job {job_id} has `{key}`")
     on = triggers(workflow) or {}
-    expected = {"branches": protected}
-    for event in ("pull_request", "push"):
-        if not isinstance(on, Mapping) or on.get(event) != expected:
-            actual = on.get(event) if isinstance(on, Mapping) else on
-            findings.append(f"{file}: `{event}` filters are {actual!r}; {GOVERNANCE} requires "
-                            f"{expected!r} and no other filter")
+    # Every pull request gets the required check, whatever its base; pushes run it only
+    # where they land, so a task-branch push does not repeat its pull request's run.
+    expected: dict[str, object] = {"pull_request": None, "push": {"branches": protected}}
+    for event, wanted in expected.items():
+        if not isinstance(on, Mapping) or event not in on or (on.get(event) or None) != wanted:
+            actual = on.get(event, "missing") if isinstance(on, Mapping) else on
+            rule = ("no filter" if wanted is None
+                    else f"{wanted!r} from {GOVERNANCE} and no other filter")
+            findings.append(f"{file}: `{event}` filters are {actual!r}; the required check "
+                            f"needs {rule}")
     if workflow.get("concurrency") != INTEGRITY_CONCURRENCY:
         findings.append(f"{file}: concurrency must be {INTEGRITY_CONCURRENCY}")
     for job_id, job in matching:

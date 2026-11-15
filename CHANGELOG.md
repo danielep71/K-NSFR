@@ -48,6 +48,9 @@ compliance.
   from the previous one in row heights only (#207).
 - The page badges show the stage *Prototype setup* (#209), and so does the
   About description (#211).
+- Repository integrity runs on every pull request, whatever its base, so a PR
+  stacked on another task branch gets the required check; pushes still run it
+  on `main` and `release/**` only (#213).
 
 <a id="v010"></a>
 

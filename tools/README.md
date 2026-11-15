@@ -201,7 +201,7 @@ described in the security policy.
 
 | Workflow | Triggers | Runs | Writes |
 | --- | --- | --- | --- |
-| Repository integrity | Every PR into and push to `main` and `release/**`; manual dispatch. No path filter, so it can be a required check. | `python tools/check.py --ci` | Nothing; uploads `test-results/` |
+| Repository integrity | Every PR, whatever its base; every push to `main` and `release/**`; manual dispatch. No path filter, so it can be a required check. A push to a task branch does not run it: the PR's run tests the same head. | `python tools/check.py --ci` | Nothing; uploads `test-results/` |
 | Issue triage | Issue events and milestone created, edited, closed, opened or deleted (run from the default branch); manual dispatch | `tools/check_issues.py` against the live issues | Nothing; uploads its report |
 | Detect issue-label drift | PRs into `main`/`release/**` that touch label files; daily at 05:17 UTC; manual dispatch | Drift self-tests on PRs; live comparison otherwise | Nothing; uploads its evidence |
 | Sync issue labels | PRs that touch label files (validation only); label-file pushes to `main` and manual dispatch on the default branch (reconciliation) | Manifest validation and self-tests; live reconciliation | Issue labels, only in the reconcile job (`issues: write`; `pull-requests: read` for the prune check) |
