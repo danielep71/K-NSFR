@@ -1,15 +1,16 @@
 name: Repository integrity
 run-name: Repository integrity — ${{ github.ref_name }} @ ${{ github.sha }}
 # Runs tools/check.py, the single entry point for the repository's checks, on
-# every pull request and push to main and release/**. No path filter, so the
-# job reports on every pull request and can be a required check. Static checks
+# every pull request, whatever its base, and on every push to main and
+# release/**. Pushes to task branches are left out: their pull request run
+# tests the same head. No path filter, so the job reports on every pull
+# request and can be a required check. Static checks
 # only: tooling, labels and issue forms, committed source, documentation and
 # workflows; no Excel execution and no run of the NSFR engine.
 on:
   push:
     branches: [main, "release/**"]
   pull_request:
-    branches: [main, "release/**"]
   workflow_dispatch:
 permissions:
   contents: read

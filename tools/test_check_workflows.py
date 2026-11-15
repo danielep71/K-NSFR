@@ -194,16 +194,28 @@ class WorkflowInvariantTests(unittest.TestCase):
         self.assertFinding("required job integrity has `strategy`")
 
     def test_path_filter_on_pull_request(self) -> None:
-        self.repo.on("repository-integrity.yml")["pull_request"]["paths"] = ["src/**"]
+        self.repo.on("repository-integrity.yml")["pull_request"] = {"paths": ["src/**"]}
         self.assertFinding("`pull_request` filters are")
+
+    def test_branch_filter_on_pull_request(self) -> None:
+        self.repo.on("repository-integrity.yml")["pull_request"] = {"branches": ["main", "release/**"]}
+        self.assertFinding("`pull_request` filters are")
+
+    def test_pull_request_trigger_missing(self) -> None:
+        del self.repo.on("repository-integrity.yml")["pull_request"]
+        self.assertFinding("`pull_request` filters are 'missing'")
+
+    def test_push_without_branch_filter(self) -> None:
+        del self.repo.on("repository-integrity.yml")["push"]["branches"]
+        self.assertFinding("`push` filters are")
 
     def test_paths_ignore_on_push(self) -> None:
         self.repo.on("repository-integrity.yml")["push"]["paths-ignore"] = ["docs/**"]
         self.assertFinding("`push` filters are")
 
-    def test_branch_filter_changed(self) -> None:
-        self.repo.on("repository-integrity.yml")["pull_request"]["branches"] = ["main"]
-        self.assertFinding("`pull_request` filters are")
+    def test_push_filter_omits_the_default_branch(self) -> None:
+        self.repo.on("repository-integrity.yml")["push"]["branches"] = ["release/**"]
+        self.assertFinding("`push` filters are")
 
     def test_required_check_renamed(self) -> None:
         self.repo.job("repository-integrity.yml", "integrity")["name"] = "Integrity"
