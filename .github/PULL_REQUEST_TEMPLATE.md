@@ -21,7 +21,7 @@ Milestones belong to issues only; leave the PR milestone empty.
 - Exact current PR head (full SHA):
 - Tested merge SHA (GitHub's synthetic merge in the Repository integrity run):
 - Repository integrity run and result:
-- Local validation commands and results:
+- Local validation commands and results (the checks of the changed files, or `python tools/check.py --ci`):
 - Excel/Windows host validation: NOT RUN — reason and follow-up issue, or exact build/bitness, candidate SHA and evidence.
 - Numerical expected values: NOT APPLICABLE, or independent/published source and tolerance.
 
