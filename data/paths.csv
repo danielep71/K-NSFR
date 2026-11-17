@@ -93,3 +93,13 @@ snapshot_date,rank,path,title,count,uniques
 2026-11-16,6,/danielep71/K-NSFR/issues/136,/issues/136,1,1
 2026-11-16,7,/danielep71/K-NSFR/milestones,/milestones,1,1
 2026-11-16,8,/danielep71/K-NSFR/pull/67,/pull/67,1,1
+2026-11-17,1,/danielep71/K-NSFR,Overview,4,2
+2026-11-17,2,/danielep71/K-NSFR/actions/workflows/codeql.yml,/actions/workflows/codeql.yml,1,1
+2026-11-17,3,/danielep71/K-NSFR/blob/main/docs/ARCHITECTURE.md,/blob/main/docs/ARCHITECTURE.md,1,1
+2026-11-17,4,/danielep71/K-NSFR/blob/main/docs/BACKLOG.md,/blob/main/docs/BACKLOG.md,1,1
+2026-11-17,5,/danielep71/K-NSFR/blob/main/docs/DATA_POLICY.md,/blob/main/docs/DATA_POLICY.md,1,1
+2026-11-17,6,/danielep71/K-NSFR/blob/main/docs/IMPLEMENTATION.md,/blob/main/docs/IMPLEMENTATION.md,1,1
+2026-11-17,7,/danielep71/K-NSFR/blob/main/docs/LICENSING.md,/blob/main/docs/LICENSING.md,1,1
+2026-11-17,8,/danielep71/K-NSFR/blob/main/docs/PROVENANCE.md,/blob/main/docs/PROVENANCE.md,1,1
+2026-11-17,9,/danielep71/K-NSFR/blob/main/docs/RELEASE.md,/blob/main/docs/RELEASE.md,1,1
+2026-11-17,10,/danielep71/K-NSFR/blob/main/docs/REPOSITORY_SETTINGS_EVIDENCE.md,/blob/main/docs/REPOSITORY_SETTINGS_EVIDENCE.md,1,1
