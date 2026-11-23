@@ -114,7 +114,7 @@ passing forms tests does not prove every live issue satisfies governance.
 
 `check_vba.py` applies the rules of the
 [implementation conventions](../docs/IMPLEMENTATION.md#vba-source-and-environment),
-the [VBA house style](../docs/VBA_HOUSE_STYLE.md) and ADR-008 to every tracked
+the [VBA house style](../docs/VBA_HOUSE_STYLE.md), ADR-008 and ADR-012 to every tracked
 `.bas`, `.cls` and `.frm` file. Each finding names the file, the line where the
 statement starts and a rule:
 
@@ -126,8 +126,10 @@ src/core/NSFR_Core_Example.bas:12: [goto] GoTo is allowed only as On Error GoTo
 | --- | --- | --- | --- |
 | `ascii`, `option-explicit`, `vb-name` | Required | Required | Required |
 | `option-private-module` (standard modules) | Required in `src/core/` | Not required | Required in `tests/` |
-| `goto` (any GoTo but `On Error GoTo`), `gosub` (GoSub, Return), `on-error-resume-next` | Forbidden | Forbidden | Forbidden |
-| `error-handler` (`On Error GoTo`, `Resume`) | Forbidden | Allowed | Allowed |
+| `goto` (any GoTo but `On Error GoTo`), `gosub` (GoSub, Return) | Forbidden | Forbidden | Forbidden |
+| `on-error-resume-next` (`On Error Resume Next` outside the `ERROR HANDLER` section) | Forbidden | Forbidden | Forbidden |
+| `banner` (a banner line not 79 characters), `module-header` (no `' MODULE:`/`' CLASS:` header naming the file, or its nine fields missing or out of order), `procedure-header` (no title banner after a signature, or its fields missing or out of order; a short `Private` procedure may be compact) | Required | Required | Required |
+| `statement-separator` (`:` between statements), `next-counter` (`Next` without its counter), `vba-qualified` (a listed VBA library function without `VBA.`) | Forbidden | Forbidden | Forbidden |
 | `declare-ptrsafe` (Declare without PtrSafe) | Forbidden | Forbidden | Forbidden |
 | `declare` (Declare statements) | Forbidden | Reviewed exception | Forbidden |
 | `com-object` (`CreateObject`, `GetObject`, `New` on anything but a project class or `Collection`) | Forbidden | Reviewed exception | Forbidden |
