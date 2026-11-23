@@ -90,7 +90,7 @@ class StatementSplittingTests(unittest.TestCase):
 
     def test_a_keyword_before_a_colon_is_a_statement_not_a_label(self) -> None:
         self.assertEqual(rules(CORE, "Return: x = 1"), ["gosub"])
-        self.assertEqual(rules(CORE, "Resume: x = 1"), ["error-handler"])
+        self.assertEqual(rules(CORE, "Stop: x = 1"), [])
 
     def test_named_arguments_do_not_split_statements(self) -> None:
         self.assertEqual(rules(CORE, "Report Value:=1"), [])
@@ -250,11 +250,18 @@ class DynamicCallTests(unittest.TestCase):
 
 
 class LayerTests(unittest.TestCase):
-    def test_error_handlers_only_at_the_host_and_in_tests(self) -> None:
-        self.assertEqual(rules(CORE, "On Error GoTo Failed"), ["error-handler"])
-        self.assertEqual(rules("src/api/NSFR_API_Example.bas", "Resume Next"), ["error-handler"])
+    def test_error_handlers_are_allowed_in_every_layer(self) -> None:
+        self.assertEqual(rules(CORE, "On Error GoTo ErrorHandler"), [])
+        self.assertEqual(rules("src/api/NSFR_API_Example.bas", "Resume Next"), [])
         self.assertEqual(rules(HOST, "On Error GoTo Failed", "Resume CleanUp", "On Error GoTo 0"), [])
         self.assertEqual(rules(TEST, "On Error GoTo Failed", "Resume Next"), [])
+
+    def test_resume_next_only_in_the_error_handler_section(self) -> None:
+        handler = ("Public Sub Run()", "'" + "-" * 78, "' ERROR HANDLER", "'" + "-" * 78,
+                   "ErrorHandler:", "        On Error Resume Next", "End Sub")
+        self.assertEqual(rules(CORE, *handler), [])
+        self.assertEqual(rules(CORE, *handler, "Public Sub Other()", "        On Error Resume Next",
+                               "End Sub"), ["on-error-resume-next"])
 
     def test_resume_next_on_error_and_plain_goto_are_never_allowed(self) -> None:
         self.assertEqual(rules(HOST, "On Error Resume Next"), ["on-error-resume-next"])
@@ -306,6 +313,78 @@ class HeaderTests(unittest.TestCase):
         self.assertEqual([(f.rule, f.line) for f in found], [("goto", 12)])
 
 
+BAR = "'" + "-" * 78
+
+
+def header(*labels: str) -> list[str]:
+    lines = []
+    for label in labels:
+        lines += [f"' {label}", "'   Text", "'"]
+    return lines[:-1]
+
+
+NINE = ("PURPOSE", "WHY THIS EXISTS", "INPUTS", "RETURNS", "BEHAVIOR", "ERROR POLICY",
+        "DEPENDENCIES", "NOTES", "UPDATED")
+
+
+def styled(path: str, *body: str, procedure_labels: tuple[str, ...] = NINE,
+           component: str | None = None) -> bytes:
+    """A module in the house style: component header, then one public procedure."""
+    stem = Path(path).stem
+    options = ["Option Explicit"] + ([] if "/host/" in path else ["Option Private Module"])
+    lines = [f'Attribute VB_Name = "{stem}"', "", *options, "", "'", BAR,
+             f"' MODULE: {component or stem}", BAR, *header(*NINE), BAR, "",
+             "Public Sub Run()", "", "'", BAR, "'" + " " * 35 + "RUN IT", BAR,
+             *header(*procedure_labels), BAR, "", *body, "", "End Sub"]
+    return "\r\n".join(lines).encode("ascii") + b"\r\n"
+
+
+def layout(path: str, raw: bytes) -> list[str]:
+    return [finding.rule for finding in check_vba.layout_findings(path, raw)]
+
+
+class LayoutTests(unittest.TestCase):
+    def test_a_house_style_module_passes(self) -> None:
+        self.assertEqual(layout(HOST, styled(HOST, "    'Count", "        x = VBA.Len(y)")), [])
+
+    def test_banners_are_79_characters(self) -> None:
+        raw = styled(HOST).replace(BAR.encode(), BAR[:-1].encode(), 1)
+        self.assertIn("banner", layout(HOST, raw))
+
+    def test_the_component_header_is_required_and_named(self) -> None:
+        self.assertEqual(layout(HOST, styled(HOST, component="Other")), ["module-header"])
+        raw = styled(HOST).replace(b"' MODULE: NSFR_Host_Example", b"' NSFR_Host_Example")
+        self.assertEqual(layout(HOST, raw), ["module-header"])
+
+    def test_the_nine_fields_in_order(self) -> None:
+        missing = tuple(label for label in NINE if label != "BEHAVIOR")
+        self.assertEqual(layout(HOST, styled(HOST, procedure_labels=missing)), ["procedure-header"])
+        swapped = ("WHY THIS EXISTS", "PURPOSE", *NINE[2:])
+        self.assertEqual(layout(HOST, styled(HOST, procedure_labels=swapped)), ["procedure-header"])
+
+    def test_a_procedure_without_a_header_is_reported(self) -> None:
+        raw = source(HOST, "Public Sub Run()", "    x = 1", "End Sub")
+        self.assertIn("procedure-header", layout(HOST, raw))
+
+    def test_a_short_private_procedure_may_be_compact(self) -> None:
+        raw = styled(HOST, procedure_labels=("PURPOSE", "UPDATED"))
+        self.assertEqual(layout(HOST, raw), ["procedure-header"])
+        raw = raw.replace(b"Public Sub Run()", b"Private Sub Run()")
+        self.assertEqual(layout(HOST, raw), [])
+
+    def test_statement_rules(self) -> None:
+        self.assertEqual(layout(HOST, styled(HOST, "        x = 1: y = 2")), ["statement-separator"])
+        self.assertEqual(layout(HOST, styled(HOST, "        For i = 1 To 2", "        Next")),
+                         ["next-counter"])
+        self.assertEqual(layout(HOST, styled(HOST, "        x = Len(y) + Trim$(z)")),
+                         ["vba-qualified", "vba-qualified"])
+
+    def test_qualification_exemptions(self) -> None:
+        self.assertEqual(layout(HOST, styled(HOST, "        Mid$(Text, 1, 1) = \"A\"",
+                                             "        Open Path For Random As #1 Len = 10",
+                                             "        x = Item.Len")), [])
+
+
 class ExceptionFileTests(unittest.TestCase):
     def problems(self, raw: str) -> list[str]:
         return [f.message for f in check_vba.load_exceptions(raw)[1]]
@@ -353,7 +432,7 @@ class CommandLineTests(unittest.TestCase):
         self.assertIn(f"{CORE}:4: [goto] GoTo is allowed only as On Error GoTo", output)
 
     def test_a_clean_tree_passes(self) -> None:
-        code, output = self.run_main({CORE: source(CORE, "x = 1")})
+        code, output = self.run_main({CORE: styled(CORE, "        x = 1")})
         self.assertEqual(code, 0, output)
         self.assertIn("1 VBA file(s), 0 finding(s)", output)
 
@@ -368,7 +447,7 @@ class CommandLineTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertTrue(check_vba.admitted(path))
         code, output = self.run_main({"prototype/src/core/Loose.bas": b"GoTo Done\n",
-                                      CORE: source(CORE, "x = 1")})
+                                      CORE: styled(CORE, "        x = 1")})
         self.assertEqual(code, 0, output)
         self.assertIn("1 VBA file(s), 0 finding(s); 1 not admitted in prototype/, not checked", output)
 
