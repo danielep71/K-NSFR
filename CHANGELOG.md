@@ -65,6 +65,7 @@ compliance.
 - The prototype's seven VBA modules follow the house style; their behavior
   stays as delivered (#223).
 - `actions/create-github-app-token` 3.4.0 in the traffic workflow (#220).
+- Ruff 0.17.4, mypy-extensions 1.2.0 and types-PyYAML 6.0.12.20261103 (#221).
 
 <a id="v010"></a>
 
