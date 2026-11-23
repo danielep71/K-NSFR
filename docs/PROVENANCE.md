@@ -111,10 +111,10 @@ are locked. Their licenses are listed in
 | GitHub App token action (`actions/create-github-app-token`) | v3.3.0, commit `64ab729a6294000f5aa4a4bc0b73d1f32bc45510` | Short-lived token for the traffic collection |
 | CodeQL action (`github/codeql-action`, init and analyze) | Full SHA in `codeql.yml` | Code scanning |
 | actionlint | 1.7.12 plus archive SHA-256 in workflow | Workflow validation |
-| Ruff | 0.17.3 plus the hashes of its published files | Python lint and complexity |
+| Ruff | 0.17.4 plus the hashes of its published files | Python lint and complexity |
 | mypy and runtime dependencies | 2.4.1 (ast-serialize 0.13.1, with the hashes of its published files); exact transitive pins/hashes in lock | Strict typing |
 | PyYAML | 6.0.3 plus wheel hash | YAML parsing |
-| types-PyYAML | 6.0.12.20260906 plus wheel hash | YAML type stubs |
+| types-PyYAML | 6.0.12.20261103 plus wheel hash | YAML type stubs |
 | markdown-it-py / mdurl | 4.2.0 plus the hashes of its published files / 0.1.2 plus wheel hash | Markdown parsing and URL handling |
 | XlsxWriter | 3.3.1 plus wheel hash | Workbook template generation |
 

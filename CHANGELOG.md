@@ -64,6 +64,7 @@ compliance.
   harness are reformatted without behavior change (#222).
 - The prototype's seven VBA modules follow the house style; their behavior
   stays as delivered (#223).
+- Ruff 0.17.4, mypy-extensions 1.2.0 and types-PyYAML 6.0.12.20261103 (#221).
 
 <a id="v010"></a>
 
