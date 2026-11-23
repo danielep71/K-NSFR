@@ -43,7 +43,6 @@ Option Private Module
 '       ?Test_NSFR_HarnessSelfTest.RunSelfTest()
 '
 '   The last line must read RESULT PASS (tests/README.md).
-'   Author: danielep71
 '
 ' PUBLIC SURFACE
 '   RunSelfTest

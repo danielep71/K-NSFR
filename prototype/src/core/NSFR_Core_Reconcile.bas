@@ -71,9 +71,6 @@ Option Private Module
 ' COMPATIBILITY
 '   Excel VBA7, 64-bit; no references beyond the defaults
 '
-' AUTHOR
-'   Daniele Penza
-'
 ' UPDATED
 '   2026-11-05
 '------------------------------------------------------------------------------
