@@ -57,6 +57,13 @@ compliance.
 - While iterating, contributors run the checks of the changed files; the
   full check runs locally after a conflict resolved in code and before a
   release tag, and in the required check on every PR (#217).
+- A new VBA house style (ADR-012): nine-field headers, body sections, intent
+  comments, `VBA.`-qualified library functions, and an error-handling
+  pattern in every layer that supersedes ADR-008's rule for core and API.
+  The `vba-static` gate checks its layout, and `NSFR_Host_Sync` and the test
+  harness are reformatted without behavior change (#222).
+- The prototype's seven VBA modules follow the house style; their behavior
+  stays as delivered (#223).
 
 <a id="v010"></a>
 

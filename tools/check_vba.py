@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Check exported VBA source against the repository's static rules.
 
-The rules come from the implementation conventions, the VBA house style and
-ADR-008. The check reads source text only: it never compiles or runs VBA,
-and docs/IMPLEMENTATION.md and tools/README.md state its limits.
+The rules come from the implementation conventions, the VBA house style,
+ADR-008 and ADR-012. The check reads source text only: it never compiles or
+runs VBA, and docs/IMPLEMENTATION.md and tools/README.md state its limits.
 
 This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@ from typing import Any
 EXTENSIONS = (".bas", ".cls", ".frm")
 EXCEPTIONS_FILE = "tools/vba-exceptions.json"
 MANIFEST_FILE = "src/manifest.txt"
-# The benchmark prototype is stored as delivered and is not admitted (ADR-011);
+# The benchmark prototype keeps its behavior as delivered and is not admitted (ADR-011);
 # its VBA is not checked until v0.2.0 moves it into the layout below.
 NOT_ADMITTED = "prototype/"
 LAYERS = (("src/core/", "core"), ("src/api/", "api"), ("src/host/", "host"),
@@ -57,6 +57,22 @@ PROCEDURE = re.compile(
     r"\s+([A-Za-z_][A-Za-z0-9_]*)", re.I)
 # A name right after these words is being declared, not called.
 DECLARING_WORDS = frozenset({"sub", "function", "get", "let", "event"})
+# House-style layout (docs/VBA_HOUSE_STYLE.md, ADR-012).
+BANNER = re.compile(r"^'[-=]{10,}$")
+BANNER_WIDTH = 79
+FIELDS = ("PURPOSE", "WHY THIS EXISTS", "INPUTS", "RETURNS", "BEHAVIOR", "ERROR POLICY",
+          "DEPENDENCIES", "NOTES", "UPDATED")
+COMPACT_FIELDS = ("PURPOSE", "UPDATED")
+COMPACT_MAX_LINES = 15
+FIELD_LABEL = re.compile(r"^' ([A-Z][A-Z0-9 /()-]*[A-Z0-9)])\s*$")
+COMPONENT_LINE = re.compile(r"^' (MODULE|CLASS): (\w+)\s*$")
+ERROR_HANDLER_SECTION = re.compile(r"^' ERROR HANDLER\s*$")
+PROCEDURE_END = re.compile(r"^\s*End\s+(?:Sub|Function|Property)\b", re.I)
+# VBA library functions written with their VBA. qualifier.
+QUALIFIED_FUNCTIONS = frozenset(name.lower() for name in (
+    "Len", "LenB", "Trim", "Trim$", "LTrim", "LTrim$", "RTrim", "RTrim$", "UCase", "UCase$",
+    "LCase", "LCase$", "Left$", "Right$", "Mid$", "InStr", "InStrRev", "StrComp",
+    "CStr", "CLng", "CInt", "CDbl", "CBool", "CDate"))
 
 
 @dataclass(frozen=True)
@@ -88,6 +104,7 @@ class Module:
     procedures: frozenset[str] = frozenset()
     findings: list[Finding] = field(default_factory=list)
     in_block: bool = False
+    in_handler: bool = False
 
     def add(self, line: int, rule: str, message: str, text: str = "") -> None:
         self.findings.append(Finding(self.path, line, rule, message, text.strip()))
@@ -191,7 +208,7 @@ def is_builtin_call(tokens: list[str], index: int, procedures: frozenset[str],
     return not declared and tokens[index].lower() not in procedures
 
 
-def jump_findings(tokens: list[str], layer: str) -> list[tuple[str, str]]:
+def jump_findings(tokens: list[str], in_handler: bool) -> list[tuple[str, str]]:
     words = [token.lower() for token in tokens]
     found: list[tuple[str, str]] = []
     handled: set[int] = set()
@@ -201,16 +218,13 @@ def jump_findings(tokens: list[str], layer: str) -> list[tuple[str, str]]:
         if word == "on" and words[index + 1:index + 2] == ["error"]:
             handled.update({index + 1, index + 2})
             action = words[index + 2] if index + 2 < len(words) else ""
-            if action == "resume":
-                found.append(("on-error-resume-next", "On Error Resume Next is not allowed"))
-            elif layer in ("core", "api", "unknown"):
-                found.append(("error-handler", "On Error appears only at the host boundary (ADR-008)"))
+            if action == "resume" and not in_handler:
+                found.append(("on-error-resume-next",
+                              "On Error Resume Next is allowed only in the ERROR HANDLER section (ADR-012)"))
         elif word in ("gosub", "return"):
             found.append(("gosub", "GoSub and Return are not allowed"))
         elif word == "goto":
             found.append(("goto", "GoTo is allowed only as On Error GoTo"))
-        elif word == "resume" and layer in ("core", "api", "unknown"):
-            found.append(("error-handler", "Resume appears only at the host boundary (ADR-008)"))
     return found
 
 
@@ -282,7 +296,7 @@ def check_statement(module: Module, line: int, statement: str) -> None:
     skip, module.in_block = block_change(tokens, module.in_block)
     if skip or not tokens:
         return
-    for rule, message in (jump_findings(tokens, module.layer)
+    for rule, message in (jump_findings(tokens, module.in_handler)
                           + declare_findings(tokens, module.layer)
                           + com_findings(tokens, module)
                           + dynamic_findings(tokens, module)):
@@ -383,6 +397,10 @@ def check_source(path: str, raw: bytes, classes: frozenset[str] = frozenset(),
         if text.lstrip().startswith("#"):
             check_directive(module, line, text)
             continue
+        if ERROR_HANDLER_SECTION.match(text.rstrip()):
+            module.in_handler = True
+        if PROCEDURE.match(strip_comment(text)) or PROCEDURE_END.match(text):
+            module.in_handler = False
         for statement in statements(strip_comment(text)):
             option = re.match(r"^\s*Option\s+(Explicit|Private\s+Module)\b", statement, re.I)
             if option:
@@ -456,6 +474,132 @@ def tracked_sources(root: Path) -> list[str]:
     return sorted(name for name in output.decode().split("\0") if name)
 
 
+def field_problems(labels: list[str], required: Sequence[str]) -> list[str]:
+    """Missing standard fields, fields out of order, and UPDATED not last."""
+    seen = [label for label in labels if label in FIELDS]
+    problems = []
+    missing = [name for name in required if name not in seen]
+    if missing:
+        problems.append("missing " + ", ".join(missing))
+    if seen != sorted(set(seen), key=FIELDS.index):
+        problems.append("fields out of order or repeated")
+    if "UPDATED" in labels and labels[-1] != "UPDATED":
+        problems.append("UPDATED must come last")
+    return problems
+
+
+def header_labels(lines: list[str], start: int) -> tuple[list[str], int]:
+    """The field labels of a header from lines[start] to its closing banner, and that index."""
+    labels: list[str] = []
+    index = start
+    while index < len(lines) and not BANNER.match(lines[index]):
+        match = FIELD_LABEL.match(lines[index])
+        if match:
+            labels.append(match.group(1))
+        index += 1
+    return labels, index
+
+
+def banner_findings(path: str, lines: list[str], start: int) -> list[Finding]:
+    return [Finding(path, index + 1, "banner", f"a banner line is {BANNER_WIDTH} characters: "
+                    f"an apostrophe and {BANNER_WIDTH - 1} dashes", line)
+            for index, line in enumerate(lines[start:], start=start)
+            if BANNER.match(line) and len(line) != BANNER_WIDTH]
+
+
+def component_findings(path: str, lines: list[str], start: int) -> list[Finding]:
+    """The component header: ' MODULE: or ' CLASS: between two banners, then the nine fields."""
+    stem = PurePosixPath(path).stem
+    index = next((index for index in range(start, len(lines)) if COMPONENT_LINE.match(lines[index])), None)
+    if index is None:
+        return [Finding(path, 1, "module-header", "no ' MODULE: or ' CLASS: component header")]
+    found: list[Finding] = []
+    match = COMPONENT_LINE.match(lines[index])
+    if match and match.group(2) != stem:
+        found.append(Finding(path, index + 1, "module-header",
+                             f"the header names {match.group(2)}, the file is {stem}"))
+    if not (index > 0 and BANNER.match(lines[index - 1])
+            and index + 1 < len(lines) and BANNER.match(lines[index + 1])):
+        found.append(Finding(path, index + 1, "module-header", "the component line sits between two banners"))
+        return found
+    labels, _ = header_labels(lines, index + 2)
+    found += [Finding(path, index + 1, "module-header", problem)
+              for problem in field_problems(labels, FIELDS)]
+    return found
+
+
+def signature_end(lines: list[str], index: int) -> int:
+    while CONTINUATION.search(strip_comment(lines[index]).rstrip()) and index + 1 < len(lines):
+        index += 1
+    return index
+
+
+def procedure_findings(path: str, lines: list[str], start: int) -> list[Finding]:
+    """Every procedure has a title banner and the nine fields, or a compact header when allowed."""
+    found: list[Finding] = []
+    for index in range(start, len(lines)):
+        code = strip_comment(lines[index])
+        match = PROCEDURE.match(code)
+        if not match or re.search(r"\bDeclare\b", code, re.I) or PROCEDURE_END.match(code):
+            continue
+        name = match.group(1)
+        at = signature_end(lines, index) + 1
+        if at < len(lines) and not lines[at].strip():
+            at += 1
+        if not (at + 3 < len(lines) and lines[at].rstrip() == "'" and BANNER.match(lines[at + 1])
+                and lines[at + 2].startswith("'  ") and BANNER.match(lines[at + 3])):
+            found.append(Finding(path, index + 1, "procedure-header",
+                                 f"{name}: no title banner and header after the signature"))
+            continue
+        labels, closing = header_labels(lines, at + 4)
+        end = next((later for later in range(closing, len(lines)) if PROCEDURE_END.match(lines[later])),
+                   len(lines))
+        body = sum(1 for line in lines[closing + 1:end] if strip_comment(line).strip())
+        compact = code.lstrip().lower().startswith("private") and body <= COMPACT_MAX_LINES
+        found += [Finding(path, index + 1, "procedure-header", f"{name}: {problem}")
+                  for problem in field_problems(labels, COMPACT_FIELDS if compact else FIELDS)]
+    return found
+
+
+def statement_layout_findings(path: str, lines: list[str], start: int,
+                              declared: frozenset[str]) -> list[Finding]:
+    """One statement per line, Next with its counter, and VBA. on the listed library functions."""
+    found: list[Finding] = []
+    for line, text in logical_lines(lines, start):
+        if re.match(r"^\s*(?:Attribute\s|#)", text, re.I):
+            continue
+        parts = statements(strip_comment(text))
+        if len(parts) > 1:
+            found.append(Finding(path, line, "statement-separator", "one statement per line, no ':'", text))
+        for statement in parts:
+            tokens = tokens_of(statement)
+            words = [token.lower() for token in tokens]
+            if words == ["next"]:
+                found.append(Finding(path, line, "next-counter", "Next names its counter", text))
+            for index, word in enumerate(words):
+                if word not in QUALIFIED_FUNCTIONS or qualifier(tokens, index) is not None \
+                        or word in declared:
+                    continue
+                following = words[index + 1] if index + 1 < len(words) else ""
+                if index == 0 and word in ("mid$",):
+                    continue  # the Mid$ statement assigns into a string
+                if word == "len" and following == "=" and words[:1] == ["open"]:
+                    continue  # the Len = clause of Open
+                found.append(Finding(path, line, "vba-qualified",
+                                     f"write VBA.{tokens[index]}", text))
+    return found
+
+
+def layout_findings(path: str, raw: bytes, declared: frozenset[str] = frozenset()) -> list[Finding]:
+    """House-style layout of one module (docs/VBA_HOUSE_STYLE.md)."""
+    lines = raw.decode("ascii", errors="replace").splitlines()
+    start = strip_header(lines)
+    names = declared | declared_procedures(raw) | declared_bindings(raw)
+    return (banner_findings(path, lines, start) + component_findings(path, lines, start)
+            + procedure_findings(path, lines, start)
+            + statement_layout_findings(path, lines, start, names))
+
+
 def check_files(root: Path, paths: Sequence[str], exceptions_raw: str) -> list[Finding]:
     classes = frozenset(PurePosixPath(path).stem.lower() for path in paths
                         if path.lower().endswith((".cls", ".frm")))
@@ -464,6 +608,7 @@ def check_files(root: Path, paths: Sequence[str], exceptions_raw: str) -> list[F
     findings: list[Finding] = []
     for path, raw in sources.items():
         findings += check_source(path, raw, classes, procedures)
+        findings += layout_findings(path, raw, procedures)
     exceptions, problems = load_exceptions(exceptions_raw)
     return problems + apply_exceptions(findings, exceptions)
 

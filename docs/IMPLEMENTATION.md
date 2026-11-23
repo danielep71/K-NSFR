@@ -64,9 +64,11 @@ non-numeric host values before constructing a valid typed request.
 Return a documented status and diagnostics for invalid input, unknown
 profile/version, arithmetic overflow, and host/import failures. Core and API
 detect overflow, division by zero and other invalid arithmetic with range
-checks before the operation and return that status; they hold no `On Error`
-handler, and an unexpected runtime error propagates to the host boundary
-([ADR-008](DECISIONS.md#recorded-decisions)). Never turn
+checks before the operation and return that status. An unexpected runtime
+error is caught by the procedure's error handler and re-raised with a
+descriptive message and the procedure's name as source
+([ADR-012](DECISIONS.md#recorded-decisions),
+[errors](VBA_HOUSE_STYLE.md#errors)). Never turn
 an error, blank, or missing value into zero, a plausible NSFR result, or a
 partially successful response. The [contracts](contracts/CONTRACTS.md) (#9)
 define the diagnostic codes and field paths; use stable codes for tests and descriptive text for people. An error
@@ -119,13 +121,12 @@ explicit ownership/cleanup. A new external COM reference, library or macro
 trust requirement needs an approved dependency/host decision and evidence;
 do not require blanket macro enablement.
 
-Prohibit `On Error`, unstructured jumps, `CallByName`, `Application.Run`,
-`Evaluate` and dynamic procedure names in core and API. A narrow
-`On Error GoTo` handler is permitted at a host resource/Excel-state boundary
-to restore state, emit a diagnostic and exit. Test and example modules may
-use `On Error GoTo` to record a failure, and `On Error Resume Next` is
-forbidden everywhere ([ADR-008](DECISIONS.md#recorded-decisions)). Do not use
-`GoTo` for ordinary branching. Use explicit argument types,
+Prohibit unstructured jumps, `CallByName`, `Application.Run`, `Evaluate` and
+dynamic procedure names in core and API. Every layer uses the house style's
+error-handling pattern: `On Error GoTo ErrorHandler`, and
+`On Error Resume Next` only inside the `ERROR HANDLER` section to make cleanup
+best-effort ([ADR-012](DECISIONS.md#recorded-decisions)). Do not use `GoTo`
+for ordinary branching. Use explicit argument types,
 qualified calls, and no implicit coercion from Excel cells. Avoid active
 workbook, selection or active sheet as an input; pass the workbook and ranges
 explicitly. The `vba-static` gate enforces the feasible source rules

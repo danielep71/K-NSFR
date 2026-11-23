@@ -178,7 +178,7 @@ material came from.
 | CodeQL advanced setup | Adapted | Replaces the default setup to cover Actions, Python and JavaScript (#146) |
 | Traffic history on a protected data branch | Adapted | Collected daily with a short-lived GitHub App token (#103, #143) |
 | Byte-for-byte regulatory source copies | Adopted | Convention only; no source copy is stored yet (#95) |
-| VBA static checks | Authored | The VBA rules of ADR-008 (#11) |
+| VBA static checks | Authored | The VBA rules of ADR-008 (#11) and ADR-012 (#222) |
 | Candidate-bound host evidence | Authored | Portable checks never prove Excel (#14) |
 | Workbook template and source synchronization | Authored | Deferred from v0.1.0 and delivered in v0.2.0; its layout is the prototype's (#13); its host evidence is pending (#195) |
 | Release tag and GitHub release | Authored | This procedure; `v0.1.0` was tagged on 2026-11-10 (#22); a GitHub release is optional, and none is published |

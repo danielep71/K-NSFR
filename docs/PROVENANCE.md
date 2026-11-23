@@ -34,7 +34,7 @@ copyright ownership or permission to redistribute.
 | SCOPE.md, ARCHITECTURE.md, DECISIONS.md, BACKLOG.md | Authored for issue #2 in this repository | No external code or template was adopted in these files |
 | Workbook engine, regulatory parameters | None admitted; the workbook template holds only the layout (below) | Future source/version, licensing and independent validation required |
 | Numerical fixtures | One neutral synthetic fixture, FX-0001 (#10) | Synthetic data and factors; no regulatory claim |
-| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `README.md` and `templates/README.md` added; Git normalized the `.bas` line ends; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
+| NSFR benchmark prototype (`prototype/`) | Authored by me; incorporated as delivered in #130, with only the specification's relative links changed and `README.md` and `templates/README.md` added; Git normalized the `.bas` line ends; its seven VBA modules were reformatted to the house style in #223, without behavior change; not admitted (ADR-011) | Its factors are transcribed from the CRR and not verified against the source register; its demo data are synthetic; its tools need `xlsxwriter`, locked for the workbook template, and `openpyxl` and LibreOffice, which are not locked |
 
 <a id="external-tools-and-future-dependencies"></a>
 
