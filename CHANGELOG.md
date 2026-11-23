@@ -64,6 +64,7 @@ compliance.
   harness are reformatted without behavior change (#222).
 - The prototype's seven VBA modules follow the house style; their behavior
   stays as delivered (#223).
+- `actions/create-github-app-token` 3.4.0 in the traffic workflow (#220).
 
 <a id="v010"></a>
 
