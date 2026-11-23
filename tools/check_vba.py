@@ -25,7 +25,7 @@ from typing import Any
 EXTENSIONS = (".bas", ".cls", ".frm")
 EXCEPTIONS_FILE = "tools/vba-exceptions.json"
 MANIFEST_FILE = "src/manifest.txt"
-# The benchmark prototype is stored as delivered and is not admitted (ADR-011);
+# The benchmark prototype keeps its behavior as delivered and is not admitted (ADR-011);
 # its VBA is not checked until v0.2.0 moves it into the layout below.
 NOT_ADMITTED = "prototype/"
 LAYERS = (("src/core/", "core"), ("src/api/", "api"), ("src/host/", "host"),

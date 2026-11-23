@@ -62,6 +62,8 @@ compliance.
   pattern in every layer that supersedes ADR-008's rule for core and API.
   The `vba-static` gate checks its layout, and `NSFR_Host_Sync` and the test
   harness are reformatted without behavior change (#222).
+- The prototype's seven VBA modules follow the house style; their behavior
+  stays as delivered (#223).
 
 <a id="v010"></a>
 

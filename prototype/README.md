@@ -52,18 +52,23 @@ commands from here, for example `python tools/build_template.py`.
   by CI; `xlsxwriter` is locked for the root workbook template. Their licenses
   are listed in
   [licensing](../docs/LICENSING.md#prototype-tool-licenses).
-- Only the relative links of the specification were changed, so that they
-  resolve from this directory; this README was added, and `templates/README.md`
-  so that the output directory exists; every other file is byte for byte as
-  delivered, apart from Git's line-end normalization of the `.bas` files.
+- The relative links of the specification were changed, so that they resolve
+  from this directory; this README was added, and `templates/README.md` so
+  that the output directory exists. On 2026-11-23 the seven VBA modules were
+  reformatted to the [house style](../docs/VBA_HOUSE_STYLE.md) (ADR-012,
+  #223): headers, banners, sections, intent comments, `VBA.` qualifiers and
+  local variable names changed; procedure and constant names, signatures,
+  string literals and logic did not, and no error handler was added. Every
+  other file is byte for byte as delivered, apart from Git's line-end
+  normalization of the `.bas` files.
 
 <a id="known-defects"></a>
 
 ## 🐞 Known defects
 
 These defects were found while the prototype was incorporated. They are left
-in place, because the prototype stays as delivered, and are fixed when v0.2.0
-admits the piece concerned.
+in place, because the prototype's behavior stays as delivered, and are fixed
+when v0.2.0 admits the piece concerned.
 
 | Where | Defect | Effect |
 | --- | --- | --- |
