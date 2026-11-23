@@ -146,7 +146,8 @@ A `Private` procedure whose body has at most 15 code lines may use a compact
 header: `PURPOSE` and `UPDATED`, plus any other field that says something
 useful, in the same order. `Public`, `Friend` and event procedures always
 carry all nine. A header may add its own UPPERCASE sections after the
-standard fields and before `UPDATED`, which always comes last.
+standard fields and before `UPDATED`, which always comes last. No header
+names an author: Git history records authorship (#232).
 
 Headers state facts the code shows. A change keeps every header, `INPUTS`
 entry and intent comment true, and sets `UPDATED` of each procedure and

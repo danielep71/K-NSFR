@@ -56,9 +56,6 @@ Option Explicit
 ' COMPATIBILITY
 '   Excel VBA7, 64-bit, Windows. No references beyond the defaults
 '
-' AUTHOR
-'   Daniele Penza
-'
 ' UPDATED
 '   2026-11-05
 '------------------------------------------------------------------------------

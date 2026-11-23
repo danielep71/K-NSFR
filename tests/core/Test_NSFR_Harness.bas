@@ -42,7 +42,6 @@ Option Private Module
 '   Compatibility: Windows 11, Microsoft 365 desktop Excel, VBA7, 64-bit
 '   (#14).
 '   Rules: tests/README.md; numbers follow docs/validation/VALIDATION.md.
-'   Author: danielep71
 '
 ' PUBLIC SURFACE
 '   NsfrTestRun, BeginRun, CheckExact, CheckText, CheckTolerance,
