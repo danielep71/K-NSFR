@@ -409,7 +409,7 @@ Private Function ValidateCategories( _
             Rule = TextOf(Categories(CategoryIndex, CC_RULE))
             TemplateCode = TextOf(Categories(CategoryIndex, CC_TEMPLATE))
             'Reject a blank or repeated code
-            If VBA.Len(Code) = 0 Then
+            If Len(Code) = 0 Then
                 AddDiagnostic Diag, DiagCount, SEV_ERROR, "Params", CategoryIndex, "Categories", _
                     "Category code is blank."
                 ValidateCategories = ValidateCategories + 1
@@ -425,11 +425,11 @@ Private Function ValidateCategories( _
                 Case RULE_MATURITY, RULE_HQLA, RULE_FIXED1, RULE_FIXED3
                     For Column = CC_ROW_UNENCUMBERED To CC_MEMO
                         RowId = TextOf(Categories(CategoryIndex, Column))
-                        If VBA.Len(RowId) = 0 And Column < CC_MEMO Then
+                        If Len(RowId) = 0 And Column < CC_MEMO Then
                             AddDiagnostic Diag, DiagCount, SEV_ERROR, "Params", CategoryIndex, Code, _
                                 "Row ID missing in the category mapping."
                             ValidateCategories = ValidateCategories + 1
-                        ElseIf VBA.Len(RowId) > 0 Then
+                        ElseIf Len(RowId) > 0 Then
                             If FindRow2(Factors, FactorRows, FC_TEMPLATE, TemplateCode, FC_ID, _
                                 RowId) = 0 Then
                                 AddDiagnostic Diag, DiagCount, SEV_ERROR, "Params", CategoryIndex, Code, _

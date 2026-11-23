@@ -108,7 +108,7 @@ Public Function TextOf( _
         ElseIf IsArray(Value) Then
             TextOf = vbNullString
         Else
-            TextOf = VBA.Trim$(VBA.CStr(Value))
+            TextOf = Trim$(CStr(Value))
         End If
 
 End Function
@@ -159,7 +159,7 @@ Public Function IsBlankValue( _
         ElseIf IsEmpty(Value) Or IsNull(Value) Then
             IsBlankValue = True
         ElseIf VarType(Value) = vbString Then
-            IsBlankValue = (VBA.Len(VBA.Trim$(Value)) = 0)
+            IsBlankValue = (Len(Trim$(Value)) = 0)
         Else
             IsBlankValue = False
         End If
@@ -227,7 +227,7 @@ Public Function NumberOf( _
     'Accept the numeric types only
         Select Case VarType(Value)
             Case vbDouble, vbSingle, vbInteger, vbLong, vbCurrency, vbDecimal, vbByte
-                NumberOf = VBA.CDbl(Value)
+                NumberOf = CDbl(Value)
                 Valid = True
             Case Else
                 'No action for other values
@@ -310,22 +310,22 @@ Public Function DateOf( _
     'Convert by variant type
         Select Case VarType(Value)
             Case vbDate
-                DateOf = Int(VBA.CDbl(Value))
+                DateOf = Int(CDbl(Value))
                 Valid = True
             Case vbDouble, vbSingle, vbInteger, vbLong, vbCurrency
-                If VBA.CDbl(Value) >= 1 And VBA.CDbl(Value) < 2958466 Then
-                    DateOf = VBA.CDate(Int(VBA.CDbl(Value)))
+                If CDbl(Value) >= 1 And CDbl(Value) < 2958466 Then
+                    DateOf = CDate(Int(CDbl(Value)))
                     Valid = True
                 End If
             Case vbString
-                Text = VBA.Trim$(Value)
-                If VBA.Len(Text) = 10 And VBA.Mid$(Text, 5, 1) = "-" _
-                    And VBA.Mid$(Text, 8, 1) = "-" Then
-                    If IsAllDigits(VBA.Left$(Text, 4)) And IsAllDigits(VBA.Mid$(Text, 6, 2)) _
-                        And IsAllDigits(VBA.Right$(Text, 2)) Then
-                        YearPart = VBA.CLng(VBA.Left$(Text, 4))
-                        MonthPart = VBA.CLng(VBA.Mid$(Text, 6, 2))
-                        DayPart = VBA.CLng(VBA.Right$(Text, 2))
+                Text = Trim$(Value)
+                If Len(Text) = 10 And Mid$(Text, 5, 1) = "-" _
+                    And Mid$(Text, 8, 1) = "-" Then
+                    If IsAllDigits(Left$(Text, 4)) And IsAllDigits(Mid$(Text, 6, 2)) _
+                        And IsAllDigits(Right$(Text, 2)) Then
+                        YearPart = CLng(Left$(Text, 4))
+                        MonthPart = CLng(Mid$(Text, 6, 2))
+                        DayPart = CLng(Right$(Text, 2))
                         'Keep a day that exists in the month: DateSerial rolls an overflow over
                         If MonthPart >= 1 And MonthPart <= 12 And DayPart >= 1 And DayPart <= 31 Then
                             DateOf = DateSerial(YearPart, MonthPart, DayPart)
@@ -387,15 +387,15 @@ Public Function IsAllDigits( _
 ' VALIDATE INPUTS
 '------------------------------------------------------------------------------
     'Reject empty text
-        If VBA.Len(Text) = 0 Then Exit Function
+        If Len(Text) = 0 Then Exit Function
 
 '------------------------------------------------------------------------------
 ' TEST EACH CHARACTER
 '------------------------------------------------------------------------------
     'Stop at the first character that is not a digit
-        For CharIndex = 1 To VBA.Len(Text)
-            If VBA.Mid$(Text, CharIndex, 1) < "0" Or _
-                VBA.Mid$(Text, CharIndex, 1) > "9" Then Exit Function
+        For CharIndex = 1 To Len(Text)
+            If Mid$(Text, CharIndex, 1) < "0" Or _
+                Mid$(Text, CharIndex, 1) > "9" Then Exit Function
         Next CharIndex
 
 '------------------------------------------------------------------------------
@@ -448,7 +448,7 @@ Public Function IsCode4( _
     'Accept text only
         If VarType(Value) <> vbString Then Exit Function
     'Require four digits once trimmed
-        IsCode4 = (VBA.Len(VBA.Trim$(Value)) = 4 And IsAllDigits(VBA.Trim$(Value)))
+        IsCode4 = (Len(Trim$(Value)) = 4 And IsAllDigits(Trim$(Value)))
 
 End Function
 
@@ -610,7 +610,7 @@ Public Function BucketFromCode( _
 ' RETURN VALUE
 '------------------------------------------------------------------------------
     'Map the normalized code to its bucket, any other code to 0
-        Select Case VBA.UCase$(Replace(VBA.Trim$(Code), " ", vbNullString))
+        Select Case UCase$(Replace(Trim$(Code), " ", vbNullString))
             Case "<6M"
                 BucketFromCode = BUCKET_LT6M
             Case "6M-1Y"
@@ -675,7 +675,7 @@ Public Function HasBucket( _
 ' RETURN VALUE
 '------------------------------------------------------------------------------
     'Search the row's cells for the bucket's letter
-        HasBucket = (VBA.InStr(1, Cells, VBA.Mid$(BUCKET_LETTERS, Bucket, 1), vbBinaryCompare) > 0)
+        HasBucket = (InStr(1, Cells, Mid$(BUCKET_LETTERS, Bucket, 1), vbBinaryCompare) > 0)
 
 End Function
 
@@ -719,7 +719,7 @@ Public Function IdDepth( _
 ' RETURN VALUE
 '------------------------------------------------------------------------------
     'Count the dots
-        IdDepth = VBA.Len(RowId) - VBA.Len(Replace(RowId, ".", vbNullString))
+        IdDepth = Len(RowId) - Len(Replace(RowId, ".", vbNullString))
 
 End Function
 

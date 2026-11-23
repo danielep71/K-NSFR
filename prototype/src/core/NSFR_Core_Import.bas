@@ -126,10 +126,10 @@ Public Function TemplateOfSheet( _
             For ColumnIndex = 1 To Application_Min(TITLE_SCAN, UBound(Values, 2))
                 Text = TextOf(Values(RowIndex, ColumnIndex))
                 'Require a title, not a bare code in an index listing
-                If VBA.Len(Text) > 7 Then
-                    If VBA.Left$(Text, 3) = "C 8" And VBA.Mid$(Text, 4, 1) >= "0" _
-                        And VBA.Mid$(Text, 4, 1) <= "4" And VBA.Mid$(Text, 5, 3) = ".00" Then
-                        TemplateOfSheet = VBA.Left$(Text, 7)
+                If Len(Text) > 7 Then
+                    If Left$(Text, 3) = "C 8" And Mid$(Text, 4, 1) >= "0" _
+                        And Mid$(Text, 4, 1) <= "4" And Mid$(Text, 5, 3) = ".00" Then
+                        TemplateOfSheet = Left$(Text, 7)
                         Exit Function
                     End If
                 End If
@@ -281,7 +281,7 @@ Public Function ScanTemplateSheet( _
     'Append a BankCells row for each number or error at a row and a column code
         For RowIndex = HeaderRow + 1 To Rows
             If IsCode4(Values(RowIndex, RowCodeColumn)) Then
-                RowCode = VBA.Trim$(Values(RowIndex, RowCodeColumn))
+                RowCode = Trim$(Values(RowIndex, RowCodeColumn))
                 For ColumnIndex = FirstCodeColumn To Columns
                     If IsCode4(Values(HeaderRow, ColumnIndex)) Then
                         'Keep an error as "ERROR"; skip text and empty cells
@@ -295,7 +295,7 @@ Public Function ScanTemplateSheet( _
                             RowItem = NewRow(BC_COLUMNS)
                             RowItem(BC_TEMPLATE) = TemplateCode
                             RowItem(BC_ROW) = RowCode
-                            RowItem(BC_COLUMN) = VBA.Trim$(Values(HeaderRow, ColumnIndex))
+                            RowItem(BC_COLUMN) = Trim$(Values(HeaderRow, ColumnIndex))
                             RowItem(BC_VALUE) = Value
                             RowItem(BC_SOURCE) = Source
                             ListAdd Cells, CellCount, RowItem
@@ -424,9 +424,9 @@ Public Function ParseCsvLine( _
 ' SKIP BLANK AND HEADER LINES
 '------------------------------------------------------------------------------
     'Return False without a problem for a blank line or the header line
-        LineText = VBA.Trim$(LineText)
-        If VBA.Len(LineText) = 0 Then Exit Function
-        If VBA.LCase$(VBA.Left$(LineText, 15)) = "rowcolumn_index" Then Exit Function
+        LineText = Trim$(LineText)
+        If Len(LineText) = 0 Then Exit Function
+        If LCase$(Left$(LineText, 15)) = "rowcolumn_index" Then Exit Function
 
 '------------------------------------------------------------------------------
 ' SPLIT THE FIELDS
@@ -442,29 +442,29 @@ Public Function ParseCsvLine( _
 ' PARSE THE INDEX
 '------------------------------------------------------------------------------
     'Collapse repeated spaces in the index
-        Index = VBA.Trim$(Fields(0))
-        Do While VBA.InStr(1, Index, "  ", vbBinaryCompare) > 0
+        Index = Trim$(Fields(0))
+        Do While InStr(1, Index, "  ", vbBinaryCompare) > 0
             Index = Replace(Index, "  ", " ")
         Loop
     'Recognize the column code, the row code and the template
         Tokens = Split(Index, " ")
         For LoopIndex = LBound(Tokens) To UBound(Tokens)
             Token = Tokens(LoopIndex)
-            If VBA.Len(Token) = 5 And VBA.LCase$(VBA.Left$(Token, 1)) = "c" _
-                And IsAllDigits(VBA.Mid$(Token, 2)) Then
-                ColumnCode = VBA.Mid$(Token, 2)
-            ElseIf VBA.Len(Token) = 5 And VBA.LCase$(VBA.Left$(Token, 1)) = "r" _
-                And IsAllDigits(VBA.Mid$(Token, 2)) Then
-                RowCode = VBA.Mid$(Token, 2)
-            ElseIf VBA.Len(Token) = 5 And VBA.Mid$(Token, 3, 1) = "." Then
+            If Len(Token) = 5 And LCase$(Left$(Token, 1)) = "c" _
+                And IsAllDigits(Mid$(Token, 2)) Then
+                ColumnCode = Mid$(Token, 2)
+            ElseIf Len(Token) = 5 And LCase$(Left$(Token, 1)) = "r" _
+                And IsAllDigits(Mid$(Token, 2)) Then
+                RowCode = Mid$(Token, 2)
+            ElseIf Len(Token) = 5 And Mid$(Token, 3, 1) = "." Then
                 TemplateCode = "C " & Token
-            ElseIf VBA.Len(Token) = 6 And VBA.UCase$(VBA.Left$(Token, 1)) = "C" _
-                And VBA.Mid$(Token, 4, 1) = "." Then
-                TemplateCode = "C " & VBA.Mid$(Token, 2)
+            ElseIf Len(Token) = 6 And UCase$(Left$(Token, 1)) = "C" _
+                And Mid$(Token, 4, 1) = "." Then
+                TemplateCode = "C " & Mid$(Token, 2)
             End If
         Next LoopIndex
     'Require all three parts
-        If VBA.Len(TemplateCode) = 0 Or VBA.Len(RowCode) = 0 Or VBA.Len(ColumnCode) = 0 Then
+        If Len(TemplateCode) = 0 Or Len(RowCode) = 0 Or Len(ColumnCode) = 0 Then
             Problem = "index '" & Fields(0) & "' is not 'C nn.nn cNNNN rNNNN'"
             Exit Function
         End If
@@ -473,14 +473,14 @@ Public Function ParseCsvLine( _
 ' PARSE THE AMOUNT
 '------------------------------------------------------------------------------
     'Require an amount in the last field
-        AmountText = VBA.Trim$(Fields(UBound(Fields)))
-        If VBA.Len(AmountText) = 0 Then
+        AmountText = Trim$(Fields(UBound(Fields)))
+        If Len(AmountText) = 0 Then
             Problem = "empty amount"
             Exit Function
         End If
     'Accept only the characters of a number with a decimal point
-        For LoopIndex = 1 To VBA.Len(AmountText)
-            If VBA.InStr(1, "0123456789.-+Ee", VBA.Mid$(AmountText, LoopIndex, 1), _
+        For LoopIndex = 1 To Len(AmountText)
+            If InStr(1, "0123456789.-+Ee", Mid$(AmountText, LoopIndex, 1), _
                 vbBinaryCompare) = 0 Then
                 Problem = "amount '" & AmountText & "' is not a number with a decimal point"
                 Exit Function

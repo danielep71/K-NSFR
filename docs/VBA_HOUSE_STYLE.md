@@ -224,7 +224,9 @@ blocks add four spaces per level. Labels are at column 0.
   `VBA.Trim$`, `VBA.Left$`, `VBA.Mid$`, `VBA.InStr`, `VBA.StrComp`,
   `VBA.CStr`, `VBA.CLng` and the like, preferring the `$` string variants.
   Test emptiness with `VBA.Len(Text) = 0` and write `vbNullString` rather
-  than `""`.
+  than `""`. The non-admitted prototype is the one exception: its LibreOffice
+  regression runs the code in LibreOffice Basic, which does not know the
+  `VBA.` qualifier, so its calls stay unqualified until its admission (#223).
 - `InStr`, `InStrRev` and `StrComp` state their compare mode
   (`vbBinaryCompare` or `vbTextCompare`).
 - `Next` names its counter. One statement per line, no `:` separator; a

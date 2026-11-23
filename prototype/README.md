@@ -58,7 +58,10 @@ commands from here, for example `python tools/build_template.py`.
   reformatted to the [house style](../docs/VBA_HOUSE_STYLE.md) (ADR-012,
   #223): headers, banners, sections, intent comments, `VBA.` qualifiers and
   local variable names changed; procedure and constant names, signatures,
-  string literals and logic did not, and no error handler was added. Every
+  string literals and logic did not, and no error handler was added. The
+  library calls keep no `VBA.` qualifier, which LibreOffice Basic rejects, so
+  that `tools/lo_regression.py` still runs; it passes on the reformatted
+  modules. Every
   other file is byte for byte as delivered, apart from Git's line-end
   normalization of the `.bas` files.
 
